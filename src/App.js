@@ -5,7 +5,7 @@ import { create } from 'jss';
 
 import theme from 'theme';
 import Routes from 'routes';
-import Layout from 'layouts';
+import Layout from 'layouts/Dashboard';
 
 const jss = create({
   ...jssPreset(),
