@@ -1,13 +1,13 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
-const Home = lazy(() => import('pages/home'));
+const Dashboard = lazy(() => import('pages/Dashboard'));
 
 const Routes = () => (
   <Suspense fallback={<div />}>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={Home} />
+        <Route exact path="/" component={Dashboard} />
         <Redirect to="/" />
       </Switch>
     </BrowserRouter>

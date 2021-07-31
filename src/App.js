@@ -5,7 +5,6 @@ import { create } from 'jss';
 
 import theme from 'theme';
 import Routes from 'routes';
-import Layout from 'layouts/Dashboard';
 
 const jss = create({
   ...jssPreset(),
@@ -16,9 +15,7 @@ const App = () => (
   <StylesProvider jss={jss}>
     <MuiThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>
-        <Layout>
-          <Routes />
-        </Layout>
+        <Routes />
       </ThemeProvider>
     </MuiThemeProvider>
   </StylesProvider>
