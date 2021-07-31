@@ -27,7 +27,7 @@ const initialWidgets = [
   },
 ];
 
-const WidgetStage = () => {
+const WidgetEditor = () => {
   const classes = useStyles();
   const [widgets, setWidgets] = useState(initialWidgets);
   const stageRef = useRef();
@@ -80,4 +80,4 @@ const WidgetStage = () => {
   );
 };
 
-export default WidgetStage;
+export default WidgetEditor;

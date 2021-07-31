@@ -1,14 +1,13 @@
+import React from 'react';
 import { styled, withStyles } from '@material-ui/core/styles';
 import MuiDrawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
-import { LOGO_URL, DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
-
-import React from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { LOGO_URL, DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
 
 const StyledExpansion = withStyles({
   root: {
