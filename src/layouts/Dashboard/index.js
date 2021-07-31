@@ -5,7 +5,7 @@ import Container from '@material-ui/core/Container';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
-const appBarHeight = 92;
+const APP_BAR_HEIGHT = 92;
 
 export default function Dashboard({ children }) {
   return (
@@ -22,7 +22,7 @@ export default function Dashboard({ children }) {
           overflow: 'auto',
         }}
       >
-        <Container maxWidth="lg" style={{ padding: 0, marginTop: appBarHeight, height: `calc(100% - ${appBarHeight}px)` }}>
+        <Container maxWidth="lg" style={{ padding: 0, marginTop: APP_BAR_HEIGHT, height: `calc(100% - ${APP_BAR_HEIGHT}px)` }}>
           {children}
         </Container>
       </Box>

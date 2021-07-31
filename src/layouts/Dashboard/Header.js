@@ -1,10 +1,8 @@
-import { styled } from '@material-ui/core/styles';
 import MuiAppBar from '@material-ui/core/AppBar';
-import { Box, TextField } from '@material-ui/core';
 import styledComponent from 'styled-components';
-
-const drawerWidth = 308;
-const appBarHeight = 92;
+import { styled } from '@material-ui/core/styles';
+import { Box } from '@material-ui/core';
+import { DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -20,14 +18,14 @@ const AppBar = styled(MuiAppBar, {
   fontWeight: 'bold',
   fontFamily: 'sans-serif',
   boxShadow: 'none',
-  borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-  height: appBarHeight,
+  borderBottom: MAIN_BORDER,
+  height: APP_BAR_HEIGHT,
   alignItems: 'center',
   justifyContent: 'flex-start',
   flexDirection: 'row',
   ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: DRAWER_WIDTH,
+    width: `calc(100% - ${DRAWER_WIDTH}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -61,7 +59,7 @@ border: none;
 const Header = () => (
   <AppBar position="absolute" open={true}>
     <Label ml="36px">TOPIC:</Label>
-    <Input placeholder="Type the topic for the canvas…" onChange={(e) => console.log(e)} />
+    <Input placeholder="Type the topic for the canvas…" />
   </AppBar>
 );
 

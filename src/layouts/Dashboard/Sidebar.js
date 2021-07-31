@@ -2,6 +2,7 @@ import { styled, withStyles } from '@material-ui/core/styles';
 import MuiDrawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
 import { LOGO_URL } from 'constants/assets';
+import { DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
 
 import React from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -13,7 +14,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 const StyledExpansion = withStyles({
   root: {
     boxShadow: 'none',
-    borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+    borderBottom: MAIN_BORDER,
     borderTop: 'none',
     '&:before': {
       background: 'none',
@@ -53,14 +54,11 @@ function SimpleExpansionPanel(props) {
   );
 }
 
-const drawerWidth = 308;
-const appBarHeight = 92;
-
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
   '& .MuiDrawer-paper': {
     position: 'relative',
     whiteSpace: 'nowrap',
-    width: drawerWidth,
+    width: DRAWER_WIDTH,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -88,8 +86,8 @@ const Sidebar = () => (
         alignItems: 'center',
         justifyContent: 'flex-start',
         px: [1],
-        minHeight: appBarHeight,
-        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        minHeight: APP_BAR_HEIGHT,
+        borderBottom: MAIN_BORDER,
       }}
     >
       <img src={LOGO_URL} alt="logo" />
