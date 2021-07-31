@@ -1,5 +1,5 @@
 import { memo, useRef } from 'react';
-import BaseEntity from './BaseEntity';
+import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
 import { WIDGET_TYPES } from 'constants/common';
 
@@ -57,7 +57,7 @@ export default memo(({ transforms = null, selected, onSelect, onTransform }) => 
   const widgetRef3 = useRef(null);
 
   return (
-    <BaseEntity
+    <BaseWidget
       targets={[widgetRef1, widgetRef2, widgetRef3]}
       type={WIDGET_TYPES.human}
       transforms={transforms}
@@ -75,6 +75,6 @@ export default memo(({ transforms = null, selected, onSelect, onTransform }) => 
       <div className={`${classes.target} target3`} ref={widgetRef3} id="target3">
         Target3
       </div>
-    </BaseEntity>
+    </BaseWidget>
   );
 });

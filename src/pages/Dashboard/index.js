@@ -4,10 +4,10 @@ import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import WidgetEditor from 'components/WidgetEditor';
+import { APP_BAR_HEIGHT } from './constants';
 
-const APP_BAR_HEIGHT = 92;
-
-export default function Dashboard({ children }) {
+export default function Dashboard() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -23,7 +23,7 @@ export default function Dashboard({ children }) {
         }}
       >
         <Container maxWidth="lg" style={{ padding: 0, marginTop: APP_BAR_HEIGHT, height: `calc(100% - ${APP_BAR_HEIGHT}px)` }}>
-          {children}
+          <WidgetEditor />
         </Container>
       </Box>
     </Box>

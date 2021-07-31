@@ -10,7 +10,18 @@ const useStyles = makeStyles({
   },
 });
 
-export default function BaseEntity({ children, targets = [], dnd, type, transforms, onSelect, onTransform }) {
+export default function BaseEntity({
+  children,
+  targets = [],
+  dnd,
+  type,
+  draggable = true,
+  rotatable = true,
+  resizable = true,
+  transforms,
+  onSelect,
+  onTransform,
+}) {
   const classes = useStyles({ dnd });
   const containerRef = useRef();
 
@@ -45,7 +56,7 @@ export default function BaseEntity({ children, targets = [], dnd, type, transfor
           target={targets}
           defaultGroupRotate={0}
           defaultGroupOrigin={'50% 50%'}
-          draggable={true}
+          draggable={draggable}
           throttleDrag={0}
           startDragRotate={0}
           throttleDragRotate={0}
@@ -53,11 +64,11 @@ export default function BaseEntity({ children, targets = [], dnd, type, transfor
           origin={true}
           originDraggable={true}
           originRelative={true}
-          rotatable={true}
+          rotatable={rotatable}
           throttleRotate={0}
           rotationPosition={'top'}
           padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-          resizable={true}
+          resizable={resizable}
           keepRatio={false}
           throttleResize={0}
           renderDirections={['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se']}
