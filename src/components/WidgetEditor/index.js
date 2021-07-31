@@ -3,6 +3,7 @@ import Human, { transformer as humanTransformer } from './widgets/Human';
 import { makeStyles } from '@material-ui/core';
 import { WIDGET_TYPES } from 'constants/common';
 import ObjectID from 'bson-objectid';
+import { DROP_EFFECT } from './constants';
 
 const useStyles = makeStyles({
   root: {
@@ -34,7 +35,7 @@ const WidgetEditor = () => {
 
   const handleDragOver = (event) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = DROP_EFFECT;
   };
 
   const handleDrop = (event) => {

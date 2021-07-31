@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
+import { DROP_EFFECT } from '../constants';
 
 const useStyles = makeStyles({
   root: {
@@ -33,7 +34,7 @@ export default function BaseEntity({ children, targets = [], dnd, type, transfor
       type,
     };
     event.dataTransfer.setData('application/constellation-widget', JSON.stringify(data));
-    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.effectAllowed = DROP_EFFECT;
   };
 
   return (
