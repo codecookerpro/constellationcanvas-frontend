@@ -1,8 +1,7 @@
 import { styled, withStyles } from '@material-ui/core/styles';
 import MuiDrawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
-import { LOGO_URL } from 'constants/assets';
-import { DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
+import { LOGO_URL, DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
 
 import React from 'react';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
