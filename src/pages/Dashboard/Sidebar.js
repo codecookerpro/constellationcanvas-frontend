@@ -1,15 +1,35 @@
 import React from 'react';
-import { styled, withStyles } from '@material-ui/core/styles';
+import _ from 'lodash';
+import { styled, withStyles, makeStyles } from '@material-ui/core/styles';
 import MuiDrawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { LOGO_URL, DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
+import { WIDGET_TYPES as WIDGETS } from 'components/WidgetEditor/constants';
 
-const StyledExpansion = withStyles({
+const useStyles = makeStyles((theme) => ({
+  root: {
+    maxHeight: `calc(100vh - ${APP_BAR_HEIGHT}px)`,
+    overflow: 'auto',
+  },
+  widget: {
+    width: 97,
+    height: 124,
+    backgroundColor: '#f6f8fa',
+    '&:hover': {
+      borderRadius: 3,
+      border: 2,
+      borderColor: '#f2a912',
+    },
+  },
+}));
+
+const StyledAccordion = withStyles({
   root: {
     boxShadow: 'none',
     borderBottom: MAIN_BORDER,
@@ -21,33 +41,38 @@ const StyledExpansion = withStyles({
   expanded: {
     margin: '0 !important',
   },
-})(ExpansionPanel);
+})(Accordion);
 
-const StyledExpansionSummary = withStyles({
+const StyledAccordionSummary = withStyles({
   root: {
     border: 'none',
   },
-})(ExpansionPanelSummary);
+})(AccordionSummary);
 
-function SimpleExpansionPanel(props) {
+function SimpleAccordion(props) {
+  const classes = useStyles();
+  const { widgets } = props;
+
+  const groupedWidgets = _.groupBy(widgets, 'group');
+
   return (
-    <div>
-      <StyledExpansion>
-        <StyledExpansionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Figures (Lego)</Typography>
-        </StyledExpansionSummary>
-        <ExpansionPanelDetails>
-          <Typography>123</Typography>
-        </ExpansionPanelDetails>
-      </StyledExpansion>
-      <StyledExpansion>
-        <StyledExpansionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Figures (Chess - White)</Typography>
-        </StyledExpansionSummary>
-        <ExpansionPanelDetails>
-          <Typography>123</Typography>
-        </ExpansionPanelDetails>
-      </StyledExpansion>
+    <div className={classes.root}>
+      {Object.keys(groupedWidgets).map((group) => (
+        <StyledAccordion key={group}>
+          <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>{group}</Typography>
+          </StyledAccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={3}>
+              {groupedWidgets[group].map((widget) => (
+                <Grid item key={widget.type} container justifyContent="center" alignItems="center" xs={6}>
+                  <img className={classes.widget} src={`public/assets/img/widgets/${widget.type}`} alt={widget.type} />
+                </Grid>
+              ))}
+            </Grid>
+          </AccordionDetails>
+        </StyledAccordion>
+      ))}
     </div>
   );
 }
@@ -90,7 +115,7 @@ const Sidebar = () => (
     >
       <img src={LOGO_URL} alt="logo" />
     </Toolbar>
-    <SimpleExpansionPanel />
+    <SimpleAccordion widgets={WIDGETS} />
   </Drawer>
 );
 
