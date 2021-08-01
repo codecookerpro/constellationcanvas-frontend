@@ -6,11 +6,19 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import WidgetEditor from 'components/WidgetEditor';
 import { APP_BAR_HEIGHT } from './constants';
+import { createGlobalStyle } from 'styled-components/macro';
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    overflow: hidden;
+  }
+`;
 
 export default function Dashboard() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
+      <GlobalStyle />
       <Header />
       <Sidebar />
       <Box

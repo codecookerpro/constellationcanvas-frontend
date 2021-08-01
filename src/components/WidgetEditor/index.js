@@ -9,7 +9,7 @@ const useStyles = makeStyles({
   root: {
     width: '100%',
     height: '100%',
-    overflow: 'hidden',
+    overflow: 'auto',
   },
 });
 
@@ -55,7 +55,7 @@ const WidgetEditor = () => {
     setWidgets((widgets) => widgets.concat(newWidget));
   };
 
-  const handleTransform = (widget, element, transform) => {
+  const handleTransform = (widget, element, type, transform) => {
     setWidgets(
       widgets.map((wid) =>
         wid.id === widget
@@ -75,7 +75,7 @@ const WidgetEditor = () => {
     <div onDrop={handleDrop} onDragOver={handleDragOver} className={classes.root} ref={stageRef}>
       {widgets.map(({ id, type, transforms }, idx) => {
         const Widget = widgetsMap[type].component;
-        return <Widget key={idx} transforms={transforms} onTransform={(element, transform) => handleTransform(id, element, transform)} />;
+        return <Widget key={idx} transforms={transforms} onTransform={(element, type, transform) => handleTransform(id, element, type, transform)} />;
       })}
     </div>
   );

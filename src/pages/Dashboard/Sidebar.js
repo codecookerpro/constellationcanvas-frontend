@@ -1,15 +1,10 @@
 import React from 'react';
 import { styled, withStyles } from '@material-ui/core/styles';
-import MuiDrawer from '@material-ui/core/Drawer';
-import Toolbar from '@material-ui/core/Toolbar';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography';
+import { Accordion, AccordionSummary, AccordionDetails, Toolbar, Drawer as MuiDrawer, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { LOGO_URL, DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
 
-const StyledExpansion = withStyles({
+const StyledAccordion = withStyles({
   root: {
     boxShadow: 'none',
     borderBottom: MAIN_BORDER,
@@ -21,33 +16,33 @@ const StyledExpansion = withStyles({
   expanded: {
     margin: '0 !important',
   },
-})(ExpansionPanel);
+})(Accordion);
 
-const StyledExpansionSummary = withStyles({
+const StyledAccordionSummary = withStyles({
   root: {
     border: 'none',
   },
-})(ExpansionPanelSummary);
+})(AccordionSummary);
 
-function SimpleExpansionPanel(props) {
+function SimpleAccordion(props) {
   return (
     <div>
-      <StyledExpansion>
-        <StyledExpansionSummary expandIcon={<ExpandMoreIcon />}>
+      <StyledAccordion>
+        <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>Figures (Lego)</Typography>
-        </StyledExpansionSummary>
-        <ExpansionPanelDetails>
+        </StyledAccordionSummary>
+        <AccordionDetails>
           <Typography>123</Typography>
-        </ExpansionPanelDetails>
-      </StyledExpansion>
-      <StyledExpansion>
-        <StyledExpansionSummary expandIcon={<ExpandMoreIcon />}>
+        </AccordionDetails>
+      </StyledAccordion>
+      <StyledAccordion>
+        <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography>Figures (Chess - White)</Typography>
-        </StyledExpansionSummary>
-        <ExpansionPanelDetails>
+        </StyledAccordionSummary>
+        <AccordionDetails>
           <Typography>123</Typography>
-        </ExpansionPanelDetails>
-      </StyledExpansion>
+        </AccordionDetails>
+      </StyledAccordion>
     </div>
   );
 }
@@ -90,7 +85,7 @@ const Sidebar = () => (
     >
       <img src={LOGO_URL} alt="logo" />
     </Toolbar>
-    <SimpleExpansionPanel />
+    <SimpleAccordion />
   </Drawer>
 );
 

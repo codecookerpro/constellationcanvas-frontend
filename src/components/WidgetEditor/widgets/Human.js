@@ -1,7 +1,6 @@
 import { memo, useRef } from 'react';
-import BaseWidget from './BaseWidget';
+import FigureWidget from './FigureWidget';
 import { makeStyles } from '@material-ui/core';
-import { WIDGET_TYPES } from 'constants/common';
 
 const useStyles = makeStyles({
   target: {
@@ -33,39 +32,19 @@ const useStyles = makeStyles({
 });
 
 export const transformer = (translate) => ({
-  target1: {
-    transform: `translate(${translate[0]}px, ${translate[1]}px) rotate(0deg)`,
-    width: 100,
-    height: 100,
-  },
-  target2: {
-    transform: `translate(${translate[0]}px, ${translate[1]}px) rotate(0deg)`,
-    width: 100,
-    height: 100,
-  },
-  target3: {
-    transform: `translate(${translate[0]}px, ${translate[1]}px) rotate(0deg)`,
-    width: 100,
-    height: 100,
-  },
+  target1: [...translate, 0, 100, 100],
+  target2: [...translate, 0, 100, 100],
+  target3: [...translate, 0, 100, 100],
 });
 
-export default memo(({ transforms = null, selected, onSelect, onTransform }) => {
+export default memo(({ transforms = null, onTransform }) => {
   const classes = useStyles();
   const widgetRef1 = useRef(null);
   const widgetRef2 = useRef(null);
   const widgetRef3 = useRef(null);
 
   return (
-    <BaseWidget
-      targets={[widgetRef1, widgetRef2, widgetRef3]}
-      type={WIDGET_TYPES.human}
-      transforms={transforms}
-      selected={selected}
-      onSelect={onSelect}
-      onTransform={onTransform}
-      dnd={!transforms}
-    >
+    <FigureWidget targets={[widgetRef1, widgetRef2, widgetRef3]} transforms={transforms} onTransform={onTransform}>
       <div className={`${classes.target} target1`} ref={widgetRef1} id="target1">
         Target1
       </div>
@@ -75,6 +54,6 @@ export default memo(({ transforms = null, selected, onSelect, onTransform }) => 
       <div className={`${classes.target} target3`} ref={widgetRef3} id="target3">
         Target3
       </div>
-    </BaseWidget>
+    </FigureWidget>
   );
 });
