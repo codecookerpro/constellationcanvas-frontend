@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { DROP_EFFECT, WIDGET_MAP, WIDGET_TYPES, ORDER_TYPE } from './constants';
-import { getUniqueId } from './helper';
+import { DROP_EFFECT, WIDGET_MAP, WIDGET_TYPES, CONTEXTMENU_ITEMS as contexts, ORDER_TYPES } from './constants';
+import { getUniqueId, bringToFront, sendToBack, bringForward, sendBackward } from './helper';
 
 const useStyles = makeStyles({
   root: {
@@ -16,6 +16,8 @@ const useStyles = makeStyles({
 const WidgetEditor = () => {
   const classes = useStyles();
   const [widgets, setWidgets] = useState([]);
+  const [mousePos, setMousePos] = useState([Infinity, Infinity]);
+  const [transformingWidget, setTransformingWidget] = useState(null);
   const [contextState, setContextState] = useState({
     id: null,
     mouseX: null,
@@ -41,11 +43,10 @@ const WidgetEditor = () => {
       landedPos: { x, y },
     };
     setWidgets((widgets) => widgets.concat(newWidget));
+    setMousePos([event.clientX, event.clientY]);
   };
 
-  const handleTransform = ({ id, element, type, transform }) => {
-    // console.log(id, element, type, transform);
-  };
+  const handleTransform = ({ id, type, transform }) => {};
 
   const handleContextMenu = (e, id) => {
     e.preventDefault();
@@ -60,76 +61,14 @@ const WidgetEditor = () => {
   const handleChangeDepth = (e, type) => {
     e.preventDefault();
 
-    const widget = widgets.find((w) => w.id === contextState.id);
-
-    if (type === ORDER_TYPE.front) {
-      setWidgets(
-        widgets.map((w) => {
-          if (w.id !== widget.id) {
-            if (w.depth > widget.depth) {
-              return {
-                ...w,
-                depth: w.depth - 1,
-              };
-            } else return w;
-          }
-          return {
-            ...widget,
-            depth: widgets.length - 1,
-          };
-        })
-      );
-    } else if (type === ORDER_TYPE.back) {
-      setWidgets(
-        widgets.map((w) => {
-          if (w.id !== widget.id) {
-            if (w.depth < widget.depth) {
-              return {
-                ...w,
-                depth: w.depth + 1,
-              };
-            } else return w;
-          }
-          return {
-            ...widget,
-            depth: 0,
-          };
-        })
-      );
-    } else if (type === ORDER_TYPE.forward) {
-      setWidgets(
-        widgets.map((w) => {
-          if (w.id !== widget.id) {
-            if (w.depth === widget.depth + 1) {
-              return {
-                ...w,
-                depth: w.depth - 1,
-              };
-            } else return w;
-          }
-          return {
-            ...widget,
-            depth: widget.depth + 1,
-          };
-        })
-      );
-    } else if (type === ORDER_TYPE.backward) {
-      setWidgets(
-        widgets.map((w) => {
-          if (w.id !== widget.id) {
-            if (w.depth === widget.depth - 1) {
-              return {
-                ...w,
-                depth: w.depth + 1,
-              };
-            } else return w;
-          }
-          return {
-            ...widget,
-            depth: widget.depth - 1,
-          };
-        })
-      );
+    if (type === ORDER_TYPES.front) {
+      setWidgets(bringToFront(widgets, contextState.id));
+    } else if (type === ORDER_TYPES.back) {
+      setWidgets(sendToBack(widgets, contextState.id));
+    } else if (type === ORDER_TYPES.forward) {
+      setWidgets(bringForward(widgets, contextState.id));
+    } else if (type === ORDER_TYPES.backward) {
+      setWidgets(sendBackward(widgets, contextState.id));
     }
 
     setContextState({
@@ -139,12 +78,16 @@ const WidgetEditor = () => {
     });
   };
 
+  const handleMouseMove = (e) => {
+    setMousePos([e.clientX, e.clientY]);
+  };
+
   return (
-    <div onDrop={handleDrop} onDragOver={handleDragOver} className={classes.root} ref={stageRef} id="widget-editor">
+    <div id="widget-editor" onDrop={handleDrop} onDragOver={handleDragOver} className={classes.root} ref={stageRef} onMouseMove={handleMouseMove}>
       {widgets.map((widget) => {
         const group = WIDGET_TYPES.find((wtype) => wtype.type === widget.type).group;
         const WidgetComponent = WIDGET_MAP[widget.type] || WIDGET_MAP[group];
-        return <WidgetComponent {...widget} key={widget.id} onTransform={handleTransform} onContextMenu={handleContextMenu} />;
+        return <WidgetComponent {...widget} key={widget.id} onTransform={handleTransform} onContextMenu={handleContextMenu} mousePos={mousePos} />;
       })}
       <Menu
         style={{ zIndex: 99999 }}
@@ -156,10 +99,11 @@ const WidgetEditor = () => {
           contextState.mouseY !== null && contextState.mouseX !== null ? { top: contextState.mouseY, left: contextState.mouseX } : undefined
         }
       >
-        <MenuItem onClick={(e) => handleChangeDepth(e, ORDER_TYPE.front)}>Bring to Front</MenuItem>
-        <MenuItem onClick={(e) => handleChangeDepth(e, ORDER_TYPE.back)}>Send to Back</MenuItem>
-        <MenuItem onClick={(e) => handleChangeDepth(e, ORDER_TYPE.forward)}>Bring Forward</MenuItem>
-        <MenuItem onClick={(e) => handleChangeDepth(e, ORDER_TYPE.backward)}>Send Backward</MenuItem>
+        {contexts.map((context) => (
+          <MenuItem key={context.type} onClick={(e) => handleChangeDepth(e, context.type)}>
+            {context.label}
+          </MenuItem>
+        ))}
       </Menu>
     </div>
   );

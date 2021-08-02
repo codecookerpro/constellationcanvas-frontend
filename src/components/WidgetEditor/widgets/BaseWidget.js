@@ -3,12 +3,16 @@ import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
 import { TRANS_TYPES } from '../constants';
 import { parseTransform, transformToString } from '../helper';
+import pointInPolygon from 'point-in-polygon';
 
 const useStyles = makeStyles({
   root: {
     display: 'none',
     position: 'absolute',
     zIndex: (props) => props.depth,
+    '& .moveable-line': {
+      visibility: (props) => (props.hovered ? 'visible' : 'hidden'),
+    },
   },
 });
 
@@ -16,88 +20,92 @@ export default function BaseWidget({
   id,
   depth,
   children,
-  targets = [],
+  target,
   draggable = true,
   rotatable = true,
   resizable = true,
   keepRatio = true,
-  transforms,
+  transform,
   mousePos,
   onTransform,
   onContextMenu,
 }) {
-  const classes = useStyles({ depth });
   const containerRef = useRef();
-  const [boundRect, setBoundRect] = useState({ left: 0, right: 0, top: 0, bottom: 0 });
+  const [points, setPoints] = useState([]);
+  const [transforming, setTransforming] = useState(false);
 
-  const calcBoundRect = (rects) => {
-    const boundRect = { left: Infinity, top: Infinity, right: 0, bottom: 0 };
-    const baseRect = document.querySelector('#widget-editor').getBoundingClientRect();
+  const updatePoints = () => {
+    const controls = [
+      rotatable && containerRef.current.querySelector('.moveable-rotation-control'),
+      containerRef.current.querySelector('.moveable-ne'),
+      containerRef.current.querySelector('.moveable-se'),
+      containerRef.current.querySelector('.moveable-sw'),
+      containerRef.current.querySelector('.moveable-nw'),
+    ].filter((d) => d);
 
-    for (const rect of rects) {
-      boundRect.left = rect.left < boundRect.left ? rect.left : boundRect.left;
-      boundRect.top = rect.top < boundRect.top ? rect.top : boundRect.top;
-      boundRect.right = rect.right > boundRect.right ? rect.right : boundRect.right;
-      boundRect.bottom = rect.bottom > boundRect.bottom ? rect.bottom : boundRect.bottom;
-    }
+    const points = [];
+    let cx = 0,
+      cy = 0;
+    controls.forEach((control) => {
+      const { x, y } = control.getBoundingClientRect();
+      cx += x;
+      cy += y;
+      points.push([x, y]);
+    });
 
-    const left = boundRect.left - baseRect.left - 30;
-    const right = boundRect.right - baseRect.left + 30;
-    const top = boundRect.top - baseRect.top - 30;
-    const bottom = boundRect.bottom - baseRect.top + 30;
+    cx /= points.length;
+    cy /= points.length;
 
-    return { left, right, top, bottom };
+    const expended = points.map(([x, y]) => {
+      let dx = x - cx;
+      let dy = y - cy;
+      const norm = Math.sqrt(dx * dx + dy * dy);
+      dx /= norm;
+      dy /= norm;
+
+      return [x + dx * 30, y + dy * 30];
+    });
+
+    setPoints(expended);
   };
 
-  const handleMutation = (mutationList, observer) => {
-    const rects = [];
-    for (const mutation of mutationList) {
-      rects.push(mutation.target.getBoundingClientRect());
-    }
+  const hovered = useMemo(() => {
+    return transforming || (points.length ? pointInPolygon(mousePos, points) : true);
+  }, [points, mousePos, transforming]);
 
-    setBoundRect(calcBoundRect(rects));
-  };
+  const classes = useStyles({ depth, hovered });
 
   // eslint-disable-next-line
-  const observer = useMemo(() => new MutationObserver(handleMutation), []);
+  const observer = useMemo(() => new MutationObserver(updatePoints), []);
 
   useEffect(() => {
-    if (targets) {
-      targets.forEach((target) => {
-        const { width, height } = transforms[target.current.id];
-        target.current.style.transform = transformToString(transforms[target.current.id]);
+    if (target) {
+      const { width, height } = transform;
+      target.current.style.transform = transformToString(transform);
 
-        if (width && height) {
-          target.current.style.width = `${width}px`;
-          target.current.style.height = `${height}px`;
-        }
-      });
+      if (width && height) {
+        target.current.style.width = `${width}px`;
+        target.current.style.height = `${height}px`;
+      }
 
-      setTimeout(() => {
-        const controls = containerRef.current.querySelectorAll('.moveable-control, .moveable-rotation');
-        const config = { attributes: true, childList: false, subtree: false };
-        const rects = [];
-        controls.forEach((control) => {
-          observer.observe(control, config);
-          rects.push(control.getBoundingClientRect());
-        });
-
-        setBoundRect(calcBoundRect(rects));
-      });
+      const config = { attributes: true, childList: false, subtree: false };
+      observer.observe(target.current, config);
 
       containerRef.current.style.display = 'block';
+
+      setTimeout(updatePoints);
     }
     // eslint-disable-next-line
   }, []);
 
   const handleDrag = (ev) => {
     ev.target.style.transform = ev.transform;
-    onTransform({ id, element: ev.target.id, type: TRANS_TYPES.drag, transform: parseTransform(ev.transform) });
+    onTransform({ id, type: TRANS_TYPES.drag, transform: parseTransform(ev.transform) });
   };
 
   const handleRotate = (ev) => {
     ev.target.style.transform = ev.drag.transform;
-    onTransform({ id, element: ev.target.id, type: TRANS_TYPES.rotate, transform: parseTransform(ev.drag.transform) });
+    onTransform({ id, type: TRANS_TYPES.rotate, transform: parseTransform(ev.drag.transform) });
   };
 
   const handleResize = (ev) => {
@@ -105,7 +113,7 @@ export default function BaseWidget({
     target.style.width = `${width}px`;
     target.style.height = `${height}px`;
     target.style.transform = drag.transform;
-    onTransform({ id, element: target.id, type: TRANS_TYPES.resize, transform: { ...parseTransform(drag.transform), width, height } });
+    onTransform({ id, type: TRANS_TYPES.resize, transform: { ...parseTransform(drag.transform), width, height } });
   };
 
   const handleDragGroup = ({ events }) => {
@@ -124,22 +132,22 @@ export default function BaseWidget({
     <div ref={containerRef} className={classes.root} onContextMenu={(e) => onContextMenu(e, id)}>
       {children}
       <Moveable
-        target={targets}
+        target={target}
         defaultGroupRotate={0}
         defaultGroupOrigin={'50% 50%'}
-        draggable={draggable}
+        draggable={hovered && draggable}
         throttleDrag={0}
         startDragRotate={0}
         throttleDragRotate={0}
         zoom={1}
-        origin={rotatable}
-        originDraggable={rotatable}
-        originRelative={rotatable}
-        rotatable={rotatable}
+        origin={hovered && rotatable}
+        originDraggable={hovered && rotatable}
+        originRelative={hovered && rotatable}
+        rotatable={hovered && rotatable}
         throttleRotate={0}
         rotationPosition={'top'}
         padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-        resizable={resizable}
+        resizable={hovered && resizable}
         keepRatio={keepRatio}
         throttleResize={0}
         renderDirections={['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se']}
@@ -150,6 +158,12 @@ export default function BaseWidget({
         onDrag={handleDrag}
         onRotate={handleRotate}
         onResize={handleResize}
+        onDragStart={() => setTransforming(true)}
+        onRotateStart={() => setTransforming(true)}
+        onResizeStart={() => setTransforming(true)}
+        onDragEnd={() => setTransforming(false)}
+        onRotateEnd={() => setTransforming(false)}
+        onResizeEnd={() => setTransforming(false)}
       />
     </div>
   );
