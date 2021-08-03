@@ -7,10 +7,9 @@ import pointInPolygon from 'point-in-polygon';
 
 const useStyles = makeStyles({
   root: {
-    display: 'none',
     position: 'absolute',
     zIndex: (props) => props.depth,
-    '& .moveable-line': {
+    '& .moveable-line, & .moveable-control': {
       visibility: (props) => (props.hovered ? 'visible' : 'hidden'),
     },
     '& *': {
@@ -36,66 +35,40 @@ export default function BaseWidget({
   onContextMenu,
 }) {
   const containerRef = useRef();
-  const [points, setPoints] = useState([]);
   const [transformStarted, setTransformStarted] = useState(false);
-
-  const updatePoints = () => {
-    const controls = [
-      rotatable && containerRef.current.querySelector('.moveable-rotation-control'),
-      containerRef.current.querySelector('.moveable-ne'),
-      containerRef.current.querySelector('.moveable-se'),
-      containerRef.current.querySelector('.moveable-sw'),
-      containerRef.current.querySelector('.moveable-nw'),
-    ].filter((d) => d);
-
-    const points = controls.map((control) => {
-      const { x, y } = control.getBoundingClientRect();
-      return [x, y];
-    });
-
-    setPoints(extendPolygon(points));
-  };
 
   const hovered = useMemo(() => {
     if (transformStarted) {
       return true;
-    } else if (points.length) {
-      let { x: ox, y: oy } = parseTransform(document.querySelector('#widget-stage').style.transform);
-      ox = parseFloat(ox);
-      oy = parseFloat(oy);
+    } else if (containerRef.current) {
+      const points = [
+        containerRef.current.querySelector('.moveable-rotation-control'),
+        containerRef.current.querySelector('.moveable-ne'),
+        containerRef.current.querySelector('.moveable-se'),
+        containerRef.current.querySelector('.moveable-sw'),
+        containerRef.current.querySelector('.moveable-nw'),
+      ]
+        .filter((d) => d)
+        .map((c) => c.getBoundingClientRect())
+        .map(({ x, y }) => [x, y]);
 
-      const pts = points.map(([x, y]) => [x + ox, y + oy]);
-
-      return pointInPolygon(mousePos, pts);
+      return pointInPolygon(mousePos, extendPolygon(points, 30));
     } else {
       return true;
     }
-  }, [points, mousePos, transformStarted]);
+  }, [mousePos, transformStarted]);
 
   const classes = useStyles({ depth, hovered });
 
-  // eslint-disable-next-line
-  const observer = useMemo(() => new MutationObserver(updatePoints), []);
-
   useEffect(() => {
-    if (target) {
-      const { w, h } = transform;
-      target.current.style.transform = transformToString(transform);
+    const { w: width, h: height } = transform;
+    target.current.style.transform = transformToString(transform);
 
-      if (w && h) {
-        target.current.style.width = `${w}px`;
-        target.current.style.height = `${h}px`;
-      }
-
-      const config = { attributes: true, childList: false, subtree: false };
-      observer.observe(target.current, config);
-
-      containerRef.current.style.display = 'block';
-
-      setTimeout(updatePoints);
+    if (width && height) {
+      target.current.style.width = `${width}px`;
+      target.current.style.height = `${height}px`;
     }
-    // eslint-disable-next-line
-  }, []);
+  }, [target, transform]);
 
   const handleDrag = (ev) => {
     ev.target.style.transform = ev.transform;
@@ -143,19 +116,19 @@ export default function BaseWidget({
         target={target}
         defaultGroupRotate={0}
         defaultGroupOrigin={'50% 50%'}
-        draggable={hovered && draggable}
+        draggable={draggable}
         throttleDrag={0}
         startDragRotate={0}
         throttleDragRotate={0}
         zoom={1}
-        origin={hovered && rotatable}
-        originDraggable={hovered && rotatable}
-        originRelative={hovered && rotatable}
-        rotatable={hovered && rotatable}
+        origin={rotatable}
+        originDraggable={rotatable}
+        originRelative={rotatable}
+        rotatable={rotatable}
         throttleRotate={0}
         rotationPosition={'top'}
         padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-        resizable={hovered && resizable}
+        resizable={resizable}
         keepRatio={keepRatio}
         throttleResize={0}
         renderDirections={['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se']}
