@@ -142,7 +142,7 @@ const WidgetEditor = () => {
         onDragOver={handleDragOver}
         onMouseMove={handleMouseMove}
       >
-        <div className={classes.widgetStage} ref={stageRef} style={{ transform }}>
+        <div className={classes.widgetStage} ref={stageRef} style={{ transform }} id="widget-stage">
           {widgets.map((widget) => {
             const group = WIDGET_TYPES.find((wtype) => wtype.type === widget.type).group;
             const WidgetComponent = WIDGET_MAP[widget.type] || WIDGET_MAP[group];

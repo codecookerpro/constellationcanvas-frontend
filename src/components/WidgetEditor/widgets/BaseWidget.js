@@ -57,7 +57,19 @@ export default function BaseWidget({
   };
 
   const hovered = useMemo(() => {
-    return transformStarted || (points.length ? pointInPolygon(mousePos, points) : true);
+    if (transformStarted) {
+      return true;
+    } else if (points.length) {
+      let { x: ox, y: oy } = parseTransform(document.querySelector('#widget-stage').style.transform);
+      ox = parseFloat(ox);
+      oy = parseFloat(oy);
+
+      const pts = points.map(([x, y]) => [x + ox, y + oy]);
+
+      return pointInPolygon(mousePos, pts);
+    } else {
+      return true;
+    }
   }, [points, mousePos, transformStarted]);
 
   const classes = useStyles({ depth, hovered });

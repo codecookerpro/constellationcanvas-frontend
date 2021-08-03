@@ -1,13 +1,28 @@
 import ObjectID from 'bson-objectid';
 
 export const parseTransform = (trans) => {
-  const translate = trans.match(/translate\(([-0-9.]*(px)), ([0-9.]*(px))\)/);
+  const translate = trans.match(/translate\(([-0-9.]*(px)), ([-0-9.]*(px))\)/);
+  const translate3d = trans.match(/translate3d\(([-0-9.]*(px)), ([-0-9.]*(px)), ([-0-9.]*(px))\)/);
   const rotate = trans.match(/rotate\(([-0-9.]*(deg|rad))\)/);
-  const x = translate ? translate[1] : 0;
-  const y = translate ? translate[3] : 0;
-  const r = rotate ? rotate[1] : 0;
+  let x = 0,
+    y = 0,
+    z = 0,
+    r = 0;
 
-  return { x, y, r };
+  if (translate3d && translate3d.length === 7) {
+    x = translate3d[1];
+    y = translate3d[3];
+    z = translate3d[5];
+  } else if (translate && translate.length === 5) {
+    x = translate[1];
+    y = translate[3];
+  }
+
+  if (rotate) {
+    r = rotate[1];
+  }
+
+  return { x, y, z, r };
 };
 
 export const transformToString = ({ x = 0, y = 0, r = 0 }) => {
@@ -68,7 +83,8 @@ export const sendBackward = (widgets, id) => {
 };
 
 export const extendPolygon = (polygon, dist = 30) => {
-  let cx = 0, cy = 0;
+  let cx = 0,
+    cy = 0;
 
   polygon.forEach(([x, y]) => {
     cx += x;
