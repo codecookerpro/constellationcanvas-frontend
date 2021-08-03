@@ -2,11 +2,49 @@ import React, { useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { DROP_EFFECT, WIDGET_MAP, WIDGET_TYPES, ORDER_TYPE } from './constants';
-import { getUniqueId } from './helper';
+import { DROP_EFFECT, WIDGET_MAP, WIDGET_TYPES, CONTEXTMENU_ITEMS as contexts, ORDER_TYPES } from './constants';
+import { getUniqueId, bringToFront, sendToBack, bringForward, sendBackward } from './helper';
+import usePanZoom from 'use-pan-and-zoom';
+
+const initialWidgets = [
+  {
+    id: '0bd72455dc0d783e324660d2',
+    type: 'lego2',
+    depth: 0,
+    data: {},
+    transform: { x: '72.75px', y: '167px', r: '0deg', w: 199, h: 253 },
+  },
+  {
+    id: '0bd72c7cdc0d783e324660d3',
+    type: 'lego6',
+    depth: 1,
+    data: {},
+    transform: { x: '292.75px', y: '349.5px', r: '0deg', w: 179, h: 228 },
+  },
+  {
+    id: '0bd730dcdc0d783e324660d4',
+    type: 'lego6',
+    depth: 2,
+    data: {},
+    transform: { x: '563.75px', y: '174px', r: '0deg', w: 176, h: 224 },
+  },
+];
 
 const useStyles = makeStyles({
   root: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  widgetZoompane: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  widgetStage: {
     width: '100%',
     height: '100%',
     zIndex: 0,
@@ -15,7 +53,9 @@ const useStyles = makeStyles({
 
 const WidgetEditor = () => {
   const classes = useStyles();
-  const [widgets, setWidgets] = useState([]);
+  const [widgets, setWidgets] = useState(initialWidgets);
+  const [mousePos, setMousePos] = useState([Infinity, Infinity]);
+  const [transforming, setTransforming] = useState(null);
   const [contextState, setContextState] = useState({
     id: null,
     mouseX: null,
@@ -26,7 +66,7 @@ const WidgetEditor = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = DROP_EFFECT;
   };
-
+  const { transform, panZoomHandlers, setContainer } = usePanZoom({ enableZoom: false });
   const handleDrop = (event) => {
     event.preventDefault();
     const { offsetX, offsetY, type } = JSON.parse(event.dataTransfer.getData('application/constellation-widget'));
@@ -41,10 +81,18 @@ const WidgetEditor = () => {
       landedPos: { x, y },
     };
     setWidgets((widgets) => widgets.concat(newWidget));
+    setMousePos([event.clientX, event.clientY]);
   };
 
-  const handleTransform = ({ id, element, type, transform }) => {
-    // console.log(id, element, type, transform);
+  const handleTransform = ({ id, type, transform }) => {
+    setWidgets(widgets.map((w) => (w.id === id ? { ...w, transform } : w)));
+  };
+  const handleTransformStart = (id) => {
+    setTransforming(id);
+  };
+
+  const handleTransformEnd = (id) => {
+    setTransforming(null);
   };
 
   const handleContextMenu = (e, id) => {
@@ -60,76 +108,14 @@ const WidgetEditor = () => {
   const handleChangeDepth = (e, type) => {
     e.preventDefault();
 
-    const widget = widgets.find((w) => w.id === contextState.id);
-
-    if (type === ORDER_TYPE.front) {
-      setWidgets(
-        widgets.map((w) => {
-          if (w.id !== widget.id) {
-            if (w.depth > widget.depth) {
-              return {
-                ...w,
-                depth: w.depth - 1,
-              };
-            } else return w;
-          }
-          return {
-            ...widget,
-            depth: widgets.length - 1,
-          };
-        })
-      );
-    } else if (type === ORDER_TYPE.back) {
-      setWidgets(
-        widgets.map((w) => {
-          if (w.id !== widget.id) {
-            if (w.depth < widget.depth) {
-              return {
-                ...w,
-                depth: w.depth + 1,
-              };
-            } else return w;
-          }
-          return {
-            ...widget,
-            depth: 0,
-          };
-        })
-      );
-    } else if (type === ORDER_TYPE.forward) {
-      setWidgets(
-        widgets.map((w) => {
-          if (w.id !== widget.id) {
-            if (w.depth === widget.depth + 1) {
-              return {
-                ...w,
-                depth: w.depth - 1,
-              };
-            } else return w;
-          }
-          return {
-            ...widget,
-            depth: widget.depth + 1,
-          };
-        })
-      );
-    } else if (type === ORDER_TYPE.backward) {
-      setWidgets(
-        widgets.map((w) => {
-          if (w.id !== widget.id) {
-            if (w.depth === widget.depth - 1) {
-              return {
-                ...w,
-                depth: w.depth + 1,
-              };
-            } else return w;
-          }
-          return {
-            ...widget,
-            depth: widget.depth - 1,
-          };
-        })
-      );
+    if (type === ORDER_TYPES.front) {
+      setWidgets(bringToFront(widgets, contextState.id));
+    } else if (type === ORDER_TYPES.back) {
+      setWidgets(sendToBack(widgets, contextState.id));
+    } else if (type === ORDER_TYPES.forward) {
+      setWidgets(bringForward(widgets, contextState.id));
+    } else if (type === ORDER_TYPES.backward) {
+      setWidgets(sendBackward(widgets, contextState.id));
     }
 
     setContextState({
@@ -139,28 +125,57 @@ const WidgetEditor = () => {
     });
   };
 
+  const handleMouseMove = (e) => {
+    if (e.buttons === 0) {
+      setMousePos([e.clientX, e.clientY]);
+    } else if (transforming === null) {
+      panZoomHandlers.onMouseMove(e);
+    }
+  };
   return (
-    <div onDrop={handleDrop} onDragOver={handleDragOver} className={classes.root} ref={stageRef} id="widget-editor">
-      {widgets.map((widget) => {
-        const group = WIDGET_TYPES.find((wtype) => wtype.type === widget.type).group;
-        const WidgetComponent = WIDGET_MAP[widget.type] || WIDGET_MAP[group];
-        return <WidgetComponent {...widget} key={widget.id} onTransform={handleTransform} onContextMenu={handleContextMenu} />;
-      })}
-      <Menu
-        style={{ zIndex: 99999 }}
-        keepMounted
-        open={contextState.mouseY !== null}
-        onClose={handleChangeDepth}
-        anchorReference="anchorPosition"
-        anchorPosition={
-          contextState.mouseY !== null && contextState.mouseX !== null ? { top: contextState.mouseY, left: contextState.mouseX } : undefined
-        }
+    <div className={classes.root}>
+      <div
+        className={classes.widgetZoompane}
+        ref={(el) => setContainer(el)}
+        {...panZoomHandlers}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onMouseMove={handleMouseMove}
       >
-        <MenuItem onClick={(e) => handleChangeDepth(e, ORDER_TYPE.front)}>Bring to Front</MenuItem>
-        <MenuItem onClick={(e) => handleChangeDepth(e, ORDER_TYPE.back)}>Send to Back</MenuItem>
-        <MenuItem onClick={(e) => handleChangeDepth(e, ORDER_TYPE.forward)}>Bring Forward</MenuItem>
-        <MenuItem onClick={(e) => handleChangeDepth(e, ORDER_TYPE.backward)}>Send Backward</MenuItem>
-      </Menu>
+        <div className={classes.widgetStage} ref={stageRef} style={{ transform }}>
+          {widgets.map((widget) => {
+            const group = WIDGET_TYPES.find((wtype) => wtype.type === widget.type).group;
+            const WidgetComponent = WIDGET_MAP[widget.type] || WIDGET_MAP[group];
+            return (
+              <WidgetComponent
+                {...widget}
+                key={widget.id}
+                mousePos={mousePos}
+                onTransform={handleTransform}
+                onTransformStart={handleTransformStart}
+                onTransformEnd={handleTransformEnd}
+                onContextMenu={handleContextMenu}
+              />
+            );
+          })}
+          <Menu
+            style={{ zIndex: 99999 }}
+            keepMounted
+            open={contextState.mouseY !== null}
+            onClose={handleChangeDepth}
+            anchorReference="anchorPosition"
+            anchorPosition={
+              contextState.mouseY !== null && contextState.mouseX !== null ? { top: contextState.mouseY, left: contextState.mouseX } : undefined
+            }
+          >
+            {contexts.map((context) => (
+              <MenuItem key={context.type} onClick={(e) => handleChangeDepth(e, context.type)}>
+                {context.label}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
+      </div>
     </div>
   );
 };
