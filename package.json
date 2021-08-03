@@ -54,6 +54,8 @@
     "prepare": "husky install",
     "pre-commit": "lint-staged && git add .",
     "lint": "eslint src --fix",
-    "format": "prettier --single-quote --write \"src/**/*.{js,jsx,json,css}\""
+    "format": "prettier --single-quote --write \"src/**/*.{js,jsx,json,css}\"",
+    "---pm2---": "",
+    "deploy:dev": "pm2 deploy frontend.json dev update"
   }
 }
