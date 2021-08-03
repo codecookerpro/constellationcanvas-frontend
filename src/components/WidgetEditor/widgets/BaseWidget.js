@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
 import { TRANS_TYPES } from '../constants';
-import { extendPolygon, parseTransform, transformToString } from '../helper';
-import pointInPolygon from 'point-in-polygon';
+import { parseTransform, transformToString } from '../helper';
 
 const useStyles = makeStyles({
   root: {
@@ -36,28 +35,6 @@ export default function BaseWidget({
 }) {
   const containerRef = useRef();
   const classes = useStyles({ depth, hovered });
-  const [transformStarted, setTransformStarted] = useState(false);
-
-  // const hovered = useMemo(() => {
-  //   if (transformStarted) {
-  //     return true;
-  //   } else if (containerRef.current) {
-  //     const points = [
-  //       containerRef.current.querySelector('.moveable-rotation-control'),
-  //       containerRef.current.querySelector('.moveable-ne'),
-  //       containerRef.current.querySelector('.moveable-se'),
-  //       containerRef.current.querySelector('.moveable-sw'),
-  //       containerRef.current.querySelector('.moveable-nw'),
-  //     ]
-  //       .filter((d) => d)
-  //       .map((c) => c.getBoundingClientRect())
-  //       .map(({ x, y }) => [x, y]);
-
-  //     return pointInPolygon(mousePos, extendPolygon(points, 30));
-  //   } else {
-  //     return true;
-  //   }
-  // }, [mousePos, transformStarted]);
 
   useEffect(() => {
     const { w: width, h: height } = transform;
@@ -101,13 +78,12 @@ export default function BaseWidget({
 
   const handleTransformStart = () => {
     onTransformStart(id);
-    setTransformStarted(true);
   };
 
   const handleTransformEnd = () => {
     onTransformEnd(id);
-    setTransformStarted(false);
   };
+
   return (
     <div ref={containerRef} className={classes.root} onContextMenu={(e) => onContextMenu(e, id)} id={`widget-${id}`}>
       {children}
