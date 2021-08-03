@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
 import { TRANS_TYPES } from '../constants';
-import { parseTransform, transformToString } from '../helper';
+import { extendPolygon, parseTransform, transformToString } from '../helper';
 import pointInPolygon from 'point-in-polygon';
 
 const useStyles = makeStyles({
@@ -12,6 +12,9 @@ const useStyles = makeStyles({
     zIndex: (props) => props.depth,
     '& .moveable-line': {
       visibility: (props) => (props.hovered ? 'visible' : 'hidden'),
+    },
+    '& *': {
+      userSelect: 'none',
     },
   },
 });
@@ -28,11 +31,13 @@ export default function BaseWidget({
   transform,
   mousePos,
   onTransform,
+  onTransformStart,
+  onTransformEnd,
   onContextMenu,
 }) {
   const containerRef = useRef();
   const [points, setPoints] = useState([]);
-  const [transforming, setTransforming] = useState(false);
+  const [transformStarted, setTransformStarted] = useState(false);
 
   const updatePoints = () => {
     const controls = [
@@ -43,35 +48,17 @@ export default function BaseWidget({
       containerRef.current.querySelector('.moveable-nw'),
     ].filter((d) => d);
 
-    const points = [];
-    let cx = 0,
-      cy = 0;
-    controls.forEach((control) => {
+    const points = controls.map((control) => {
       const { x, y } = control.getBoundingClientRect();
-      cx += x;
-      cy += y;
-      points.push([x, y]);
+      return [x, y];
     });
 
-    cx /= points.length;
-    cy /= points.length;
-
-    const expended = points.map(([x, y]) => {
-      let dx = x - cx;
-      let dy = y - cy;
-      const norm = Math.sqrt(dx * dx + dy * dy);
-      dx /= norm;
-      dy /= norm;
-
-      return [x + dx * 30, y + dy * 30];
-    });
-
-    setPoints(expended);
+    setPoints(extendPolygon(points));
   };
 
   const hovered = useMemo(() => {
-    return transforming || (points.length ? pointInPolygon(mousePos, points) : true);
-  }, [points, mousePos, transforming]);
+    return transformStarted || (points.length ? pointInPolygon(mousePos, points) : true);
+  }, [points, mousePos, transformStarted]);
 
   const classes = useStyles({ depth, hovered });
 
@@ -80,12 +67,12 @@ export default function BaseWidget({
 
   useEffect(() => {
     if (target) {
-      const { width, height } = transform;
+      const { w, h } = transform;
       target.current.style.transform = transformToString(transform);
 
-      if (width && height) {
-        target.current.style.width = `${width}px`;
-        target.current.style.height = `${height}px`;
+      if (w && h) {
+        target.current.style.width = `${w}px`;
+        target.current.style.height = `${h}px`;
       }
 
       const config = { attributes: true, childList: false, subtree: false };
@@ -113,7 +100,7 @@ export default function BaseWidget({
     target.style.width = `${width}px`;
     target.style.height = `${height}px`;
     target.style.transform = drag.transform;
-    onTransform({ id, type: TRANS_TYPES.resize, transform: { ...parseTransform(drag.transform), width, height } });
+    onTransform({ id, type: TRANS_TYPES.resize, transform: { ...parseTransform(drag.transform), w: width, h: height } });
   };
 
   const handleDragGroup = ({ events }) => {
@@ -128,6 +115,15 @@ export default function BaseWidget({
     events.forEach((ev) => handleResize(ev));
   };
 
+  const handleTransformStart = () => {
+    onTransformStart(id);
+    setTransformStarted(true);
+  };
+
+  const handleTransformEnd = () => {
+    onTransformEnd(id);
+    setTransformStarted(false);
+  };
   return (
     <div ref={containerRef} className={classes.root} onContextMenu={(e) => onContextMenu(e, id)}>
       {children}
@@ -158,12 +154,12 @@ export default function BaseWidget({
         onDrag={handleDrag}
         onRotate={handleRotate}
         onResize={handleResize}
-        onDragStart={() => setTransforming(true)}
-        onRotateStart={() => setTransforming(true)}
-        onResizeStart={() => setTransforming(true)}
-        onDragEnd={() => setTransforming(false)}
-        onRotateEnd={() => setTransforming(false)}
-        onResizeEnd={() => setTransforming(false)}
+        onDragStart={handleTransformStart}
+        onRotateStart={handleTransformStart}
+        onResizeStart={handleTransformStart}
+        onDragEnd={handleTransformEnd}
+        onRotateEnd={handleTransformEnd}
+        onResizeEnd={handleTransformEnd}
       />
     </div>
   );

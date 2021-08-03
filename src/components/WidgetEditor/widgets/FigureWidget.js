@@ -10,7 +10,7 @@ const useStyles = makeStyles({
   },
 });
 
-const FigureWidget = ({ id, type, depth, transform, landedPos, mousePos, onTransform, onContextMenu }) => {
+const FigureWidget = ({ id, type, depth, transform, landedPos, mousePos, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
   const classes = useStyles({ depth });
   const imgRef = useRef();
 
@@ -26,6 +26,8 @@ const FigureWidget = ({ id, type, depth, transform, landedPos, mousePos, onTrans
       mousePos={mousePos}
       transform={transform || landedPos}
       onTransform={onTransform}
+      onTransformStart={onTransformStart}
+      onTransformEnd={onTransformEnd}
       onContextMenu={onContextMenu}
     >
       <img ref={imgRef} className={classes.image} src={`/assets/img/widgets/${type}.png`} alt={type} draggable={false} />

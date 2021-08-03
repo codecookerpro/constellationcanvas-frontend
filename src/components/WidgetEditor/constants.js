@@ -1,4 +1,5 @@
 import FigureWidget from './widgets/FigureWidget';
+import ShapeWidget from './widgets/ShapeWidget';
 
 export const DROP_EFFECT = 'move';
 export const TRANS_TYPES = Object.freeze({
@@ -53,7 +54,7 @@ export const WIDGET_MAP = {
   [WIDGET_GROUPS.chess]: FigureWidget,
   [WIDGET_GROUPS.animal]: FigureWidget,
   [WIDGET_GROUPS.object]: FigureWidget,
-  [WIDGET_GROUPS.shape]: FigureWidget,
+  [WIDGET_GROUPS.shape]: ShapeWidget,
   [WIDGET_GROUPS.ball]: FigureWidget,
   [WIDGET_GROUPS.arrow]: FigureWidget,
   [WIDGET_GROUPS.text]: FigureWidget,

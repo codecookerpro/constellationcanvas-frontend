@@ -66,3 +66,25 @@ export const sendBackward = (widgets, id) => {
     };
   });
 };
+
+export const extendPolygon = (polygon, dist = 30) => {
+  let cx = 0, cy = 0;
+
+  polygon.forEach(([x, y]) => {
+    cx += x;
+    cy += y;
+  });
+
+  cx /= polygon.length;
+  cy /= polygon.length;
+
+  return polygon.map(([x, y]) => {
+    let dx = x - cx;
+    let dy = y - cy;
+    const norm = Math.sqrt(dx * dx + dy * dy);
+    dx /= norm;
+    dy /= norm;
+
+    return [x + dx * dist, y + dy * dist];
+  });
+};
