@@ -11,7 +11,7 @@ const useStyles = makeStyles({
   },
 });
 
-const FigureWidget = ({ id, type, depth, transform, landedPos, mousePos, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
+const FigureWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
   const classes = useStyles({ depth });
   const imgRef = useRef();
 
@@ -24,7 +24,7 @@ const FigureWidget = ({ id, type, depth, transform, landedPos, mousePos, onTrans
       resizable={true}
       rotatable={false}
       target={imgRef}
-      mousePos={mousePos}
+      hovered={hovered}
       transform={transform || landedPos}
       onTransform={onTransform}
       onTransformStart={onTransformStart}

@@ -28,37 +28,36 @@ export default function BaseWidget({
   resizable = true,
   keepRatio = true,
   transform,
-  mousePos,
+  hovered,
   onTransform,
   onTransformStart,
   onTransformEnd,
   onContextMenu,
 }) {
   const containerRef = useRef();
+  const classes = useStyles({ depth, hovered });
   const [transformStarted, setTransformStarted] = useState(false);
 
-  const hovered = useMemo(() => {
-    if (transformStarted) {
-      return true;
-    } else if (containerRef.current) {
-      const points = [
-        containerRef.current.querySelector('.moveable-rotation-control'),
-        containerRef.current.querySelector('.moveable-ne'),
-        containerRef.current.querySelector('.moveable-se'),
-        containerRef.current.querySelector('.moveable-sw'),
-        containerRef.current.querySelector('.moveable-nw'),
-      ]
-        .filter((d) => d)
-        .map((c) => c.getBoundingClientRect())
-        .map(({ x, y }) => [x, y]);
+  // const hovered = useMemo(() => {
+  //   if (transformStarted) {
+  //     return true;
+  //   } else if (containerRef.current) {
+  //     const points = [
+  //       containerRef.current.querySelector('.moveable-rotation-control'),
+  //       containerRef.current.querySelector('.moveable-ne'),
+  //       containerRef.current.querySelector('.moveable-se'),
+  //       containerRef.current.querySelector('.moveable-sw'),
+  //       containerRef.current.querySelector('.moveable-nw'),
+  //     ]
+  //       .filter((d) => d)
+  //       .map((c) => c.getBoundingClientRect())
+  //       .map(({ x, y }) => [x, y]);
 
-      return pointInPolygon(mousePos, extendPolygon(points, 30));
-    } else {
-      return true;
-    }
-  }, [mousePos, transformStarted]);
-
-  const classes = useStyles({ depth, hovered });
+  //     return pointInPolygon(mousePos, extendPolygon(points, 30));
+  //   } else {
+  //     return true;
+  //   }
+  // }, [mousePos, transformStarted]);
 
   useEffect(() => {
     const { w: width, h: height } = transform;
@@ -110,7 +109,7 @@ export default function BaseWidget({
     setTransformStarted(false);
   };
   return (
-    <div ref={containerRef} className={classes.root} onContextMenu={(e) => onContextMenu(e, id)}>
+    <div ref={containerRef} className={classes.root} onContextMenu={(e) => onContextMenu(e, id)} id={`widget-${id}`}>
       {children}
       <Moveable
         target={target}

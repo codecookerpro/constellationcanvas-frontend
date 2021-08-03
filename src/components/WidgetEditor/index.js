@@ -5,6 +5,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { DROP_EFFECT, WIDGET_MAP, WIDGET_TYPES, CONTEXTMENU_ITEMS as contexts, ORDER_TYPES } from './constants';
 import { getUniqueId, bringToFront, sendToBack, bringForward, sendBackward } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
+import { extendPolygon } from './helper';
+import pointInPolygon from 'point-in-polygon';
 
 const initialWidgets = [
   {
@@ -54,7 +56,6 @@ const useStyles = makeStyles({
 const WidgetEditor = () => {
   const classes = useStyles();
   const [widgets, setWidgets] = useState(initialWidgets);
-  const [mousePos, setMousePos] = useState([Infinity, Infinity]);
   const [transforming, setTransforming] = useState(null);
   const [contextState, setContextState] = useState({
     id: null,
@@ -81,7 +82,6 @@ const WidgetEditor = () => {
       landedPos: { x, y },
     };
     setWidgets((widgets) => widgets.concat(newWidget));
-    setMousePos([event.clientX, event.clientY]);
   };
 
   const handleTransform = ({ id, type, transform }) => {
@@ -127,7 +127,26 @@ const WidgetEditor = () => {
 
   const handleMouseMove = (e) => {
     if (e.buttons === 0) {
-      setMousePos([e.clientX, e.clientY]);
+      const hoveredWidgets = widgets
+        .map((w) => {
+          const widgetContainer = stageRef.current.querySelector(`#widget-${w.id}`);
+          const points = [
+            widgetContainer?.querySelector('.moveable-rotation-control'),
+            widgetContainer?.querySelector('.moveable-ne'),
+            widgetContainer?.querySelector('.moveable-se'),
+            widgetContainer?.querySelector('.moveable-sw'),
+            widgetContainer?.querySelector('.moveable-nw'),
+          ]
+            .filter((d) => d)
+            .map((c) => c.getBoundingClientRect())
+            .map(({ x, y }) => [x, y]);
+          const hovered = pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
+
+          return { ...w, hovered };
+        })
+        .filter((w) => w.hovered);
+      const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
+      setWidgets(widgets.map((w) => ({ ...w, hovered: w.id === frontWidget?.id })));
     } else if (transforming === null) {
       panZoomHandlers.onMouseMove(e);
     }
@@ -150,7 +169,6 @@ const WidgetEditor = () => {
               <WidgetComponent
                 {...widget}
                 key={widget.id}
-                mousePos={mousePos}
                 onTransform={handleTransform}
                 onTransformStart={handleTransformStart}
                 onTransformEnd={handleTransformEnd}
