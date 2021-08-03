@@ -1,5 +1,8 @@
 import FigureWidget from './widgets/FigureWidget';
+import ObjectWidget from './widgets/ObjectWidget';
 import ShapeWidget from './widgets/ShapeWidget';
+import TextWidget from './widgets/TextWidget';
+import RelationshipWidget from './widgets/RelationshipWidget';
 
 export const DROP_EFFECT = 'move';
 export const TRANS_TYPES = Object.freeze({
@@ -53,12 +56,12 @@ export const WIDGET_MAP = {
   [WIDGET_GROUPS.peg]: FigureWidget,
   [WIDGET_GROUPS.chess]: FigureWidget,
   [WIDGET_GROUPS.animal]: FigureWidget,
-  [WIDGET_GROUPS.object]: FigureWidget,
+  [WIDGET_GROUPS.object]: ObjectWidget,
   [WIDGET_GROUPS.shape]: ShapeWidget,
   [WIDGET_GROUPS.ball]: FigureWidget,
-  [WIDGET_GROUPS.arrow]: FigureWidget,
-  [WIDGET_GROUPS.text]: FigureWidget,
-  [WIDGET_GROUPS.relation]: FigureWidget,
+  [WIDGET_GROUPS.arrow]: ObjectWidget,
+  [WIDGET_GROUPS.text]: TextWidget,
+  [WIDGET_GROUPS.relation]: RelationshipWidget,
 };
 
 export const WIDGET_TYPES = [

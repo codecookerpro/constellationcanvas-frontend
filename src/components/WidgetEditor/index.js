@@ -57,6 +57,7 @@ const WidgetEditor = () => {
   const classes = useStyles();
   const [widgets, setWidgets] = useState(initialWidgets);
   const [transforming, setTransforming] = useState(null);
+  const [hoveredWidgets, setHoveredWidgets] = useState([]);
   const [contextState, setContextState] = useState({
     id: null,
     mouseX: null,
@@ -109,13 +110,13 @@ const WidgetEditor = () => {
     e.preventDefault();
 
     if (type === ORDER_TYPES.front) {
-      setWidgets(bringToFront(widgets, contextState.id));
+      setWidgets(bringToFront(widgets, contextState.id, hoveredWidgets));
     } else if (type === ORDER_TYPES.back) {
-      setWidgets(sendToBack(widgets, contextState.id));
+      setWidgets(sendToBack(widgets, contextState.id, hoveredWidgets));
     } else if (type === ORDER_TYPES.forward) {
-      setWidgets(bringForward(widgets, contextState.id));
+      setWidgets(bringForward(widgets, contextState.id, hoveredWidgets));
     } else if (type === ORDER_TYPES.backward) {
-      setWidgets(sendBackward(widgets, contextState.id));
+      setWidgets(sendBackward(widgets, contextState.id, hoveredWidgets));
     }
 
     setContextState({
@@ -145,6 +146,7 @@ const WidgetEditor = () => {
           return { ...w, hovered };
         })
         .filter((w) => w.hovered);
+      setHoveredWidgets(hoveredWidgets);
       const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
       setWidgets(widgets.map((w) => ({ ...w, hovered: w.id === frontWidget?.id })));
     } else if (transforming === null) {

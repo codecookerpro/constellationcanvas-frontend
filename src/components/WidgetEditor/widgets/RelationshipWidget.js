@@ -5,14 +5,14 @@ import { useRef } from 'react';
 
 const useStyles = makeStyles({
   image: {
-    width: 97,
-    height: 124,
-    backgroundImage: (props) => `url(${WIDGET_IMG_BASE_URL}${props.type}.png)`,
-    backgroundSize: '100% 100%',
+    width: 90,
+    height: 40,
+    maxHeight: 40,
+    background: (props) => `url(${WIDGET_IMG_BASE_URL}${props.type}.png) 0 -40px repeat-x`,
   },
 });
 
-const ShapeWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
+const RelationshipWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
   const classes = useStyles({ type });
   const imgRef = useRef();
 
@@ -38,4 +38,4 @@ const ShapeWidget = ({ id, type, depth, transform, landedPos, hovered, onTransfo
   );
 };
 
-export default ShapeWidget;
+export default RelationshipWidget;
