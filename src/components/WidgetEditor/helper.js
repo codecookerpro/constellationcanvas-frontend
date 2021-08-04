@@ -1,4 +1,5 @@
 import ObjectID from 'bson-objectid';
+import pointInPolygon from 'point-in-polygon';
 
 export const parseTransform = (trans) => {
   const translate = trans.match(/translate\(([-0-9.]*(px)), ([-0-9.]*(px))\)/);
@@ -103,4 +104,25 @@ export const extendPolygon = (polygon, dist = 30) => {
 
     return [x + dx * dist, y + dy * dist];
   });
+};
+
+export const getHoveredWidgets = (widgets, ref, e) => {
+  return widgets
+    .map((w) => {
+      const widgetContainer = ref.current.querySelector(`#widget-${w.id}`);
+      const points = [
+        widgetContainer?.querySelector('.moveable-rotation-control'),
+        widgetContainer?.querySelector('.moveable-ne'),
+        widgetContainer?.querySelector('.moveable-se'),
+        widgetContainer?.querySelector('.moveable-sw'),
+        widgetContainer?.querySelector('.moveable-nw'),
+      ]
+        .filter((d) => d)
+        .map((c) => c.getBoundingClientRect())
+        .map(({ x, y }) => [x, y]);
+      const hovered = pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
+
+      return { ...w, hovered };
+    })
+    .filter((w) => w.hovered);
 };

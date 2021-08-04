@@ -3,10 +3,8 @@ import { makeStyles } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { DROP_EFFECT, WIDGET_MAP, WIDGET_TYPES, CONTEXTMENU_ITEMS as contexts, ORDER_TYPES } from './constants';
-import { getUniqueId, bringToFront, sendToBack, bringForward, sendBackward } from './helper';
+import { getUniqueId, bringToFront, sendToBack, bringForward, sendBackward, getHoveredWidgets } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
-import { extendPolygon } from './helper';
-import pointInPolygon from 'point-in-polygon';
 
 const initialWidgets = [
   {
@@ -135,31 +133,40 @@ const WidgetEditor = () => {
 
   const handleMouseMove = (e) => {
     if (e.buttons === 0) {
-      const hoveredWidgets = widgets
-        .map((w) => {
-          const widgetContainer = stageRef.current.querySelector(`#widget-${w.id}`);
-          const points = [
-            widgetContainer?.querySelector('.moveable-rotation-control'),
-            widgetContainer?.querySelector('.moveable-ne'),
-            widgetContainer?.querySelector('.moveable-se'),
-            widgetContainer?.querySelector('.moveable-sw'),
-            widgetContainer?.querySelector('.moveable-nw'),
-          ]
-            .filter((d) => d)
-            .map((c) => c.getBoundingClientRect())
-            .map(({ x, y }) => [x, y]);
-          const hovered = pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
-
-          return { ...w, hovered };
-        })
-        .filter((w) => w.hovered);
+      const hoveredWidgets = getHoveredWidgets(widgets, stageRef, e);
       setHoveredWidgets(hoveredWidgets);
       const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
       setWidgets(widgets.map((w) => ({ ...w, hovered: w.id === frontWidget?.id })));
     } else if (transforming === null) {
+      setContextState({
+        id: null,
+        mouseX: null,
+        mouseY: null,
+      });
       panZoomHandlers.onMouseMove(e);
     }
   };
+
+  const handleRightClick = (e) => {
+    const hoveredWidgets = getHoveredWidgets(widgets, stageRef, e);
+    const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
+    if (frontWidget === undefined) {
+      setContextState({
+        id: null,
+        mouseX: null,
+        mouseY: null,
+      });
+    } else {
+      e.preventDefault();
+
+      setContextState({
+        id: frontWidget.id,
+        mouseX: e.clientX,
+        mouseY: e.clientY,
+      });
+    }
+  };
+
   return (
     <div className={classes.root}>
       <div
@@ -169,6 +176,7 @@ const WidgetEditor = () => {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onMouseMove={handleMouseMove}
+        onContextMenu={handleRightClick}
       >
         <div className={classes.widgetStage} ref={stageRef} style={{ transform }}>
           {widgets.map((widget) => {

@@ -16,7 +16,7 @@ const useStyles = makeStyles({
     left: (props) => `${props.newPos.x + 49}px`,
     transform: 'translate(0, -10px)',
     background: 'transparent',
-    zIndex: (props) => `${props.depth}`,
+    zIndex: (props) => `${props.depth + 1}`,
     border: 0,
     outline: 'none',
   },
