@@ -7524,6 +7524,11 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
   integrity sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=
 
+lines-intersect@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/lines-intersect/-/lines-intersect-1.0.0.tgz#a60c87a3d957a0871d114d054a685ab71f728042"
+  integrity sha1-pgyHo9lXoIcdEU0FSmhatx9ygEI=
+
 lint-staged@^11.1.1:
   version "11.1.1"
   resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-11.1.1.tgz#9c2018b872654cf80b2b1ff5a10b6b74aef6e300"
@@ -8961,6 +8966,19 @@ point-in-polygon@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/point-in-polygon/-/point-in-polygon-1.1.0.tgz#b0af2616c01bdee341cbf2894df643387ca03357"
   integrity sha512-3ojrFwjnnw8Q9242TzgXuTD+eKiutbzyslcq1ydfu82Db2y+Ogbmyrkpv0Hgj31qwT3lbS9+QAAO/pIQM35XRw==
+
+point-inside-polygon@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/point-inside-polygon/-/point-inside-polygon-1.0.1.tgz#f4f6de901bf8f9cd2f7d9b5fb4758f1afa9812ab"
+  integrity sha1-9PbekBv4+c0vfZtftHWPGvqYEqs=
+
+polygon-overlap@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/polygon-overlap/-/polygon-overlap-1.0.5.tgz#0ce3526a8bd98674ab046fc92dd02664b6d8242d"
+  integrity sha1-DONSaovZhnSrBG/JLdAmZLbYJC0=
+  dependencies:
+    lines-intersect "1.0.0"
+    point-inside-polygon "1.0.1"
 
 popper.js@1.16.1-lts:
   version "1.16.1-lts"

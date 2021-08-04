@@ -1,5 +1,6 @@
 import ObjectID from 'bson-objectid';
 import pointInPolygon from 'point-in-polygon';
+import overlap from 'polygon-overlap';
 
 export const parseTransform = (trans) => {
   const translate = trans.match(/translate\(([-0-9.]*(px)), ([-0-9.]*(px))\)/);
@@ -61,24 +62,38 @@ export const sendToBack = (widgets, id) => {
   });
 };
 
-export const bringForward = (widgets, id) => {
+export const bringForward = (widgets, id, ref) => {
   const widget = widgets.find((w) => w.id === id);
+
+  const overlapedWidgets = getOverlapedWidgets(widgets, ref, id);
+  let diff = 0x3f3f3f3f;
+  overlapedWidgets.forEach((w) => {
+    if (w.depth > widget.depth) diff = Math.min(diff, w.depth - widget.depth);
+  });
+  diff = diff === 0x3f3f3f3f ? 0 : diff;
 
   return widgets.map((w) => {
     return {
       ...w,
-      depth: w.id === widget.id ? widget.depth + 1 : w.depth === widget.depth + 1 ? w.depth - 1 : w.depth,
+      depth: w.id === widget.id ? widget.depth + diff : w.depth === widget.depth + diff ? w.depth - 1 : w.depth,
     };
   });
 };
 
-export const sendBackward = (widgets, id) => {
+export const sendBackward = (widgets, id, ref) => {
   const widget = widgets.find((w) => w.id === id);
+
+  const overlapedWidgets = getOverlapedWidgets(widgets, ref, id);
+  let diff = 0x3f3f3f3f;
+  overlapedWidgets.forEach((w) => {
+    if (w.depth < widget.depth) diff = Math.min(diff, widget.depth - w.depth);
+  });
+  diff = diff === 0x3f3f3f3f ? 0 : diff;
 
   return widgets.map((w) => {
     return {
       ...w,
-      depth: w.id === widget.id ? widget.depth - 1 : w.depth === widget.depth - 1 ? w.depth + 1 : w.depth,
+      depth: w.id === widget.id ? widget.depth - diff : w.depth === widget.depth - diff ? w.depth + 1 : w.depth,
     };
   });
 };
@@ -125,4 +140,37 @@ export const getHoveredWidgets = (widgets, ref, e) => {
       return { ...w, hovered };
     })
     .filter((w) => w.hovered);
+};
+
+export const getOverlapedWidgets = (widgets, ref, id) => {
+  const widget1 = ref.current.querySelector(`#widget-${id}`);
+  const points1 = [
+    widget1?.querySelector('.moveable-rotation-control'),
+    widget1?.querySelector('.moveable-ne'),
+    widget1?.querySelector('.moveable-se'),
+    widget1?.querySelector('.moveable-sw'),
+    widget1?.querySelector('.moveable-nw'),
+  ]
+    .filter((d) => d)
+    .map((c) => c.getBoundingClientRect())
+    .map(({ x, y }) => [x, y]);
+
+  return widgets
+    .map((w) => {
+      const widget2 = ref.current.querySelector(`#widget-${w.id}`);
+      const points2 = [
+        widget2?.querySelector('.moveable-rotation-control'),
+        widget2?.querySelector('.moveable-ne'),
+        widget2?.querySelector('.moveable-se'),
+        widget2?.querySelector('.moveable-sw'),
+        widget2?.querySelector('.moveable-nw'),
+      ]
+        .filter((d) => d)
+        .map((c) => c.getBoundingClientRect())
+        .map(({ x, y }) => [x, y]);
+      const overlaped = overlap(points1, points2);
+      return { ...w, overlaped };
+    })
+    .filter((w) => w.overlaped)
+    .sort((a, b) => b.depth - a.depth);
 };
