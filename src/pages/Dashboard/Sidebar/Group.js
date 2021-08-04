@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
     fontStyle: 'normal',
     lineHeight: 'normal',
     letterSpacing: 0.49,
+    paddingLeft: 20,
     color: '#6c6c6e',
   },
 }));
