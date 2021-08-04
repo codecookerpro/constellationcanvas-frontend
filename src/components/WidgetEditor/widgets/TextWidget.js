@@ -12,39 +12,43 @@ const useStyles = makeStyles({
   },
   text: {
     position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(0, -50%)',
+    top: (props) => `${props.newPos.y + 62}px`,
+    left: (props) => `${props.newPos.x + 49}px`,
+    transform: 'translate(0, -10px)',
     background: 'transparent',
+    zIndex: (props) => `${props.depth}`,
     border: 0,
+    outline: 'none',
   },
 });
 
 const TextWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
-  const classes = useStyles({ type });
+  const newPos = transform || landedPos;
+  const classes = useStyles({ type, newPos, depth });
   const imgRef = useRef();
 
   return (
-    <BaseWidget
-      id={id}
-      depth={depth}
-      type={type}
-      draggable={true}
-      resizable={true}
-      rotatable={true}
-      keepRatio={false}
-      target={imgRef}
-      hovered={hovered}
-      transform={transform || landedPos}
-      onTransform={onTransform}
-      onTransformStart={onTransformStart}
-      onTransformEnd={onTransformEnd}
-      onContextMenu={onContextMenu}
-    >
-      <div ref={imgRef} className={classes.image}>
-        <input type="text" className={classes.text}></input>
-      </div>
-    </BaseWidget>
+    <>
+      <input type="text" className={classes.text} autoFocus id={`text-widget-${id}`}></input>
+      <BaseWidget
+        id={id}
+        depth={depth}
+        type={type}
+        draggable={true}
+        resizable={true}
+        rotatable={false}
+        keepRatio={false}
+        target={imgRef}
+        hovered={hovered}
+        transform={newPos}
+        onTransform={onTransform}
+        onTransformStart={onTransformStart}
+        onTransformEnd={onTransformEnd}
+        onContextMenu={onContextMenu}
+      >
+        <div ref={imgRef} className={classes.image} />
+      </BaseWidget>
+    </>
   );
 };
 

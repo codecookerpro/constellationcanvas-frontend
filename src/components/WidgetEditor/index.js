@@ -85,7 +85,14 @@ const WidgetEditor = () => {
     setWidgets((widgets) => widgets.concat(newWidget));
   };
 
-  const handleTransform = ({ id, type, transform }) => {
+  const handleTransform = ({ id, transform }) => {
+    const textWidget = stageRef.current.querySelector(`#text-widget-${id}`);
+    if (textWidget) {
+      textWidget.style.left = transform.x;
+      textWidget.style.top = transform.y;
+      textWidget.style.transform = 'translate(40px, 52px)';
+      console.log(textWidget.style);
+    }
     setWidgets(widgets.map((w) => (w.id === id ? { ...w, transform } : w)));
   };
   const handleTransformStart = (id) => {
