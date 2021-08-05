@@ -31,7 +31,6 @@ export default function BaseWidget({
   onTransform,
   onTransformStart,
   onTransformEnd,
-  onContextMenu,
 }) {
   const containerRef = useRef();
   const classes = useStyles({ depth, hovered });
@@ -76,7 +75,8 @@ export default function BaseWidget({
     events.forEach((ev) => handleResize(ev));
   };
 
-  const handleTransformStart = () => {
+  const handleTransformStart = (e) => {
+    e.target.focus();
     onTransformStart(id);
   };
 
@@ -85,7 +85,7 @@ export default function BaseWidget({
   };
 
   return (
-    <div ref={containerRef} className={classes.root} onContextMenu={(e) => onContextMenu(e, id)} id={`widget-${id}`}>
+    <div ref={containerRef} className={classes.root} id={`widget-${id}`}>
       {children}
       <Moveable
         target={target}

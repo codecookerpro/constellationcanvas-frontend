@@ -1,6 +1,6 @@
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
-import { WIDGET_IMG_BASE_URL } from 'pages/Dashboard/constants';
+import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 import { useRef } from 'react';
 
 const useStyles = makeStyles({
@@ -12,7 +12,7 @@ const useStyles = makeStyles({
   },
 });
 
-const ShapeWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
+const ShapeWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd }) => {
   const classes = useStyles({ type });
   const imgRef = useRef();
 
@@ -31,7 +31,6 @@ const ShapeWidget = ({ id, type, depth, transform, landedPos, hovered, onTransfo
       onTransform={onTransform}
       onTransformStart={onTransformStart}
       onTransformEnd={onTransformEnd}
-      onContextMenu={onContextMenu}
     >
       <div ref={imgRef} className={classes.image} />
     </BaseWidget>

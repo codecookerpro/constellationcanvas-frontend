@@ -1,11 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-import { WIDGET_WIDTH, WIDGET_HEIGHT, WIDGET_IMG_BASE_URL } from '../constants';
+import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 
 const useStyles = makeStyles((theme) => ({
   widget: {
-    width: WIDGET_WIDTH,
-    height: WIDGET_HEIGHT,
+    width: 97,
     backgroundColor: '#f6f8fa',
     borderRadius: 8,
     padding: 8,

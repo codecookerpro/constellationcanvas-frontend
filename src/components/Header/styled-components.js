@@ -1,10 +1,10 @@
-import MuiAppBar from '@material-ui/core/AppBar';
+import AppBar from '@material-ui/core/AppBar';
 import styledComponent from 'styled-components';
 import { styled } from '@material-ui/core/styles';
 import { Box } from '@material-ui/core';
-import { DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from './constants';
+import { DRAWER_WIDTH, APP_BAR_HEIGHT, MAIN_BORDER } from 'constants/user-interface';
 
-const AppBar = styled(MuiAppBar, {
+export const StyledAppBar = styled(AppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
@@ -33,34 +33,25 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const Label = styled(Box)(({ theme }) => ({
+export const StyledLabel = styled(Box)(({ theme }) => ({
   display: 'flex',
   width: '120px',
 }));
 
-const Input = styledComponent.input`
-::-webkit-input-placeholder {
-    font-style: italic;
-    font-size: 22px;
-    font-weight: 300;
-    letter-spacing: 0.76px;
-    color: #cacaca;
-}
-:focus {
-    outline: none;
-}
-font-size: 22px;
-font-weight: 300;
-height: 23px;
-width: 100%;
-border: none;
+export const StyledInput = styledComponent.input`
+  ::-webkit-input-placeholder {
+      font-style: italic;
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: 0.76px;
+      color: #cacaca;
+  }
+  :focus {
+      outline: none;
+  }
+  font-size: 22px;
+  font-weight: 300;
+  height: 23px;
+  width: 100%;
+  border: none;
 `;
-
-const Header = () => (
-  <AppBar position="absolute" open={true}>
-    <Label ml="36px">TOPIC:</Label>
-    <Input placeholder="Type the topic for the canvas…" />
-  </AppBar>
-);
-
-export default Header;

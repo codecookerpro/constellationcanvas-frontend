@@ -2,11 +2,17 @@ import React, { useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { DROP_EFFECT, WIDGET_MAP, WIDGET_TYPES, CONTEXTMENU_ITEMS as contexts, ORDER_TYPES } from './constants';
-import { getUniqueId, bringToFront, sendToBack, bringForward, sendBackward } from './helper';
+import Divider from '@material-ui/core/Divider';
+import {
+  DROP_EFFECT,
+  WIDGET_MAP,
+  WIDGET_TYPES,
+  CONTEXTMENU_ITEMS_GENERAL as general_contexts,
+  CONTEXTMENU_ITEMS_WIDGET as widget_contexts,
+  CONTEXTMENU_TYPES,
+} from './constants';
+import { getUniqueId, bringToFront, sendToBack, bringForward, sendBackward, getHoveredWidgets, getMaxDepth } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
-import { extendPolygon } from './helper';
-import pointInPolygon from 'point-in-polygon';
 
 const initialWidgets = [
   {
@@ -57,11 +63,13 @@ const WidgetEditor = () => {
   const classes = useStyles();
   const [widgets, setWidgets] = useState(initialWidgets);
   const [transforming, setTransforming] = useState(null);
-  const [hoveredWidgets, setHoveredWidgets] = useState([]);
   const [contextState, setContextState] = useState({
     id: null,
     mouseX: null,
     mouseY: null,
+  });
+  const [copiedWidget, setCopiedWidget] = useState({
+    id: null,
   });
   const stageRef = useRef();
   const handleDragOver = (event) => {
@@ -78,7 +86,7 @@ const WidgetEditor = () => {
     const newWidget = {
       id: getUniqueId(),
       type,
-      depth: widgets.length,
+      depth: getMaxDepth(widgets) + 1,
       data: {},
       landedPos: { x, y },
     };
@@ -86,14 +94,7 @@ const WidgetEditor = () => {
   };
 
   const handleTransform = ({ id, transform }) => {
-    const textWidget = stageRef.current.querySelector(`#text-widget-${id}`);
-    if (textWidget) {
-      textWidget.style.left = transform.x;
-      textWidget.style.top = transform.y;
-      textWidget.style.transform = 'translate(40px, 52px)';
-      console.log(textWidget.style);
-    }
-    setWidgets(widgets.map((w) => (w.id === id ? { ...w, transform } : w)));
+    setWidgets(widgets.map((w) => (w.id === id ? { ...w, transform: { ...w.transform, ...transform } } : w)));
   };
   const handleTransformStart = (id) => {
     setTransforming(id);
@@ -103,27 +104,39 @@ const WidgetEditor = () => {
     setTransforming(null);
   };
 
-  const handleContextMenu = (e, id) => {
+  const handleContextClick = (e, type) => {
     e.preventDefault();
 
-    setContextState({
-      id,
-      mouseX: e.clientX,
-      mouseY: e.clientY,
-    });
-  };
-
-  const handleChangeDepth = (e, type) => {
-    e.preventDefault();
-
-    if (type === ORDER_TYPES.front) {
-      setWidgets(bringToFront(widgets, contextState.id, hoveredWidgets));
-    } else if (type === ORDER_TYPES.back) {
-      setWidgets(sendToBack(widgets, contextState.id, hoveredWidgets));
-    } else if (type === ORDER_TYPES.forward) {
-      setWidgets(bringForward(widgets, contextState.id, hoveredWidgets));
-    } else if (type === ORDER_TYPES.backward) {
-      setWidgets(sendBackward(widgets, contextState.id, hoveredWidgets));
+    if (type === CONTEXTMENU_TYPES.front) {
+      setWidgets(bringToFront(widgets, contextState.id));
+    } else if (type === CONTEXTMENU_TYPES.back) {
+      setWidgets(sendToBack(widgets, contextState.id));
+    } else if (type === CONTEXTMENU_TYPES.forward) {
+      setWidgets(bringForward(widgets, contextState.id, stageRef));
+    } else if (type === CONTEXTMENU_TYPES.backward) {
+      setWidgets(sendBackward(widgets, contextState.id, stageRef));
+    } else if (type === CONTEXTMENU_TYPES.copy) {
+      setCopiedWidget(widgets.find((w) => w.id === contextState.id));
+    } else if (type === CONTEXTMENU_TYPES.cut) {
+      setCopiedWidget(widgets.find((w) => w.id === contextState.id));
+      setWidgets(widgets.filter((w) => w.id !== contextState.id));
+    } else if (type === CONTEXTMENU_TYPES.paste) {
+      if (copiedWidget.id !== null) {
+        const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
+        const newWidget = {
+          ...copiedWidget,
+          id: getUniqueId(),
+          depth: getMaxDepth(widgets) + 1,
+          transform: {
+            ...copiedWidget.transform,
+            x: contextState.mouseX - baseX,
+            y: contextState.mouseY - baseY,
+          },
+        };
+        setWidgets((widgets) => widgets.concat(newWidget));
+      }
+    } else if (type === CONTEXTMENU_TYPES.delete) {
+      setWidgets(widgets.filter((w) => w.id !== contextState.id));
     }
 
     setContextState({
@@ -135,31 +148,39 @@ const WidgetEditor = () => {
 
   const handleMouseMove = (e) => {
     if (e.buttons === 0) {
-      const hoveredWidgets = widgets
-        .map((w) => {
-          const widgetContainer = stageRef.current.querySelector(`#widget-${w.id}`);
-          const points = [
-            widgetContainer?.querySelector('.moveable-rotation-control'),
-            widgetContainer?.querySelector('.moveable-ne'),
-            widgetContainer?.querySelector('.moveable-se'),
-            widgetContainer?.querySelector('.moveable-sw'),
-            widgetContainer?.querySelector('.moveable-nw'),
-          ]
-            .filter((d) => d)
-            .map((c) => c.getBoundingClientRect())
-            .map(({ x, y }) => [x, y]);
-          const hovered = pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
-
-          return { ...w, hovered };
-        })
-        .filter((w) => w.hovered);
-      setHoveredWidgets(hoveredWidgets);
+      const hoveredWidgets = getHoveredWidgets(widgets, stageRef, e);
       const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
       setWidgets(widgets.map((w) => ({ ...w, hovered: w.id === frontWidget?.id })));
     } else if (transforming === null) {
+      setContextState({
+        id: null,
+        mouseX: null,
+        mouseY: null,
+      });
       panZoomHandlers.onMouseMove(e);
     }
   };
+
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+
+    const hoveredWidgets = getHoveredWidgets(widgets, stageRef, e);
+    const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
+    if (frontWidget === undefined) {
+      setContextState({
+        id: null,
+        mouseX: e.clientX,
+        mouseY: e.clientY,
+      });
+    } else {
+      setContextState({
+        id: frontWidget.id,
+        mouseX: e.clientX,
+        mouseY: e.clientY,
+      });
+    }
+  };
+
   return (
     <div className={classes.root}>
       <div
@@ -169,6 +190,7 @@ const WidgetEditor = () => {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onMouseMove={handleMouseMove}
+        onContextMenu={handleContextMenu}
       >
         <div className={classes.widgetStage} ref={stageRef} style={{ transform }}>
           {widgets.map((widget) => {
@@ -181,7 +203,6 @@ const WidgetEditor = () => {
                 onTransform={handleTransform}
                 onTransformStart={handleTransformStart}
                 onTransformEnd={handleTransformEnd}
-                onContextMenu={handleContextMenu}
               />
             );
           })}
@@ -189,17 +210,30 @@ const WidgetEditor = () => {
             style={{ zIndex: 99999 }}
             keepMounted
             open={contextState.mouseY !== null}
-            onClose={handleChangeDepth}
+            onClose={handleContextClick}
             anchorReference="anchorPosition"
             anchorPosition={
               contextState.mouseY !== null && contextState.mouseX !== null ? { top: contextState.mouseY, left: contextState.mouseX } : undefined
             }
+            transitionDuration={0}
           >
-            {contexts.map((context) => (
-              <MenuItem key={context.type} onClick={(e) => handleChangeDepth(e, context.type)}>
-                {context.label}
-              </MenuItem>
-            ))}
+            {(contextState.id === null ? general_contexts : widget_contexts).map((context, index) => {
+              if (context.type === CONTEXTMENU_TYPES.divider) {
+                return <Divider key={context.type + index} />;
+              }
+              if (context.type === CONTEXTMENU_TYPES.paste) {
+                return (
+                  <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={copiedWidget.id === null}>
+                    {context.label}
+                  </MenuItem>
+                );
+              }
+              return (
+                <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)}>
+                  {context.label}
+                </MenuItem>
+              );
+            })}
           </Menu>
         </div>
       </div>

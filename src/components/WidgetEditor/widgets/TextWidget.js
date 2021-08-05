@@ -1,35 +1,40 @@
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
-import { WIDGET_IMG_BASE_URL } from 'pages/Dashboard/constants';
+import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 import { useRef } from 'react';
+import { TEXT_HEIGHT, TEXT_WIDTH, TEXT_WIDGET_PADDINGS } from '../constants';
 
 const useStyles = makeStyles({
-  image: {
-    width: 97,
-    height: 124,
+  root: {
+    width: (props) => props.w,
+    height: (props) => props.h,
     backgroundImage: (props) => `url(${WIDGET_IMG_BASE_URL}${props.type}.png)`,
     backgroundSize: '100% 100%',
-  },
-  text: {
-    position: 'absolute',
-    top: (props) => `${props.newPos.y + 62}px`,
-    left: (props) => `${props.newPos.x + 49}px`,
-    transform: 'translate(0, -10px)',
-    background: 'transparent',
-    zIndex: (props) => `${props.depth}`,
     border: 0,
     outline: 'none',
+    resize: 'none',
+    overflow: 'hidden',
+    padding: ({ w, h, padding: [pt, pr, pb, pl] }) => {
+      return `${h * pt}px ${w * pr}px ${h * pb}px ${w * pl}px`;
+    },
+    fontSize: 18,
   },
 });
 
-const TextWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
+const TextWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd }) => {
   const newPos = transform || landedPos;
-  const classes = useStyles({ type, newPos, depth });
+  const classes = useStyles({
+    type,
+    newPos,
+    depth,
+    padding: TEXT_WIDGET_PADDINGS[type],
+    w: transform?.w || TEXT_WIDTH,
+    h: transform?.h || TEXT_HEIGHT,
+  });
   const imgRef = useRef();
 
   return (
     <>
-      <input type="text" className={classes.text} autoFocus id={`text-widget-${id}`}></input>
       <BaseWidget
         id={id}
         depth={depth}
@@ -44,9 +49,8 @@ const TextWidget = ({ id, type, depth, transform, landedPos, hovered, onTransfor
         onTransform={onTransform}
         onTransformStart={onTransformStart}
         onTransformEnd={onTransformEnd}
-        onContextMenu={onContextMenu}
       >
-        <div ref={imgRef} className={classes.image} />
+        <textarea ref={imgRef} className={classes.root} autoFocus id={`text-widget-${id}`} />
       </BaseWidget>
     </>
   );
