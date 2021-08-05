@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-import { WIDGET_WIDTH, WIDGET_HEIGHT, WIDGET_IMG_BASE_URL } from '../constants';
+import { WIDGET_WIDTH, WIDGET_HEIGHT, WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 
 const useStyles = makeStyles((theme) => ({
   widget: {

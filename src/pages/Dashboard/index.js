@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { CssBaseline } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Sidebar from './Sidebar/';
-import Header from './Header';
-import WidgetEditor from 'components/WidgetEditor';
-import { APP_BAR_HEIGHT } from './constants';
+import { Box, Container } from '@material-ui/core';
+import { Sidebar, Header, WidgetEditor } from 'components';
+import { APP_BAR_HEIGHT } from 'constants/user-interface';
 import { createGlobalStyle } from 'styled-components/macro';
 
 const GlobalStyle = createGlobalStyle`

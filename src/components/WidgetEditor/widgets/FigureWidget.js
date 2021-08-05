@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
-import { WIDGET_IMG_BASE_URL } from 'pages/Dashboard/constants';
+import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 
 const useStyles = makeStyles({
   image: {

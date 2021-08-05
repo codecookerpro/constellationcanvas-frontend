@@ -1,6 +1,6 @@
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
-import { WIDGET_IMG_BASE_URL } from 'pages/Dashboard/constants';
+import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 import { useRef } from 'react';
 
 const useStyles = makeStyles({
