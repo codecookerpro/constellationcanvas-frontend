@@ -11,11 +11,11 @@ export const parseTransform = (trans) => {
     z = 0,
     r = 0;
 
-  if (translate3d && translate3d.length === 7) {
+  if (translate3d) {
     x = translate3d[1];
     y = translate3d[3];
     z = translate3d[5];
-  } else if (translate && translate.length === 5) {
+  } else if (translate) {
     x = translate[1];
     y = translate[3];
   }
@@ -66,11 +66,11 @@ export const bringForward = (widgets, id, ref) => {
   const widget = widgets.find((w) => w.id === id);
 
   const overlapedWidgets = getOverlapedWidgets(widgets, ref, id);
-  let diff = 0x3f3f3f3f;
+  let diff = Infinity;
   overlapedWidgets.forEach((w) => {
     if (w.depth > widget.depth) diff = Math.min(diff, w.depth - widget.depth);
   });
-  diff = diff === 0x3f3f3f3f ? 0 : diff;
+  diff = diff === Infinity ? 0 : diff;
 
   return widgets.map((w) => {
     return {
@@ -84,11 +84,11 @@ export const sendBackward = (widgets, id, ref) => {
   const widget = widgets.find((w) => w.id === id);
 
   const overlapedWidgets = getOverlapedWidgets(widgets, ref, id);
-  let diff = 0x3f3f3f3f;
+  let diff = Infinity;
   overlapedWidgets.forEach((w) => {
     if (w.depth < widget.depth) diff = Math.min(diff, widget.depth - w.depth);
   });
-  diff = diff === 0x3f3f3f3f ? 0 : diff;
+  diff = diff === Infinity ? 0 : diff;
 
   return widgets.map((w) => {
     return {
