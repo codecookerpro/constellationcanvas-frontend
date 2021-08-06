@@ -3,6 +3,7 @@ import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
 import { TRANS_TYPES } from '../constants';
 import { parseTransform, transformToString } from '../helper';
+import clsx from 'clsx';
 
 const useStyles = makeStyles({
   root: {
@@ -85,7 +86,7 @@ export default function BaseWidget({
   };
 
   return (
-    <div ref={containerRef} className={classes.root} id={`widget-${id}`}>
+    <div ref={containerRef} className={clsx(classes.root, 'widget-container')} id={`widget-${id}`}>
       {children}
       <Moveable
         target={target}

@@ -2,7 +2,6 @@ import _ from 'lodash';
 import ObjectID from 'bson-objectid';
 import pointInPolygon from 'point-in-polygon';
 import overlap from 'polygon-overlap';
-import { TRANS_3D_TOKEN_NUM, TRANS_2D_TOKEN_NUM, TRANS_3D_X_POS, TRANS_3D_Y_POS, TRANS_3D_Z_POS, TRANS_2D_X_POS, TRANS_2D_Y_POS } from './constants';
 
 export const parseTransform = (trans) => {
   const translate = trans.match(/translate\(([-0-9.]*(px)), ([-0-9.]*(px))\)/);
@@ -13,13 +12,13 @@ export const parseTransform = (trans) => {
     z = 0,
     r = 0;
 
-  if (translate3d && translate3d.length === TRANS_3D_TOKEN_NUM) {
-    x = translate3d[TRANS_3D_X_POS];
-    y = translate3d[TRANS_3D_Y_POS];
-    z = translate3d[TRANS_3D_Z_POS];
-  } else if (translate && translate.length == TRANS_2D_TOKEN_NUM) {
-    x = translate[TRANS_2D_X_POS];
-    y = translate[TRANS_2D_Y_POS];
+  if (translate3d) {
+    x = translate3d[1];
+    y = translate3d[3];
+    z = translate3d[5];
+  } else if (translate) {
+    x = translate[1];
+    y = translate[3];
   }
 
   if (rotate) {

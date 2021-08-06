@@ -97,6 +97,7 @@ export const WIDGET_MAP = {
   [WIDGET_GROUPS.arrow]: ObjectWidget,
   [WIDGET_GROUPS.text]: TextWidget,
   [WIDGET_GROUPS.relation]: RelationshipWidget,
+  [WIDGET_GROUPS.emotion]: ObjectWidget,
 };
 
 export const TEXT_WIDGET_PADDINGS = {
@@ -108,13 +109,6 @@ export const TEXT_WIDGET_PADDINGS = {
 
 export const TEXT_WIDTH = 200;
 export const TEXT_HEIGHT = 160;
-export const TRANS_3D_X_POS = 1;
-export const TRANS_3D_Y_POS = 3;
-export const TRANS_3D_Z_POS = 5;
-export const TRANS_2D_X_POS = 1;
-export const TRANS_2D_Y_POS = 3;
-export const TRANS_3D_TOKEN_NUM = 7;
-export const TRANS_2D_TOKEN_NUM = 5;
 
 export const WIDGET_TYPES = [
   {

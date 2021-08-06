@@ -1,7 +1,7 @@
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
 import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { TEXT_HEIGHT, TEXT_WIDTH, TEXT_WIDGET_PADDINGS } from '../constants';
 
 const useStyles = makeStyles({
@@ -21,8 +21,8 @@ const useStyles = makeStyles({
   },
 });
 
-const TextWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd }) => {
-  const newPos = transform || landedPos;
+const TextWidget = ({ id, type, depth, transform, data, landedPos, hovered, onTransform, onTransformStart, onTransformEnd, onDataChange }) => {
+  const newPos = useMemo(() => transform || landedPos, [transform, landedPos]);
   const classes = useStyles({
     type,
     newPos,
@@ -32,6 +32,10 @@ const TextWidget = ({ id, type, depth, transform, landedPos, hovered, onTransfor
     h: transform?.h || TEXT_HEIGHT,
   });
   const imgRef = useRef();
+
+  const handleTextChange = (e) => {
+    onDataChange(id, { text: e.target.value });
+  };
 
   return (
     <>
@@ -50,7 +54,7 @@ const TextWidget = ({ id, type, depth, transform, landedPos, hovered, onTransfor
         onTransformStart={onTransformStart}
         onTransformEnd={onTransformEnd}
       >
-        <textarea ref={imgRef} className={classes.root} autoFocus id={`text-widget-${id}`} />
+        <textarea ref={imgRef} className={classes.root} value={data?.text} autoFocus id={`text-widget-${id}`} onChange={handleTextChange} />
       </BaseWidget>
     </>
   );
