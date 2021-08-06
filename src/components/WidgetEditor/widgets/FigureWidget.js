@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
+import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
+import clsx from 'clsx';
 
 const useStyles = makeStyles({
   image: {
@@ -10,7 +12,7 @@ const useStyles = makeStyles({
   },
 });
 
-const FigureWidget = ({ id, type, depth, transform, landedPos, mousePos, onTransform, onTransformStart, onTransformEnd, onContextMenu }) => {
+const FigureWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd }) => {
   const classes = useStyles({ depth });
   const imgRef = useRef();
 
@@ -23,14 +25,19 @@ const FigureWidget = ({ id, type, depth, transform, landedPos, mousePos, onTrans
       resizable={true}
       rotatable={false}
       target={imgRef}
-      mousePos={mousePos}
+      hovered={hovered}
       transform={transform || landedPos}
       onTransform={onTransform}
       onTransformStart={onTransformStart}
       onTransformEnd={onTransformEnd}
-      onContextMenu={onContextMenu}
     >
-      <img ref={imgRef} className={classes.image} src={`/assets/img/widgets/${type}.png`} alt={type} draggable={false} />
+      <img
+        ref={imgRef}
+        className={clsx(classes.image, 'widget', `widget-${type}`)}
+        src={`${WIDGET_IMG_BASE_URL}${type}.png`}
+        alt={type}
+        draggable={false}
+      />
     </BaseWidget>
   );
 };

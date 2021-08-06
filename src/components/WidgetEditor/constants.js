@@ -1,5 +1,8 @@
 import FigureWidget from './widgets/FigureWidget';
+import ObjectWidget from './widgets/ObjectWidget';
 import ShapeWidget from './widgets/ShapeWidget';
+import TextWidget from './widgets/TextWidget';
+import RelationshipWidget from './widgets/RelationshipWidget';
 
 export const DROP_EFFECT = 'move';
 export const TRANS_TYPES = Object.freeze({
@@ -9,29 +12,63 @@ export const TRANS_TYPES = Object.freeze({
   land: 'land',
 });
 
-export const ORDER_TYPES = {
+export const CONTEXTMENU_TYPES = {
   front: 'front',
   back: 'back',
   forward: 'forward',
   backward: 'backward',
+  divider: 'divider',
+  copy: 'copy',
+  cut: 'cut',
+  paste: 'paste',
+  delete: 'delete',
 };
 
-export const CONTEXTMENU_ITEMS = [
+export const CONTEXTMENU_ITEMS_GENERAL = [
   {
-    type: ORDER_TYPES.front,
+    type: CONTEXTMENU_TYPES.paste,
+    label: 'Paste',
+  },
+];
+
+export const CONTEXTMENU_ITEMS_WIDGET = [
+  {
+    type: CONTEXTMENU_TYPES.front,
     label: 'Bring to Front',
   },
   {
-    type: ORDER_TYPES.back,
+    type: CONTEXTMENU_TYPES.back,
     label: 'Send to Back',
   },
   {
-    type: ORDER_TYPES.forward,
+    type: CONTEXTMENU_TYPES.forward,
     label: 'Bring Forward',
   },
   {
-    type: ORDER_TYPES.backward,
+    type: CONTEXTMENU_TYPES.backward,
     label: 'Send Backward',
+  },
+  {
+    type: CONTEXTMENU_TYPES.divider,
+  },
+  {
+    type: CONTEXTMENU_TYPES.copy,
+    label: 'Copy',
+  },
+  {
+    type: CONTEXTMENU_TYPES.cut,
+    label: 'Cut',
+  },
+  {
+    type: CONTEXTMENU_TYPES.paste,
+    label: 'Paste',
+  },
+  {
+    type: CONTEXTMENU_TYPES.divider,
+  },
+  {
+    type: CONTEXTMENU_TYPES.delete,
+    label: 'Delete',
   },
 ];
 
@@ -40,9 +77,10 @@ export const WIDGET_GROUPS = Object.freeze({
   peg: 'Figures (Pegs)',
   chess: 'Figures (Chess)',
   animal: 'Figures (Animals)',
+  emotion: 'Emotions',
   object: 'Objects',
   shape: 'Shapes',
-  ball: 'Harvey Balls',
+  capacity: 'Capacity/Energy',
   arrow: 'Directional Arrows',
   text: 'Text Controls',
   relation: 'Relationships',
@@ -53,13 +91,24 @@ export const WIDGET_MAP = {
   [WIDGET_GROUPS.peg]: FigureWidget,
   [WIDGET_GROUPS.chess]: FigureWidget,
   [WIDGET_GROUPS.animal]: FigureWidget,
-  [WIDGET_GROUPS.object]: FigureWidget,
+  [WIDGET_GROUPS.object]: ObjectWidget,
   [WIDGET_GROUPS.shape]: ShapeWidget,
   [WIDGET_GROUPS.ball]: FigureWidget,
-  [WIDGET_GROUPS.arrow]: FigureWidget,
-  [WIDGET_GROUPS.text]: FigureWidget,
-  [WIDGET_GROUPS.relation]: FigureWidget,
+  [WIDGET_GROUPS.arrow]: ObjectWidget,
+  [WIDGET_GROUPS.text]: TextWidget,
+  [WIDGET_GROUPS.relation]: RelationshipWidget,
+  [WIDGET_GROUPS.emotion]: ObjectWidget,
 };
+
+export const TEXT_WIDGET_PADDINGS = {
+  text1: [0.09, 0.07, 0.09, 0.07],
+  text2: [0.09, 0.07, 0.09, 0.07],
+  text3: [0.19, 0.18, 0.19, 0.12],
+  text4: [0.25, 0.17, 0.29, 0.26],
+};
+
+export const TEXT_WIDTH = 200;
+export const TEXT_HEIGHT = 160;
 
 export const WIDGET_TYPES = [
   {
@@ -167,6 +216,30 @@ export const WIDGET_TYPES = [
     group: WIDGET_GROUPS.lego,
   },
   {
+    type: 'lego27',
+    group: WIDGET_GROUPS.lego,
+  },
+  {
+    type: 'lego28',
+    group: WIDGET_GROUPS.lego,
+  },
+  {
+    type: 'lego29',
+    group: WIDGET_GROUPS.lego,
+  },
+  {
+    type: 'lego30',
+    group: WIDGET_GROUPS.lego,
+  },
+  {
+    type: 'lego31',
+    group: WIDGET_GROUPS.lego,
+  },
+  {
+    type: 'lego32',
+    group: WIDGET_GROUPS.lego,
+  },
+  {
     type: 'peg1',
     group: WIDGET_GROUPS.peg,
   },
@@ -204,6 +277,14 @@ export const WIDGET_TYPES = [
   },
   {
     type: 'chess4',
+    group: WIDGET_GROUPS.chess,
+  },
+  {
+    type: 'chess5',
+    group: WIDGET_GROUPS.chess,
+  },
+  {
+    type: 'chess6',
     group: WIDGET_GROUPS.chess,
   },
   {
@@ -255,6 +336,30 @@ export const WIDGET_TYPES = [
     group: WIDGET_GROUPS.animal,
   },
   {
+    type: 'emotion1',
+    group: WIDGET_GROUPS.emotion,
+  },
+  {
+    type: 'emotion2',
+    group: WIDGET_GROUPS.emotion,
+  },
+  {
+    type: 'emotion3',
+    group: WIDGET_GROUPS.emotion,
+  },
+  {
+    type: 'emotion4',
+    group: WIDGET_GROUPS.emotion,
+  },
+  {
+    type: 'emotion5',
+    group: WIDGET_GROUPS.emotion,
+  },
+  {
+    type: 'emotion6',
+    group: WIDGET_GROUPS.emotion,
+  },
+  {
     type: 'object1',
     group: WIDGET_GROUPS.object,
   },
@@ -287,6 +392,14 @@ export const WIDGET_TYPES = [
     group: WIDGET_GROUPS.object,
   },
   {
+    type: 'object9',
+    group: WIDGET_GROUPS.object,
+  },
+  {
+    type: 'object10',
+    group: WIDGET_GROUPS.object,
+  },
+  {
     type: 'shape1',
     group: WIDGET_GROUPS.shape,
   },
@@ -303,44 +416,24 @@ export const WIDGET_TYPES = [
     group: WIDGET_GROUPS.shape,
   },
   {
-    type: 'ball1',
-    group: WIDGET_GROUPS.ball,
+    type: 'capacity1',
+    group: WIDGET_GROUPS.capacity,
   },
   {
-    type: 'ball2',
-    group: WIDGET_GROUPS.ball,
+    type: 'capacity2',
+    group: WIDGET_GROUPS.capacity,
   },
   {
-    type: 'ball3',
-    group: WIDGET_GROUPS.ball,
+    type: 'capacity3',
+    group: WIDGET_GROUPS.capacity,
   },
   {
-    type: 'ball4',
-    group: WIDGET_GROUPS.ball,
+    type: 'capacity4',
+    group: WIDGET_GROUPS.capacity,
   },
   {
-    type: 'ball5',
-    group: WIDGET_GROUPS.ball,
-  },
-  {
-    type: 'ball6',
-    group: WIDGET_GROUPS.ball,
-  },
-  {
-    type: 'ball7',
-    group: WIDGET_GROUPS.ball,
-  },
-  {
-    type: 'ball8',
-    group: WIDGET_GROUPS.ball,
-  },
-  {
-    type: 'ball9',
-    group: WIDGET_GROUPS.ball,
-  },
-  {
-    type: 'ball10',
-    group: WIDGET_GROUPS.ball,
+    type: 'capacity5',
+    group: WIDGET_GROUPS.capacity,
   },
   {
     type: 'arrow1',
@@ -400,6 +493,10 @@ export const WIDGET_TYPES = [
   },
   {
     type: 'relation5',
+    group: WIDGET_GROUPS.relation,
+  },
+  {
+    type: 'relation6',
     group: WIDGET_GROUPS.relation,
   },
 ];
