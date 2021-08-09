@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="97px" height="124px" viewBox="0 0 97 124" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>AB6C52B6-9342-4C29-AE1D-664785CD2B05</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Constellation-Canvas" transform="translate(-40.000000, -7819.000000)">
+            <g id="Lego" transform="translate(40.000000, 7819.000000)">
+                <rect id="Rectangle" x="0" y="0" width="97" height="124" rx="8"></rect>
+                <g id="loc-arrow" transform="translate(21.000000, 34.000000)">
+                    <circle id="Oval" fill="#FFE100" cx="27.5" cy="27.5" r="27.5"></circle>
+                    <polygon id="Path" fill="#676767" fill-rule="nonzero" points="40.021 15 28.6565108 40 26.386271 28.6355108 15.021 26.3613621"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
