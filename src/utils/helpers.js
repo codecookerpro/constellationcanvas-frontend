@@ -8,3 +8,7 @@ export const keyMirror = (obj) =>
       {}
     )
   );
+
+export const toArray = (arg) => (Array.isArray(arg) ? arg : [arg]);
+
+export const isNumber = (arg) => parseFloat(arg) === arg;

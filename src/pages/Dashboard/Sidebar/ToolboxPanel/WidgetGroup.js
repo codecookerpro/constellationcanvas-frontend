@@ -5,19 +5,19 @@ import Widget from './Widget';
 import { StyledAccordion, StyledAccordionSummary, StyledAccordionDetails } from './styled-components';
 import useStyles from '../use-styles';
 
-const WidgetGroup = ({ group, widgets }) => {
+const WidgetGroup = ({ type, label, count, imageType }) => {
   const classes = useStyles();
 
   return (
     <StyledAccordion>
       <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography className={classes.subGroup}>{group}</Typography>
+        <Typography className={classes.subGroup}>{label}</Typography>
       </StyledAccordionSummary>
       <StyledAccordionDetails>
         <Grid container spacing={3}>
-          {widgets.map((widget) => (
-            <Grid item key={widget.type} container justifyContent="center" alignItems="center" xs={6}>
-              <Widget type={widget.type} />
+          {Array.from({ length: count }).map((v, idx) => (
+            <Grid item key={`${type}${idx}`} container justifyContent="center" alignItems="center" xs={6}>
+              <Widget group={type} type={`${type}${idx + 1}`} imageType={imageType} />
             </Grid>
           ))}
         </Grid>

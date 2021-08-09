@@ -1,6 +1,6 @@
 import React from 'react';
-import { StylesProvider, ThemeProvider as MuiThemeProvider, jssPreset } from '@material-ui/core/styles';
-import { ThemeProvider } from 'styled-components/macro';
+import { StylesProvider, ThemeProvider, jssPreset } from '@material-ui/core/styles';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components/macro';
 import { create } from 'jss';
 
 import theme from 'theme';
@@ -13,11 +13,11 @@ const jss = create({
 
 const App = () => (
   <StylesProvider jss={jss}>
-    <MuiThemeProvider theme={theme}>
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <StyledThemeProvider theme={theme}>
         <Routes />
-      </ThemeProvider>
-    </MuiThemeProvider>
+      </StyledThemeProvider>
+    </ThemeProvider>
   </StylesProvider>
 );
 
