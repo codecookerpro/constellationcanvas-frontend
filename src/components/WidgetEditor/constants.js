@@ -11,10 +11,10 @@ import EmotionWidget from './widgets/EmotionWidget';
 
 export const DROP_EFFECT = 'move';
 export const TEXT_WIDGET_DEFAULT_PROPS = {
-  text1: { padding: { top: 0.07, right: 0.05, bottom: 0.07, left: 0.05 }, width: 77, height: 32 },
-  text2: { padding: { top: 0.09, right: 0.07, bottom: 0.25, left: 0.07 }, width: 150, height: 150 },
-  text3: { padding: { top: 0.19, right: 0.18, bottom: 0.19, left: 0.12 }, width: 77, height: 32 },
-  text4: { padding: { top: 0.25, right: 0.17, bottom: 0.29, left: 0.26 }, width: 77, height: 32 },
+  text1: { padding: { top: 0.07, right: 0.05, bottom: 0.07, left: 0.05 }, width: 154, height: 64 },
+  text2: { padding: { top: 0.09, right: 0.07, bottom: 0.25, left: 0.07 }, width: 112, height: 108 },
+  text3: { padding: { top: 0.22, right: 0.18, bottom: 0.28, left: 0.12 }, width: 168, height: 132 },
+  text4: { padding: { top: 0.27, right: 0.26, bottom: 0.38, left: 0.2 }, width: 178, height: 170 },
 };
 
 export const TRANS_TYPES = keyMirror({
@@ -126,3 +126,10 @@ export const CONTEXTMENU_ITEMS_WIDGET = [
     label: 'Delete',
   },
 ];
+
+export const WIDGET_SCALE_LIMIT = {
+  xMin: 0.3,
+  yMin: 0.3,
+  xMax: 10.0,
+  yMax: 10.0,
+};

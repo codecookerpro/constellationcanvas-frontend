@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
-import { TRANS_TYPES } from '../constants';
+import { TRANS_TYPES, WIDGET_SCALE_LIMIT } from '../constants';
 import { parseTransform, transformToString } from '../helper';
 import { toArray } from 'utils';
 
@@ -42,7 +42,12 @@ const BaseWidget = (props) => {
     onTransform({ id, type: TRANS_TYPES.rotate, transform: parseTransform(transform) });
   };
 
-  const handleScale = ({ target, transform }) => {
+  const handleScale = ({ target, transform, scale: [sx, sy] }) => {
+    const { xMin, yMin, xMax, yMax } = WIDGET_SCALE_LIMIT;
+    if (sx < xMin || sy < yMin || sx > xMax || sy > yMax) {
+      return;
+    }
+
     target.style.transform = transform;
     onTransform({ id, type: TRANS_TYPES.scale, transform: parseTransform(transform) });
   };
