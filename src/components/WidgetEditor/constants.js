@@ -133,3 +133,8 @@ export const WIDGET_SCALE_LIMIT = {
   xMax: 10.0,
   yMax: 10.0,
 };
+
+export const WIDGET_EDITOR_SCALE_LIMIT = {
+  min: 0.2,
+  max: 3.5,
+};

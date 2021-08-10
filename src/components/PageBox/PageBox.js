@@ -19,7 +19,7 @@ export default function PageBox(props) {
       <GlobalStyle />
       {props.sidebar && <PageSidebar sidebar={props.sidebar} />}
       {props.header && <PageHeader header={props.header} />}
-      <PageContent content={props.children} />}
+      <PageContent content={props.children} />
     </Box>
   );
 }
