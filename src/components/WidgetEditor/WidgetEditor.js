@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -66,7 +66,8 @@ const WidgetEditor = ({
     event.preventDefault();
     event.dataTransfer.dropEffect = DROP_EFFECT;
   };
-  const { transform, zoom, panZoomHandlers, setContainer } = usePanZoom({ zoomSensitivity: 0.001 });
+  const blockedPanZoom = useMemo(() => transforming || contextState.mouseY, [transforming, contextState]);
+  const { transform, zoom, panZoomHandlers, setContainer, setZoom } = usePanZoom({ minZoom: 0.2, maxZoom: 3.5, enableZoom: false });
   const handleDrop = (event) => {
     event.preventDefault();
     const { offsetX, offsetY, type } = JSON.parse(event.dataTransfer.getData('application/constellation-widget'));
@@ -193,6 +194,12 @@ const WidgetEditor = ({
     }
   };
 
+  const handleWheel = (e) => {
+    if (!blockedPanZoom) {
+      setZoom(zoom - e.deltaY * 0.001);
+    }
+  };
+
   return (
     <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
       <div
@@ -203,6 +210,7 @@ const WidgetEditor = ({
         onDragOver={handleDragOver}
         onMouseMove={handleMouseMove}
         onContextMenu={handleContextMenu}
+        onWheel={handleWheel}
       >
         <div className={classes.widgetStage} ref={stageRef} style={{ transform }}>
           {widgets.map((widget) => {
