@@ -23,7 +23,7 @@ const useStyles = makeStyles({
     fontSize: 18,
     border: 0,
     resize: 'none',
-    overflow: 'hidden',
+    overflow: 'auto',
     backgroundColor: 'transparent',
     outline: 'none',
     padding: 0,
@@ -31,9 +31,18 @@ const useStyles = makeStyles({
     height: ({ sy }) => `${100 * Math.abs(sy)}%`,
     transformOrigin: '0 0',
     transform: ({ sx, sy }) => `scale(${1 / sx}, ${1 / sy})`,
-
     '&:disabled': {
       color: '#000000',
+    },
+    '&::-webkit-scrollbar': {
+      width: '0.2em',
+    },
+    '&::-webkit-scrollbar-track': {
+      '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0,0,0,.1)',
+      borderRadius: 4,
     },
   },
 });

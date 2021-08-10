@@ -9,6 +9,8 @@ import {
   CONTEXTMENU_ITEMS_GENERAL as general_contexts,
   CONTEXTMENU_ITEMS_WIDGET as widget_contexts,
   CONTEXTMENU_TYPES,
+  WIDGET_GROUP_TYPES,
+  WIDGET_EDITOR_SCALE_LIMIT,
 } from './constants';
 import { getHoveredWidgets, getForwardWidget, getBackwardWidget } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
@@ -62,12 +64,23 @@ const WidgetEditor = ({
 
   const stageRef = useRef();
   const rootRef = useRef();
+
+  const blockedPanZoom = useMemo(
+    () => transforming || contextState.mouseY || widgets.filter((w) => w.hovered && w.type.match(WIDGET_GROUP_TYPES.text)).length,
+    [transforming, contextState, widgets]
+  );
+
+  const { transform, zoom, panZoomHandlers, setContainer, setZoom } = usePanZoom({
+    minZoom: WIDGET_EDITOR_SCALE_LIMIT.min,
+    maxZoom: WIDGET_EDITOR_SCALE_LIMIT.max,
+    enableZoom: false,
+  });
+
   const handleDragOver = (event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = DROP_EFFECT;
   };
-  const blockedPanZoom = useMemo(() => transforming || contextState.mouseY, [transforming, contextState]);
-  const { transform, zoom, panZoomHandlers, setContainer, setZoom } = usePanZoom({ minZoom: 0.2, maxZoom: 3.5, enableZoom: false });
+
   const handleDrop = (event) => {
     event.preventDefault();
     const { offsetX, offsetY, type } = JSON.parse(event.dataTransfer.getData('application/constellation-widget'));
@@ -77,7 +90,7 @@ const WidgetEditor = ({
     const newWidget = {
       type,
       data: {},
-      transform: { tx, ty },
+      transform: { tx, ty, rotate: 0, sx: 1, sy: 1 },
     };
     addWidget(newWidget);
   };

@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 const BaseWidget = (props) => {
-  const { id, depth, children, target, transform, hovered, onTransform, onTransformStart, onTransformEnd } = props;
+  const { id, depth, children, target, transform, hovered, zoom, onTransform, onTransformStart, onTransformEnd } = props;
   const containerRef = useRef();
   const classes = useStyles({ depth, hovered });
 
@@ -80,6 +80,7 @@ const BaseWidget = (props) => {
         rotatable={false}
         scalable={true}
         {...props}
+        zoom={1 / zoom}
         defaultGroupRotate={0}
         defaultGroupOrigin={'50% 50%'}
         throttleDrag={0}
@@ -89,7 +90,6 @@ const BaseWidget = (props) => {
         throttleRotate={0}
         rotationPosition={'top'}
         padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-        throttleResize={0}
         renderDirections={['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se']}
         edge={false}
         onDragGroup={handleDragGroup}
