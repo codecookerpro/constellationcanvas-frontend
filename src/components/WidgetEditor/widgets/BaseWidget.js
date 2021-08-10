@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
+import clsx from 'clsx';
 import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
 import { TRANS_TYPES } from '../constants';
 import { parseTransform, transformToString } from '../helper';
-import clsx from 'clsx';
+import { toArray } from 'utils';
 
 const useStyles = makeStyles({
   root: {
@@ -18,50 +19,32 @@ const useStyles = makeStyles({
   },
 });
 
-export default function BaseWidget({
-  id,
-  depth,
-  children,
-  target,
-  draggable = true,
-  rotatable = true,
-  resizable = true,
-  keepRatio = true,
-  transform,
-  hovered,
-  onTransform,
-  onTransformStart,
-  onTransformEnd,
-}) {
+const BaseWidget = (props) => {
+  const { id, depth, children, target, transform, hovered, onTransform, onTransformStart, onTransformEnd } = props;
   const containerRef = useRef();
   const classes = useStyles({ depth, hovered });
 
-  useEffect(() => {
-    const { w: width, h: height } = transform;
-    target.current.style.transform = transformToString(transform);
+  useEffect(
+    () =>
+      toArray(target).forEach((tar) => {
+        tar.current.style.transform = transformToString(transform);
+      }),
+    [target, transform]
+  );
 
-    if (width && height) {
-      target.current.style.width = `${width}px`;
-      target.current.style.height = `${height}px`;
-    }
-  }, [target, transform]);
-
-  const handleDrag = (ev) => {
-    ev.target.style.transform = ev.transform;
-    onTransform({ id, type: TRANS_TYPES.drag, transform: parseTransform(ev.transform) });
+  const handleDrag = ({ target, transform }) => {
+    target.style.transform = transform;
+    onTransform({ id, type: TRANS_TYPES.drag, transform: parseTransform(transform) });
   };
 
-  const handleRotate = (ev) => {
-    ev.target.style.transform = ev.drag.transform;
-    onTransform({ id, type: TRANS_TYPES.rotate, transform: parseTransform(ev.drag.transform) });
+  const handleRotate = ({ target, transform }) => {
+    target.style.transform = transform;
+    onTransform({ id, type: TRANS_TYPES.rotate, transform: parseTransform(transform) });
   };
 
-  const handleResize = (ev) => {
-    const { width, height, drag, target } = ev;
-    target.style.width = `${width}px`;
-    target.style.height = `${height}px`;
-    target.style.transform = drag.transform;
-    onTransform({ id, type: TRANS_TYPES.resize, transform: { ...parseTransform(drag.transform), w: width, h: height } });
+  const handleScale = ({ target, transform }) => {
+    target.style.transform = transform;
+    onTransform({ id, type: TRANS_TYPES.scale, transform: parseTransform(transform) });
   };
 
   const handleDragGroup = ({ events }) => {
@@ -72,12 +55,11 @@ export default function BaseWidget({
     events.forEach((ev) => handleRotate(ev));
   };
 
-  const handleResizeGroup = ({ events }) => {
-    events.forEach((ev) => handleResize(ev));
+  const handleScaleGroup = ({ events }) => {
+    events.forEach((ev) => handleScale(ev));
   };
 
   const handleTransformStart = (e) => {
-    e.target.focus();
     onTransformStart(id);
   };
 
@@ -89,39 +71,37 @@ export default function BaseWidget({
     <div ref={containerRef} className={clsx(classes.root, 'widget-container')} id={`widget-${id}`}>
       {children}
       <Moveable
-        target={target}
+        draggable={true}
+        rotatable={false}
+        scalable={true}
+        {...props}
         defaultGroupRotate={0}
         defaultGroupOrigin={'50% 50%'}
-        draggable={draggable}
         throttleDrag={0}
         startDragRotate={0}
         throttleDragRotate={0}
-        zoom={1}
-        origin={rotatable}
-        originDraggable={rotatable}
-        originRelative={rotatable}
-        rotatable={rotatable}
+        origin={false}
         throttleRotate={0}
         rotationPosition={'top'}
         padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-        resizable={resizable}
-        keepRatio={keepRatio}
         throttleResize={0}
         renderDirections={['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se']}
         edge={false}
         onDragGroup={handleDragGroup}
         onRotateGroup={handleRotateGroup}
-        onResizeGroup={handleResizeGroup}
+        onScaleGroup={handleScaleGroup}
         onDrag={handleDrag}
-        onRotate={handleRotate}
-        onResize={handleResize}
         onDragStart={handleTransformStart}
-        onRotateStart={handleTransformStart}
-        onResizeStart={handleTransformStart}
         onDragEnd={handleTransformEnd}
+        onRotate={handleRotate}
+        onRotateStart={handleTransformStart}
         onRotateEnd={handleTransformEnd}
-        onResizeEnd={handleTransformEnd}
+        onScale={handleScale}
+        onScaleStart={handleTransformStart}
+        onScaleEnd={handleTransformEnd}
       />
     </div>
   );
-}
+};
+
+export default memo(BaseWidget);

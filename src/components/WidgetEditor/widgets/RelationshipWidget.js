@@ -2,37 +2,24 @@ import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
 import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 import { useRef } from 'react';
+import { WIDGET_GROUPS } from '../constants';
 
 const useStyles = makeStyles({
-  image: {
-    width: 90,
-    height: 40,
-    maxHeight: 40,
-    background: (props) => `url(${WIDGET_IMG_BASE_URL}${props.type}.png) 0 -40px repeat-x`,
+  root: {
+    width: 80,
+    height: 15,
+    backgroundImage: ({ group, type }) => `url(${WIDGET_IMG_BASE_URL}${group}/${type}.${WIDGET_GROUPS.find((g) => g.type === group).imageType})`,
+    backgroundSize: '100% 100%',
   },
 });
 
-const RelationshipWidget = ({ id, type, depth, transform, landedPos, hovered, onTransform, onTransformStart, onTransformEnd }) => {
-  const classes = useStyles({ type });
-  const imgRef = useRef();
+const RelationshipWidget = (props) => {
+  const classes = useStyles(props);
+  const figureRef = useRef();
 
   return (
-    <BaseWidget
-      id={id}
-      depth={depth}
-      type={type}
-      draggable={true}
-      resizable={true}
-      rotatable={true}
-      keepRatio={false}
-      target={imgRef}
-      hovered={hovered}
-      transform={transform || landedPos}
-      onTransform={onTransform}
-      onTransformStart={onTransformStart}
-      onTransformEnd={onTransformEnd}
-    >
-      <div ref={imgRef} className={classes.image} />
+    <BaseWidget {...props} rotatable={true} keepRatio={false} target={figureRef}>
+      <div ref={figureRef} className={classes.root} />
     </BaseWidget>
   );
 };

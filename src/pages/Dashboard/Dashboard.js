@@ -1,59 +1,45 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CssBaseline } from '@material-ui/core';
-import { Box, Container } from '@material-ui/core';
-import { Sidebar, Header, WidgetEditor } from 'components';
-import { APP_BAR_HEIGHT } from 'constants/user-interface';
-import { createGlobalStyle } from 'styled-components/macro';
-import ActionTypes from 'constants/action-types';
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    overflow: hidden;
-  }
-`;
+import { WidgetEditor } from 'components';
+import Sidebar from './Sidebar';
+import Header from './Header';
+import PageBox from 'components/PageBox';
+import {
+  setTopic,
+  setCopiedWidget,
+  addWidget,
+  removeWidget,
+  setWidgetTransform,
+  setWidgetData,
+  setWidgetHovered,
+  bringToFront,
+  sendToBack,
+  bringForward,
+  sendBackward,
+} from 'actions/dashboards';
 
 export default function Dashboard() {
-  const canvas = useSelector((state) => state.main.canvas);
-  const currentIndex = useSelector((state) => state.main.currentIndex);
-  const topic = canvas[currentIndex].topic;
-  const copiedWidget = useSelector((state) => state.main.copiedWidget);
+  const current = useSelector(({ main }) => main[main.index]);
+  const copiedWidget = useSelector(({ main }) => main.copiedWidget);
 
   const dispatch = useDispatch();
 
-  const setTopic = (value) => {
-    dispatch({
-      type: ActionTypes.SET_TOPIC,
-      payload: value,
-    });
-  };
-
-  const setCopiedWidget = (widget) => {
-    dispatch({
-      type: ActionTypes.SET_COPIED_WIDGET,
-      copiedWidget: widget,
-    });
-  };
-
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <GlobalStyle />
-      <Header topic={topic} onChangeTopic={setTopic} />
-      <Sidebar />
-      <Box
-        component="main"
-        sx={{
-          backgroundColor: 'white',
-          flexGrow: 1,
-          height: '100vh',
-          overflow: 'auto',
-        }}
-      >
-        <Container maxWidth="xl" style={{ padding: 0, marginTop: APP_BAR_HEIGHT, height: `calc(100% - ${APP_BAR_HEIGHT}px)` }}>
-          <WidgetEditor copiedWidget={copiedWidget} onSetCopiedWidget={setCopiedWidget} />
-        </Container>
-      </Box>
-    </Box>
+    <PageBox sidebar={<Sidebar />} header={<Header topic={current.topic} setTopic={(topic) => dispatch(setTopic(topic))} />}>
+      <WidgetEditor
+        widgets={current.widgets}
+        addWidget={(widget) => dispatch(addWidget(widget))}
+        removeWidget={(id) => dispatch(removeWidget(id))}
+        setWidgetTransform={({ id, transform }) => dispatch(setWidgetTransform({ id, transform }))}
+        setWidgetData={({ id, data }) => dispatch(setWidgetData({ id, data }))}
+        setWidgetHovered={(id) => dispatch(setWidgetHovered(id))}
+        bringToFront={(id) => dispatch(bringToFront(id))}
+        sendToBack={(id) => dispatch(sendToBack(id))}
+        bringForward={({ id, forwardId }) => dispatch(bringForward({ id, forwardId }))}
+        sendBackward={({ id, backwardId }) => dispatch(sendBackward({ id, backwardId }))}
+        copiedWidget={copiedWidget}
+        setCopiedWidget={(widget) => dispatch(setCopiedWidget(widget))}
+      />
+    </PageBox>
   );
 }

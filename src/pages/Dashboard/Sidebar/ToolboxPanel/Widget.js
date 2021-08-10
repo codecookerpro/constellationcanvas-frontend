@@ -5,7 +5,7 @@ import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 const useStyles = makeStyles((theme) => ({
   widget: {
     width: 97,
-    backgroundColor: '#f6f8fa',
+    backgroundColor: 'transparent',
     borderRadius: 8,
     padding: 8,
     '&:hover': {
@@ -17,11 +17,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Widget = (props) => {
+const Widget = ({ group, type, imageType }) => {
   const classes = useStyles();
-  const { type } = props;
-
-  const src = `${WIDGET_IMG_BASE_URL}${type}.png`;
+  const src = `${WIDGET_IMG_BASE_URL}${group}/${type}.${imageType}`;
 
   const onDragStart = (e) => {
     const rect = e.target.getBoundingClientRect();
