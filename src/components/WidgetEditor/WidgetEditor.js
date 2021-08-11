@@ -4,10 +4,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import {
-  DROP_EFFECT,
   WIDGET_MAP,
-  CONTEXTMENU_ITEMS_GENERAL as general_contexts,
-  CONTEXTMENU_ITEMS_WIDGET as widget_contexts,
+  CONTEXTMENU_ITEMS_GENERAL,
+  CONTEXTMENU_ITEMS_WIDGET,
   CONTEXTMENU_TYPES,
   WIDGET_GROUP_TYPES,
   WIDGET_EDITOR_SCALE_LIMIT,
@@ -78,7 +77,6 @@ const WidgetEditor = ({
 
   const handleDragOver = (event) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = DROP_EFFECT;
   };
 
   const handleDrop = (event) => {
@@ -253,7 +251,7 @@ const WidgetEditor = ({
             }
             transitionDuration={0}
           >
-            {(contextState.id === null ? general_contexts : widget_contexts).map((context, index) => {
+            {(contextState.id === null ? CONTEXTMENU_ITEMS_GENERAL : CONTEXTMENU_ITEMS_WIDGET).map((context, index) => {
               if (context.type === CONTEXTMENU_TYPES.divider) {
                 return <Divider key={context.type + index} />;
               }

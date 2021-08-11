@@ -1,13 +1,29 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
+import { makeStyles } from '@material-ui/core';
+import { WIDGET_GROUPS } from '../constants';
+import { getImgUrl } from '../helper';
 import BaseWidget from './BaseWidget';
-import useImageStyles from './use-image-styles';
+import useDim from './use-dim';
+
+const useStyles = makeStyles({
+  root: {
+    width: (props) => props.width || 0,
+    height: (props) => props.height || 0,
+    backgroundImage: ({ group, type }) => `url(${getImgUrl(group, type)})`,
+    backgroundSize: '100% 100%',
+  },
+});
 
 const FigureWidget = (props) => {
-  const classes = useImageStyles({ type: props.type, group: props.group, defaultWidth: 97, defaultHeight: 124 });
+  const { type, group } = props;
   const figureRef = useRef();
+  const moveableRef = useRef();
+  const { draggable, scalable, rotatable, keepRatio } = useMemo(() => WIDGET_GROUPS.find((g) => g.type === group), [group]);
+  const { width, height } = useDim(group, type, moveableRef);
+  const classes = useStyles({ type, group, width, height });
 
   return (
-    <BaseWidget {...props} keepRatio={true} target={figureRef}>
+    <BaseWidget {...props} draggable={draggable} scalable={scalable} rotatable={rotatable} keepRatio={keepRatio} target={figureRef} ref={moveableRef}>
       <div ref={figureRef} className={classes.root} />
     </BaseWidget>
   );

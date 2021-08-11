@@ -2,6 +2,10 @@ import _ from 'lodash';
 import pointInPolygon from 'point-in-polygon';
 import overlap from 'polygon-overlap';
 import { isNumber } from 'utils';
+import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
+import { WIDGET_GROUPS } from './constants';
+
+export const getImgUrl = (group, type) => `${WIDGET_IMG_BASE_URL}${group}/${type}.${WIDGET_GROUPS.find((g) => g.type === group).imageType}`;
 
 export const parseTransform = (trans) => {
   const t2dTokens = trans.match(/translate\(([-0-9.]*(px)), ([-0-9.]*(px))\)/);

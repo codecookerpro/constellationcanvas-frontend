@@ -1,15 +1,8 @@
 import { keyMirror } from 'utils';
 
 import FigureWidget from './widgets/FigureWidget';
-import ObjectWidget from './widgets/ObjectWidget';
-import ShapeWidget from './widgets/ShapeWidget';
 import TextWidget from './widgets/TextWidget';
-import RelationshipWidget from './widgets/RelationshipWidget';
-import CapacityWidget from './widgets/CapacityWidget';
-import ArrowWidget from './widgets/ArrowWidget';
-import EmotionWidget from './widgets/EmotionWidget';
 
-export const DROP_EFFECT = 'move';
 export const TEXT_WIDGET_DEFAULT_PROPS = {
   text1: { padding: { top: 0.07, right: 0.05, bottom: 0.07, left: 0.05 }, width: 154, height: 64 },
   text2: { padding: { top: 0.09, right: 0.07, bottom: 0.25, left: 0.07 }, width: 112, height: 108 },
@@ -40,17 +33,127 @@ export const WIDGET_GROUP_TYPES = keyMirror({
 });
 
 export const WIDGET_GROUPS = [
-  { type: WIDGET_GROUP_TYPES.lego, label: 'Figures (Lego)', imageType: 'png', count: 32 },
-  { type: WIDGET_GROUP_TYPES.peg, label: 'Figures (Pegs)', imageType: 'png', count: 6 },
-  { type: WIDGET_GROUP_TYPES.chess, label: 'Figures (Chess)', imageType: 'png', count: 6 },
-  { type: WIDGET_GROUP_TYPES.animal, label: 'Figures (Animals)', imageType: 'png', count: 12 },
-  { type: WIDGET_GROUP_TYPES.emotion, label: 'Emotions', imageType: 'png', count: 6 },
-  { type: WIDGET_GROUP_TYPES.object, label: 'Objects', imageType: 'png', count: 10 },
-  { type: WIDGET_GROUP_TYPES.shape, label: 'Shapes', imageType: 'svg', count: 4 },
-  { type: WIDGET_GROUP_TYPES.capacity, label: 'Capacity/Energy', imageType: 'png', count: 5 },
-  { type: WIDGET_GROUP_TYPES.arrow, label: 'Directional Arrows', imageType: 'svg', count: 6 },
-  { type: WIDGET_GROUP_TYPES.text, label: 'Text Controls', imageType: 'svg', count: 4 },
-  { type: WIDGET_GROUP_TYPES.relationship, label: 'Relationships', imageType: 'svg', count: 6 },
+  {
+    type: WIDGET_GROUP_TYPES.lego,
+    label: 'Figures (Lego)',
+    draggable: true,
+    scalable: true,
+    rotatable: false,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'png',
+    count: 32,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.peg,
+    label: 'Figures (Pegs)',
+    draggable: true,
+    scalable: true,
+    rotatable: false,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'png',
+    count: 6,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.chess,
+    label: 'Figures (Chess)',
+    draggable: true,
+    scalable: true,
+    rotatable: false,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'png',
+    count: 6,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.animal,
+    label: 'Figures (Animals)',
+    draggable: true,
+    scalable: true,
+    rotatable: false,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'png',
+    count: 12,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.object,
+    label: 'Objects',
+    draggable: true,
+    scalable: true,
+    rotatable: true,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'png',
+    count: 9,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.arrow,
+    label: 'Directional Arrows',
+    draggable: true,
+    scalable: true,
+    rotatable: true,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'svg',
+    count: 6,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.shape,
+    label: 'Shapes',
+    draggable: true,
+    scalable: true,
+    rotatable: true,
+    keepRatio: false,
+    defaultArea: 10000,
+    imageType: 'svg',
+    count: 4,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.text,
+    label: 'Text Controls',
+    draggable: true,
+    scalable: true,
+    rotatable: false,
+    keepRatio: false,
+    defaultArea: 10000,
+    imageType: 'svg',
+    count: 4,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.relationship,
+    label: 'Relationships',
+    draggable: true,
+    scalable: true,
+    rotatable: true,
+    keepRatio: false,
+    defaultArea: 3000,
+    imageType: 'svg',
+    count: 10,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.capacity,
+    label: 'Capacity/Energy',
+    draggable: true,
+    scalable: true,
+    rotatable: true,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'png',
+    count: 5,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.emotion,
+    label: 'Emotions',
+    draggable: true,
+    scalable: true,
+    rotatable: true,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'svg',
+    count: 6,
+  },
 ];
 
 export const WIDGET_MAP = {
@@ -58,13 +161,13 @@ export const WIDGET_MAP = {
   [WIDGET_GROUP_TYPES.peg]: FigureWidget,
   [WIDGET_GROUP_TYPES.chess]: FigureWidget,
   [WIDGET_GROUP_TYPES.animal]: FigureWidget,
-  [WIDGET_GROUP_TYPES.emotion]: EmotionWidget,
-  [WIDGET_GROUP_TYPES.object]: ObjectWidget,
-  [WIDGET_GROUP_TYPES.shape]: ShapeWidget,
-  [WIDGET_GROUP_TYPES.capacity]: CapacityWidget,
-  [WIDGET_GROUP_TYPES.arrow]: ArrowWidget,
+  [WIDGET_GROUP_TYPES.emotion]: FigureWidget,
+  [WIDGET_GROUP_TYPES.object]: FigureWidget,
+  [WIDGET_GROUP_TYPES.shape]: FigureWidget,
+  [WIDGET_GROUP_TYPES.capacity]: FigureWidget,
+  [WIDGET_GROUP_TYPES.arrow]: FigureWidget,
   [WIDGET_GROUP_TYPES.text]: TextWidget,
-  [WIDGET_GROUP_TYPES.relationship]: RelationshipWidget,
+  [WIDGET_GROUP_TYPES.relationship]: FigureWidget,
 };
 
 export const CONTEXTMENU_TYPES = keyMirror({

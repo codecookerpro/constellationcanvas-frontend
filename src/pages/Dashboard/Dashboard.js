@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { WidgetEditor } from 'components';
-import Sidebar from './Sidebar';
 import Header from './Header';
 import PageBox from 'components/PageBox';
 import {
@@ -25,7 +24,7 @@ export default function Dashboard() {
   const dispatch = useDispatch();
 
   return (
-    <PageBox sidebar={<Sidebar />} header={<Header topic={current.topic} setTopic={(topic) => dispatch(setTopic(topic))} />}>
+    <PageBox header={<Header topic={current.topic} setTopic={(topic) => dispatch(setTopic(topic))} />}>
       <WidgetEditor
         widgets={current.widgets}
         addWidget={(widget) => dispatch(addWidget(widget))}
