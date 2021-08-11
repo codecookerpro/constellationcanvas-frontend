@@ -20,6 +20,7 @@ export const TRANS_TYPES = keyMirror({
 
 export const WIDGET_GROUP_TYPES = keyMirror({
   lego: null,
+  family: null,
   peg: null,
   chess: null,
   animal: null,
@@ -42,7 +43,18 @@ export const WIDGET_GROUPS = [
     keepRatio: true,
     defaultArea: 10000,
     imageType: 'png',
-    count: 32,
+    count: 19,
+  },
+  {
+    type: WIDGET_GROUP_TYPES.family,
+    label: 'Figures (Family)',
+    draggable: true,
+    scalable: true,
+    rotatable: false,
+    keepRatio: true,
+    defaultArea: 10000,
+    imageType: 'png',
+    count: 14,
   },
   {
     type: WIDGET_GROUP_TYPES.peg,
@@ -158,6 +170,7 @@ export const WIDGET_GROUPS = [
 
 export const WIDGET_MAP = {
   [WIDGET_GROUP_TYPES.lego]: FigureWidget,
+  [WIDGET_GROUP_TYPES.family]: FigureWidget,
   [WIDGET_GROUP_TYPES.peg]: FigureWidget,
   [WIDGET_GROUP_TYPES.chess]: FigureWidget,
   [WIDGET_GROUP_TYPES.animal]: FigureWidget,
