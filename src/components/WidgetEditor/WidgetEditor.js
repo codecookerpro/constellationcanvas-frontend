@@ -83,8 +83,8 @@ const WidgetEditor = ({
     event.preventDefault();
     const { offsetX, offsetY, type } = JSON.parse(event.dataTransfer.getData('application/constellation-widget'));
     const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
-    const tx = event.clientX - baseX - offsetX;
-    const ty = event.clientY - baseY - offsetY;
+    const tx = (event.clientX - baseX) / zoom - offsetX;
+    const ty = (event.clientY - baseY) / zoom - offsetY;
     const newWidget = {
       type,
       data: {},
@@ -163,7 +163,7 @@ const WidgetEditor = ({
 
   const handleMouseMove = (e) => {
     if (e.buttons === 0 && e.ctrlKey === false) {
-      const hoveredWidgets = getHoveredWidgets(widgets, stageRef, e);
+      const hoveredWidgets = getHoveredWidgets(e, widgets, stageRef);
       const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
 
       if (contextState.mouseY === null) {

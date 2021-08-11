@@ -89,53 +89,39 @@ export const extendPolygon = (polygon, dist = 30) => {
   });
 };
 
-export const getHoveredWidgets = (widgets, ref, e) => {
+export const getWidgetBoundaries = (ref, id) => {
+  const widget = ref.current.querySelector(`#widget-${id}`);
+
+  const points = [
+    widget?.querySelector('.moveable-rotation-control'),
+    widget?.querySelector('.moveable-ne'),
+    widget?.querySelector('.moveable-se'),
+    widget?.querySelector('.moveable-sw'),
+    widget?.querySelector('.moveable-nw'),
+  ]
+    .filter((d) => d)
+    .map((c) => c.getBoundingClientRect())
+    .map(({ x, y }) => [x, y]);
+
+  return points;
+};
+
+export const getHoveredWidgets = (e, widgets, ref) => {
   return widgets
     .map((w) => {
-      const widgetContainer = ref.current.querySelector(`#widget-${w.id}`);
-      const points = [
-        widgetContainer?.querySelector('.moveable-rotation-control'),
-        widgetContainer?.querySelector('.moveable-ne'),
-        widgetContainer?.querySelector('.moveable-se'),
-        widgetContainer?.querySelector('.moveable-sw'),
-        widgetContainer?.querySelector('.moveable-nw'),
-      ]
-        .filter((d) => d)
-        .map((c) => c.getBoundingClientRect())
-        .map(({ x, y }) => [x, y]);
-      const hovered = pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 20));
-
+      const points = getWidgetBoundaries(ref, w.id);
+      const hovered = pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
       return { ...w, hovered };
     })
     .filter((w) => w.hovered);
 };
 
 export const getOverlapedWidgets = (widgets, ref, id) => {
-  const widget1 = ref.current.querySelector(`#widget-${id}`);
-  const points1 = [
-    widget1?.querySelector('.moveable-rotation-control'),
-    widget1?.querySelector('.moveable-ne'),
-    widget1?.querySelector('.moveable-se'),
-    widget1?.querySelector('.moveable-sw'),
-    widget1?.querySelector('.moveable-nw'),
-  ]
-    .filter((d) => d)
-    .map((c) => c.getBoundingClientRect())
-    .map(({ x, y }) => [x, y]);
+  const points1 = getWidgetBoundaries(ref, id);
 
   return widgets
     .map((w) => {
-      const widget2 = ref.current.querySelector(`#widget-${w.id}`);
-      const points2 = [
-        widget2?.querySelector('.moveable-rotation-control'),
-        widget2?.querySelector('.moveable-ne'),
-        widget2?.querySelector('.moveable-se'),
-        widget2?.querySelector('.moveable-sw'),
-        widget2?.querySelector('.moveable-nw'),
-      ]
-        .filter((d) => d)
-        .map((c) => c.getBoundingClientRect())
-        .map(({ x, y }) => [x, y]);
+      const points2 = getWidgetBoundaries(ref, w.id);
       const overlaped = overlap(points1, points2);
       return { ...w, overlaped };
     })
