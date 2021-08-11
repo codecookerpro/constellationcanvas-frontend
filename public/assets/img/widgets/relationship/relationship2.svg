@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="89px" height="3px" viewBox="0 0 89 3" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>97D7DD29-CA7C-455D-B42B-CCEE583B62BA</title>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-dasharray="8" stroke-linecap="round">
-        <g id="Constellation-Canvas" transform="translate(-175.000000, -7585.000000)" stroke="#000000" stroke-width="2">
-            <g id="Relationships" transform="translate(0.000000, 7452.000000)">
-                <g id="Lego" transform="translate(176.000000, 134.000000)">
-                    <line x1="-3.01841885e-16" y1="0.5" x2="87" y2="0.5" id="Line-2"></line>
-                </g>
-            </g>
-        </g>
+<svg width="90px" height="6px" viewBox="0 0 90 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Constellation-Canvas" stroke="#000000" stroke-width="2" stroke-dasharray="8" stroke-linecap="round">
+        <line x1="3" y1="3" x2="87" y2="3"></line>
     </g>
 </svg>

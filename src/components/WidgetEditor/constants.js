@@ -140,7 +140,7 @@ export const WIDGET_GROUPS = [
     scalable: true,
     rotatable: true,
     keepRatio: false,
-    defaultArea: 3000,
+    defaultArea: 4000,
     imageType: 'svg',
     count: 10,
   },
@@ -253,4 +253,11 @@ export const WIDGET_SCALE_LIMIT = {
 export const WIDGET_EDITOR_SCALE_LIMIT = {
   min: 0.2,
   max: 3.5,
+};
+
+export const WIDGET_DESCRIPTIONS = {
+  relationship7: 'Collaborative',
+  relationship8: 'Conflicted',
+  relationship9: 'Hostile',
+  relationship10: 'Cut-off',
 };
