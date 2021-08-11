@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { WIDGET_GROUPS } from '../constants';
 import { getImgUrl } from '../helper';
 
-const useDim = (group, type, ref) => {
+const useDynamicSize = (group, type, ref) => {
   const [dim, setDim] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -22,4 +22,4 @@ const useDim = (group, type, ref) => {
   return dim;
 };
 
-export default useDim;
+export default useDynamicSize;

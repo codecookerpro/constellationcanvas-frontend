@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import { WIDGET_GROUPS } from '../constants';
 import { getImgUrl } from '../helper';
 import BaseWidget from './BaseWidget';
-import useDim from './use-dim';
+import useDim from '../hooks/use-dynamic-size';
 
 const useStyles = makeStyles({
   root: {
