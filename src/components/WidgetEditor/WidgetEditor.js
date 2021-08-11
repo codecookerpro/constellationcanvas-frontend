@@ -169,7 +169,7 @@ const WidgetEditor = ({
       if (contextState.mouseY === null) {
         setWidgetHovered(frontWidget?.id);
       }
-    } else if (transforming === null && e.ctrlKey === false && contextState.id === null) {
+    } else if (!transforming && !e.ctrlKey && !contextState.id && e.buttons === 1) {
       setContextState({
         id: null,
         mouseX: null,
