@@ -32,9 +32,12 @@ const BaseWidget = React.forwardRef((props, ref) => {
     [target, transform]
   );
 
-  const handleDrag = ({ target, transform }) => {
-    target.style.transform = transform;
-    onTransform({ id, type: TRANS_TYPES.drag, transform: parseTransform(transform) });
+  const handleDrag = ({ target, transform, translate: [tx, ty], dist: [dx, dy] }) => {
+    tx = tx - dx + dx / zoom;
+    ty = ty - dy + dy / zoom;
+    const newTransfrom = { ...parseTransform(transform), tx, ty };
+    target.style.transform = transformToString(newTransfrom);
+    onTransform({ id, type: TRANS_TYPES.drag, transform: newTransfrom });
   };
 
   const handleRotate = ({ target, transform }) => {

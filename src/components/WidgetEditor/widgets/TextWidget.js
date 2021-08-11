@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 import { useRef, useState } from 'react';
 import { TEXT_WIDGET_DEFAULT_PROPS, WIDGET_GROUPS } from '../constants';
-import useDim from '../hooks/use-dynamic-size';
+import useDynamicSize from '../hooks/use-dynamic-size';
 
 const useStyles = makeStyles({
   root: {
@@ -58,7 +58,7 @@ const TextWidget = (props) => {
     onTransformEnd,
   } = props;
   const moveableRef = useRef();
-  const { width, height } = useDim(group, type, moveableRef);
+  const { width, height } = useDynamicSize(group, type, moveableRef);
   const classes = useStyles({ type, group, width, height, sx, sy });
   const wrapperRef = useRef();
   const textRef = useRef();

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import { WIDGET_GROUPS } from '../constants';
 import { getImgUrl } from '../helper';
 import BaseWidget from './BaseWidget';
-import useDim from '../hooks/use-dynamic-size';
+import useDynamicSize from '../hooks/use-dynamic-size';
 
 const useStyles = makeStyles({
   root: {
@@ -19,7 +19,7 @@ const FigureWidget = (props) => {
   const figureRef = useRef();
   const moveableRef = useRef();
   const { draggable, scalable, rotatable, keepRatio } = useMemo(() => WIDGET_GROUPS.find((g) => g.type === group), [group]);
-  const { width, height } = useDim(group, type, moveableRef);
+  const { width, height } = useDynamicSize(group, type, moveableRef);
   const classes = useStyles({ type, group, width, height });
 
   return (
