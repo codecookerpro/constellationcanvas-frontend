@@ -1,15 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="97px" height="124px" viewBox="0 0 97 124" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>F7CACEFD-4668-4E32-8465-279656F774D9</title>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Constellation-Canvas" transform="translate(-40.000000, -9201.000000)">
-            <g id="Lego" transform="translate(40.000000, 9201.000000)">
-                <rect id="Rectangle" x="0" y="0" width="97" height="124" rx="8"></rect>
-                <g id="Group-3" transform="translate(7.000000, 58.000000)" fill="#000000">
-                    <rect id="Rectangle" x="0" y="3" width="38" height="2" rx="1"></rect>
-                    <rect id="Rectangle" x="45" y="3" width="38" height="2" rx="1"></rect>
-                    <rect id="Rectangle" x="36" y="0" width="2" height="8" rx="1"></rect>
-                    <rect id="Rectangle" x="45" y="0" width="2" height="8" rx="1"></rect>
+<svg xmlns="http://www.w3.org/2000/svg" width="92" height="19" viewBox="0 0 92 19">
+    <g fill="none" fill-rule="evenodd">
+        <g fill="#000" fill-rule="nonzero">
+            <g>
+                <g>
+                    <path d="M73.5-6.5l14 7-14 7v-6h-59v6L.5.5l14-7v6h59v-6z" transform="translate(-42.000000, -7894.000000) translate(0.000000, 7452.000000) translate(44.000000, 451.000000)"/>
                 </g>
             </g>
         </g>

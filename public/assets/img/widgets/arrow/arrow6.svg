@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="97px" height="124px" viewBox="0 0 97 124" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>DE608657-95D3-42F2-BF98-D7B35C28BA62</title>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Constellation-Canvas" transform="translate(-171.000000, -7819.000000)">
-            <g id="Lego" transform="translate(171.000000, 7819.000000)">
-                <rect id="Rectangle" x="0" y="0" width="97" height="124" rx="8"></rect>
-                <g id="loc-arrow" transform="translate(21.000000, 35.000000)">
-                    <circle id="Oval" fill="#00B6BA" cx="27.5" cy="27.5" r="27.5"></circle>
-                    <polygon id="Path" fill="#FFFFFF" fill-rule="nonzero" points="40.021 15 28.6565108 40 26.386271 28.6355108 15.021 26.3613621"></polygon>
+<svg xmlns="http://www.w3.org/2000/svg" width="55" height="55" viewBox="0 0 55 55">
+    <g fill="none" fill-rule="evenodd">
+        <g>
+            <g>
+                <g transform="translate(-192.000000, -6494.000000) translate(0.000000, 6070.000000) translate(192.000000, 424.000000)">
+                    <circle cx="27.5" cy="27.5" r="27.5" fill="#00B6BA"/>
+                    <path fill="#FFF" fill-rule="nonzero" d="M40.021 15L28.657 40 26.386 28.636 15.021 26.361z"/>
                 </g>
             </g>
         </g>

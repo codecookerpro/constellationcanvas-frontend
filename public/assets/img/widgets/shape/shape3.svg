@@ -1,9 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="97" height="124" viewBox="0 0 97 124">
-    <g fill="none" fill-rule="evenodd">
-        <g>
-            <g transform="translate(-40.000000, -6701.000000) translate(40.000000, 6701.000000)">
-                <rect width="97" height="124" rx="8"/>
-                <path stroke="#000" d="M49 37L74 87 24 87z"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="53px" viewBox="0 0 52 53" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>38FCC363-0A3C-4865-BEA7-9EF487CC61EF</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Constellation-Canvas" transform="translate(-63.000000, -6902.000000)" stroke="#000000">
+            <g id="Shapes" transform="translate(0.000000, 6636.000000)">
+                <g id="Lego" transform="translate(64.000000, 268.000000)">
+                    <polygon id="Triangle" points="25 0 50 50 0 50"></polygon>
+                </g>
             </g>
         </g>
     </g>
