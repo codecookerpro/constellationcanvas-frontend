@@ -3,16 +3,15 @@ import { makeStyles } from '@material-ui/core';
 import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
 import { useRef, useState } from 'react';
 import { TEXT_WIDGET_DEFAULT_PROPS, WIDGET_GROUPS } from '../constants';
+import useDynamicSize from '../hooks/use-dynamic-size';
 
 const useStyles = makeStyles({
   root: {
-    width: (props) => TEXT_WIDGET_DEFAULT_PROPS[props.type].width,
-    height: (props) => TEXT_WIDGET_DEFAULT_PROPS[props.type].height,
+    width: (props) => props.width,
+    height: (props) => props.height,
     backgroundImage: ({ group, type }) => `url(${WIDGET_IMG_BASE_URL}${group}/${type}.${WIDGET_GROUPS.find((g) => g.type === group).imageType})`,
-    padding: ({ type }) => {
+    padding: ({ type, width, height }) => {
       const {
-        width,
-        height,
         padding: { top, right, bottom, left },
       } = TEXT_WIDGET_DEFAULT_PROPS[type];
       return `${height * top}px ${width * right}px ${height * bottom}px ${width * left}px`;
@@ -58,7 +57,9 @@ const TextWidget = (props) => {
     onTransformStart,
     onTransformEnd,
   } = props;
-  const classes = useStyles({ type, group, sx, sy });
+  const moveableRef = useRef();
+  const { width, height } = useDynamicSize(group, type, moveableRef);
+  const classes = useStyles({ type, group, width, height, sx, sy });
   const wrapperRef = useRef();
   const textRef = useRef();
   const [editable, setEditable] = useState(false);
@@ -78,7 +79,7 @@ const TextWidget = (props) => {
   };
 
   return (
-    <BaseWidget {...props} keepRatio={false} target={wrapperRef}>
+    <BaseWidget {...props} keepRatio={false} target={wrapperRef} ref={moveableRef}>
       <div ref={wrapperRef} className={classes.root} onDoubleClick={handleDoubleClick}>
         <textarea
           value={data?.text}

@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-const BaseWidget = (props) => {
+const BaseWidget = React.forwardRef((props, ref) => {
   const { id, depth, children, target, transform, hovered, zoom, onTransform, onTransformStart, onTransformEnd } = props;
   const containerRef = useRef();
   const classes = useStyles({ depth, hovered });
@@ -32,9 +32,12 @@ const BaseWidget = (props) => {
     [target, transform]
   );
 
-  const handleDrag = ({ target, transform }) => {
-    target.style.transform = transform;
-    onTransform({ id, type: TRANS_TYPES.drag, transform: parseTransform(transform) });
+  const handleDrag = ({ target, transform, translate: [tx, ty], dist: [dx, dy] }) => {
+    tx = tx - dx + dx / zoom;
+    ty = ty - dy + dy / zoom;
+    const newTransfrom = { ...parseTransform(transform), tx, ty };
+    target.style.transform = transformToString(newTransfrom);
+    onTransform({ id, type: TRANS_TYPES.drag, transform: newTransfrom });
   };
 
   const handleRotate = ({ target, transform }) => {
@@ -79,6 +82,7 @@ const BaseWidget = (props) => {
         draggable={true}
         rotatable={false}
         scalable={true}
+        ref={ref}
         {...props}
         zoom={1 / zoom}
         defaultGroupRotate={0}
@@ -107,6 +111,6 @@ const BaseWidget = (props) => {
       />
     </div>
   );
-};
+});
 
 export default memo(BaseWidget);
