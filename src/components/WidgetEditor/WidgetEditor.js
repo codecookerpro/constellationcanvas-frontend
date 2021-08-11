@@ -188,7 +188,7 @@ const WidgetEditor = ({
   const handleContextMenu = (e) => {
     e.preventDefault();
 
-    const hoveredWidgets = getHoveredWidgets(widgets, stageRef, e);
+    const hoveredWidgets = getHoveredWidgets(e, widgets, stageRef);
     const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
     if (frontWidget === undefined) {
       setContextState({
