@@ -1,3 +1,2 @@
-export { default as Sidebar } from './Sidebar';
-export { default as Header } from './Header';
+export { default as PageBox } from './PageBox';
 export { default as WidgetEditor } from './WidgetEditor';

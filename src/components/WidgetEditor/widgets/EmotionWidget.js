@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import BaseWidget from './BaseWidget';
 import useImageStyles from './use-image-styles';
 
-const FigureWidget = (props) => {
+const EmotionWidget = (props) => {
   const classes = useImageStyles({ type: props.type, group: props.group, defaultWidth: 97, defaultHeight: 124 });
   const figureRef = useRef();
 
@@ -13,4 +13,4 @@ const FigureWidget = (props) => {
   );
 };
 
-export default FigureWidget;
+export default EmotionWidget;
