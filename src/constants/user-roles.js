@@ -3,4 +3,5 @@ export const USER_ROLES = {
   facilitator: 'facilitator',
   user: 'user',
   all: 'all',
+  guest: 'guest',
 };

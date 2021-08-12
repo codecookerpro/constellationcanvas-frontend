@@ -3,6 +3,7 @@ import ActionTypes from 'constants/action-types';
 import * as mainStateUpdaters from './main-state-updaters';
 
 const actionHandler = {
+  [ActionTypes.SET_INDEX]: mainStateUpdaters.setIndexUpdater,
   [ActionTypes.SET_TOPIC]: mainStateUpdaters.setTopicUpdater,
   [ActionTypes.SET_COPIED_WIDGET]: mainStateUpdaters.setCopiedWidgetUpdater,
   [ActionTypes.ADD_WIDGET]: mainStateUpdaters.addWidgetUpdater,

@@ -1,11 +1,10 @@
 import { Box, Button, makeStyles } from '@material-ui/core';
-import { PageBox } from 'components';
 import { FONT_FAMILY, LOGO_URL, UI_COLORS } from 'constants/user-interface';
 
 const useStyles = makeStyles({
   root: {
     backgroundColor: UI_COLORS.lightIndigo,
-    flexGrow: 1,
+    display: 'flex',
     height: '100vh',
     overflow: 'auto',
     alignItems: 'center',
@@ -70,7 +69,7 @@ const Login = () => {
   const classes = useStyles();
 
   return (
-    <PageBox className={classes.root}>
+    <Box className={classes.root}>
       <Box className={classes.rectangle}>
         <img src={LOGO_URL} className={classes.logo} alt="logo" />
         <span className={classes.participantLabel}>Participant Code:</span>
@@ -86,7 +85,7 @@ const Login = () => {
           </Button>
         </Box>
       </Box>
-    </PageBox>
+    </Box>
   );
 };
 

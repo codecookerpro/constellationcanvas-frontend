@@ -167,6 +167,15 @@ export const INITIAL_MAIN_STATE = Object.freeze({
   },
 });
 
+export const setIndexUpdater = (state, payload) => {
+  const { index } = payload;
+
+  return {
+    ...state,
+    index,
+  };
+};
+
 export const setCopiedWidgetUpdater = (state, payload) => {
   const { widget } = payload;
 

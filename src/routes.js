@@ -1,18 +1,30 @@
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 
-const Dashboard = lazy(() => import('pages/Dashboard'));
-const Login = lazy(() => import('pages/Login'));
-const Admin = lazy(() => import('pages/Admin'));
+import Layout from './components/Layout';
+
+import { ROUTE_MAP as routes } from 'constants/routes';
 
 const Routes = () => (
   <Suspense fallback={<div />}>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/" component={Dashboard} />
-        <Route exact path="/admin" component={Admin} />
-        <Route path="/login" component={Login} />
-        <Redirect to="/" />
+        {routes.map((route) => (
+          <Route
+            key={route.location}
+            path={route.location}
+            render={(props) => {
+              const Component = route.component;
+
+              return (
+                <Layout {...route.settings}>
+                  <Component />
+                </Layout>
+              );
+            }}
+          />
+        ))}
+        <Redirect to="/current-state" />
       </Switch>
     </BrowserRouter>
   </Suspense>
