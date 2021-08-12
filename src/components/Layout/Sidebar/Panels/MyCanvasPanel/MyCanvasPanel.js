@@ -65,17 +65,17 @@ export default function MyCanvasPanel() {
   return (
     <Box className={classes.root}>
       {canvases.map((canvas) => {
-        const active = pathname.startsWith(canvas.location);
+        const active = pathname.startsWith(canvas.path);
 
         return (
           <Link
             className={active ? classes.active : classes.link}
             key={canvas.title}
-            href={canvas.location}
+            href={canvas.path}
             onClick={(e) => {
               e.preventDefault();
 
-              history.push(canvas.location);
+              history.push(canvas.path);
               dispatch(setIndex(canvas.index));
             }}
           >

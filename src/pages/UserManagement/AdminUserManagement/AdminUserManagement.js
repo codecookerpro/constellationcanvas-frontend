@@ -8,7 +8,7 @@ import PersonAddIcon from '@material-ui/icons/PersonAddOutlined';
 import AdminUserManagementTable from './components/AdminUserManagementTable';
 import InviteDialog from './components/InviteDialog';
 
-import { USER_ROLES } from 'constants/user-roles';
+import { USER_ROLES } from 'constants/enums';
 
 const useStyles = makeStyles((theme) => ({
   root: {

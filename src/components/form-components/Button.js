@@ -8,6 +8,9 @@ export default withStyles((theme) => ({
     textTransform: 'uppercase',
     fontWeight: 'bold',
     fontSize: 13,
-    letterSpacing: '0.45px',
+    letterSpacing: 0.45,
+    width: 110,
+    height: 35,
+    boxShadow: 'none',
   },
 }))(Button);

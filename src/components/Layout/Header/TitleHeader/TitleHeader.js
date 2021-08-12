@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TitleHeader = (props) => {
   const classes = useStyles();
-  const role = useSelector((state) => state.profile.role);
+  const role = useSelector((state) => state.auth.profile.role);
 
   return (
     <Typography className={classes.root} variant="h1" component="h1">

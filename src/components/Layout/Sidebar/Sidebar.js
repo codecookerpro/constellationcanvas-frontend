@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 
 export default function Sidebar(props) {
   const classes = useStyles();
-  const role = useSelector((state) => state?.profile?.role);
+  const role = useSelector((state) => state.auth.profile?.role);
   const { pathname } = useLocation();
 
   return (
@@ -37,13 +37,13 @@ export default function Sidebar(props) {
           const Panel = item.component;
 
           if (!Panel) {
-            return <GroupBox key={item.title} title={item.title} location={item.location} />;
+            return <GroupBox key={item.title} title={item.title} path={item.path} />;
           }
 
           let active = item.type === SIDEBAR_ITEM_TYPES.canvas;
 
           if (item.type === SIDEBAR_ITEM_TYPES.canvas) {
-            active = item.children.findIndex((child) => pathname.startsWith(child.location)) !== -1;
+            active = item.children.findIndex((child) => pathname.startsWith(child.path)) !== -1;
           }
 
           return (

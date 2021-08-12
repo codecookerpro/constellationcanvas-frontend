@@ -82,7 +82,7 @@ export default function Layout(props) {
   const classes = useStyles();
   const { sidebar, header } = props;
 
-  const name = useSelector((state) => state.profile.name);
+  const name = useSelector((state) => state.auth.profile?.name);
 
   const Header = header.display ? headers[header.type] : undefined;
 

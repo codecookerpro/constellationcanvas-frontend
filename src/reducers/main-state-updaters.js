@@ -154,11 +154,11 @@ export const INITIAL_MAIN_STATE = Object.freeze({
       },
     ],
   },
-  [CANVAS_STATES.first]: {
+  [CANVAS_STATES.futureState1]: {
     topic: '',
     widgets: [],
   },
-  [CANVAS_STATES.second]: {
+  [CANVAS_STATES.futureState2]: {
     topic: '',
     widgets: [],
   },
