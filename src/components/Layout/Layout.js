@@ -7,10 +7,10 @@ import { createGlobalStyle } from 'styled-components/macro';
 
 import AccountBox from './AccountBox';
 import Sidebar from './Sidebar';
-import TitleBox from 'components/form-components/Title';
+import Title from 'components/form-components/Title';
 
 import { HEADER_MAP as headers } from './constants';
-import { SIDEBAR_WIDTH, HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE as title } from 'constants/user-interface';
+import { SIDEBAR_WIDTH, HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE } from 'constants/user-interface';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -93,7 +93,7 @@ export default function Layout(props) {
       {sidebar.display && (
         <Box className={classes.sidePane}>
           <Box className={classes.logo}>
-            <TitleBox title={title} />
+            <Title>{PROJECT_TITLE}</Title>
           </Box>
           <Box className={classes.sidebar}>
             <Sidebar />

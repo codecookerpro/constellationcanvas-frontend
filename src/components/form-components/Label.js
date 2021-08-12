@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export default styled.div`
-  margin-bottom: 9px;
+  margin-bottom: 6px;
   font-size: 12px;
   font-weight: 500;
   font-stretch: normal;

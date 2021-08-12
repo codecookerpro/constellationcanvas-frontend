@@ -1,20 +1,18 @@
 import { withStyles } from '@material-ui/core/styles';
-import MuiTypography from '@material-ui/core/Typography';
+import Typography from '@material-ui/core/Typography';
 
-const Typography = withStyles((theme) => ({
+export default withStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
+    width: 221,
+    height: 35,
     backgroundColor: theme.palette.primary.main,
-    padding: '9px 16px',
     borderRadius: 9999,
     color: 'white',
-    textTransform: 'uppercase',
     fontWeight: 'bold',
     fontSize: 14,
+    letterSpacing: '0.49px',
   },
-}))(MuiTypography);
-
-export default function TitleBox({ title }) {
-  return <Typography>{title}</Typography>;
-}
+}))(Typography);

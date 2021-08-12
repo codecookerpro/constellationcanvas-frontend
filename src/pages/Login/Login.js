@@ -1,6 +1,6 @@
 import { Box, makeStyles } from '@material-ui/core';
-import { Input, Button, Label } from 'components/form-components';
-import { LOGO_URL } from 'constants/user-interface';
+import { Title, Input, Button, Label } from 'components/form-components';
+import { PROJECT_TITLE } from 'constants/user-interface';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,26 +12,23 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
   },
   rectangle: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
     width: '360px',
-    height: '361px',
     margin: '0 0 100px',
     padding: '38px 46px 37px 47px',
     borderRadius: '15px',
     backgroundColor: '#fff',
-    display: 'flex',
-    justifyContent: 'flex-start',
-    flexDirection: 'column',
   },
-  logo: {
-    width: '221px',
-    height: '35px',
+  title: {
     margin: '0 23px 38px',
-    objectFit: 'contain',
   },
   buttonWrapper: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 18,
   },
 }));
 
@@ -41,7 +38,7 @@ const Login = () => {
   return (
     <Box className={classes.root}>
       <Box className={classes.rectangle}>
-        <img src={LOGO_URL} className={classes.logo} alt="logo" />
+        <Title className={classes.title}>{PROJECT_TITLE}</Title>
 
         <Label>Participant Code:</Label>
         <Input placeholder="Enter participant code..." />
@@ -53,7 +50,7 @@ const Login = () => {
           <Button color="primary" variant="contained">
             SUBMIT
           </Button>
-          <Button color="secondary" variant="contained" style={{ marginLeft: 4 }}>
+          <Button color="secondary" variant="contained" style={{ marginLeft: 16 }}>
             RESET
           </Button>
         </Box>
