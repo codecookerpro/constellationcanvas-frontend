@@ -12,6 +12,13 @@ const Button = withStyles({
     fontWeight: 500,
     letterSpacing: 0.49,
     textTransform: 'capitalize',
+
+    '&:hover': {
+      backgroundColor: '#4a95d7',
+    },
+    '&:active': {
+      backgroundColor: '#4a95d7',
+    },
   },
 })(MuiButton);
 

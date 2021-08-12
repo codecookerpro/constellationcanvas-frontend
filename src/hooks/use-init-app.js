@@ -19,16 +19,22 @@ const useInitApp = () => {
       return;
     }
 
-    const storedProfile = JSON.parse(localStorage.profile);
-
     if (!profile) {
+      const storedProfile = JSON.parse(localStorage.profile);
       dispatch(setUserInfo(accessToken, storedProfile));
+      return;
     }
 
-    if (!storedProfile.name) {
+    if (!profile.name) {
       history.push(LINKS.screenName);
-    } else if (storedProfile.role === USER_ROLES.admin) {
+    } else if (profile.role === USER_ROLES.admin) {
       history.push(LINKS.userManagement);
+    } else if (history.location.pathname === '/') {
+      if (profile.role === USER_ROLES.facilitator) {
+        history.push(LINKS.userManagement);
+      } else {
+        history.push(LINKS.current);
+      }
     }
 
     axios.interceptors.request.use(
