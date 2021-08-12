@@ -7,7 +7,7 @@ export const TEXT_WIDGET_DEFAULT_PROPS = {
   text1: { padding: { top: 0.07, right: 0.05, bottom: 0.07, left: 0.05 }, width: 154, height: 64 },
   text2: { padding: { top: 0.09, right: 0.07, bottom: 0.25, left: 0.07 }, width: 112, height: 108 },
   text3: { padding: { top: 0.22, right: 0.18, bottom: 0.28, left: 0.12 }, width: 168, height: 132 },
-  text4: { padding: { top: 0.27, right: 0.26, bottom: 0.38, left: 0.2 }, width: 178, height: 170 },
+  text4: { padding: { top: 0.27, right: 0.2, bottom: 0.38, left: 0.26 }, width: 178, height: 170 },
 };
 
 export const TRANS_TYPES = keyMirror({
@@ -140,7 +140,7 @@ export const WIDGET_GROUPS = [
     scalable: true,
     rotatable: true,
     keepRatio: false,
-    defaultArea: 3000,
+    defaultArea: 4000,
     imageType: 'svg',
     count: 10,
   },
@@ -253,4 +253,11 @@ export const WIDGET_SCALE_LIMIT = {
 export const WIDGET_EDITOR_SCALE_LIMIT = {
   min: 0.2,
   max: 3.5,
+};
+
+export const WIDGET_DESCRIPTIONS = {
+  relationship7: 'Collaborative',
+  relationship8: 'Conflicted',
+  relationship9: 'Hostile',
+  relationship10: 'Cut-off',
 };
