@@ -1,22 +1,13 @@
-import { makeStyles } from '@material-ui/core';
-import { UI_COLORS } from 'constants/user-interface';
+import { Button } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles({
+export default withStyles((theme) => ({
   root: {
-    padding: '10px 28px 10px 29px',
-    borderRadius: '5px',
-    backgroundColor: (props) => props.color,
+    borderRadius: 5,
+    color: 'white',
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
+    fontSize: 13,
+    letterSpacing: '0.45px',
   },
-});
-
-const Button = (props) => {
-  const classes = useStyles({ color: props.color || UI_COLORS.lightIndigo });
-
-  return (
-    <button className={classes.root} {...props}>
-      {props.children}
-    </button>
-  );
-};
-
-export default Button;
+}))(Button);

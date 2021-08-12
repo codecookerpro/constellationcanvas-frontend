@@ -1,1 +1,4 @@
-export { default as TitleBox } from './TitleBox';
+export { default as TitleBox } from './Title';
+export { default as Input } from './Input';
+export { default as Button } from './Button';
+export { default as Label } from './Label';

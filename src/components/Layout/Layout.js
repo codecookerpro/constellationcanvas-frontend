@@ -7,7 +7,7 @@ import { createGlobalStyle } from 'styled-components/macro';
 
 import AccountBox from './AccountBox';
 import Sidebar from './Sidebar';
-import TitleBox from 'components/form-components/TitleBox';
+import TitleBox from 'components/form-components/Title';
 
 import { HEADER_MAP as headers } from './constants';
 import { SIDEBAR_WIDTH, HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE as title } from 'constants/user-interface';
