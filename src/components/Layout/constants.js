@@ -1,9 +1,9 @@
 import { MyCanvasPanel, ParticipantPanel, ToolBoxPanel } from './Sidebar/Panels';
 import { TopicHeader, TitleHeader } from './Header';
 
-import { HEADER_TYPES, LOCATION_MAP } from 'constants/routes';
-import { USER_ROLES } from 'constants/user-roles';
 import { CANVAS_STATES } from 'reducers/constants';
+import { HEADER_TYPES, USER_ROLES } from 'constants/enums';
+import LINKS from 'constants/links';
 
 export const HEADER_MAP = {
   [HEADER_TYPES.topic]: TopicHeader,
@@ -31,18 +31,18 @@ export const SIDEBAR_ITEMS = [
     children: [
       {
         title: 'Current State',
-        location: LOCATION_MAP.current,
+        path: LINKS.current,
         index: CANVAS_STATES.current,
       },
       {
         title: 'Future State 1',
-        location: LOCATION_MAP.first,
-        index: CANVAS_STATES.first,
+        path: LINKS.futureState1,
+        index: CANVAS_STATES.futureState1,
       },
       {
         title: 'Future State 2',
-        location: LOCATION_MAP.second,
-        index: CANVAS_STATES.second,
+        path: LINKS.futureState2,
+        index: CANVAS_STATES.futureState2,
       },
     ],
   },
@@ -62,6 +62,6 @@ export const SIDEBAR_ITEMS = [
     title: 'USER MANAGEMENT',
     type: SIDEBAR_ITEM_TYPES.manage,
     role: [USER_ROLES.facilitator, USER_ROLES.admin],
-    location: LOCATION_MAP.manage,
+    path: LINKS.userManagement,
   },
 ];

@@ -1,4 +1,15 @@
-import { USER_ROLES } from './user-roles';
+import { keyMirror } from 'utils';
+
+export const USER_ROLES = keyMirror({
+  admin: null,
+  facilitator: null,
+  user: null,
+});
+
+export const HEADER_TYPES = keyMirror({
+  topic: null,
+  title: null,
+});
 
 export const USER_ACTION_TYPES = {
   invite: 'invite',

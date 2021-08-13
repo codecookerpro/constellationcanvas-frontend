@@ -14,6 +14,12 @@ const ActionTypes = keyMirror({
   SEND_TO_BACK: null,
   BRING_FORWARD: null,
   SEND_BACKWARD: null,
+
+  // error
+  HANDLE_ERROR: null,
+
+  // auth
+  SET_USER_INFO: null,
 });
 
 export default ActionTypes;

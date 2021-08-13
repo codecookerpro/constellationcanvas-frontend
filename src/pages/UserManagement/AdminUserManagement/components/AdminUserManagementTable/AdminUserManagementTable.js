@@ -10,8 +10,7 @@ import Menu from '@material-ui/core/Menu';
 import { StyledTableCell, StyledMenuItem } from './styled-components';
 import Row from './Row';
 
-import { USER_ROLES } from 'constants/user-roles';
-import { USER_ACTIONS as userActions } from 'constants/user-actions';
+import { USER_ACTIONS, USER_ROLES } from 'constants/enums';
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -82,13 +81,11 @@ export default function AdminUserManagementTable(props) {
         onClose={handleClose}
         transitionDuration={0}
       >
-        {userActions
-          .filter((action) => action.role === USER_ROLES.all || action.role === menuState.role)
-          .map((action) => (
-            <StyledMenuItem key={action.title} onClick={handleClose}>
-              {action.title}
-            </StyledMenuItem>
-          ))}
+        {USER_ACTIONS.filter((action) => action.role === USER_ROLES.all || action.role === menuState.role).map((action) => (
+          <StyledMenuItem key={action.title} onClick={handleClose}>
+            {action.title}
+          </StyledMenuItem>
+        ))}
       </Menu>
     </TableContainer>
   );

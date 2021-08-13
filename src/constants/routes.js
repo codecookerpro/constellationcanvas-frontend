@@ -1,21 +1,9 @@
 import CanvasBoard from 'pages/CanvasBoard';
 import UserManagement from 'pages/UserManagement';
-import Login from 'pages/Login';
+import { Register, ScreenName } from 'pages/Auth';
 
-import { USER_ROLES } from './user-roles';
-
-export const LOCATION_MAP = {
-  current: '/current-state',
-  first: '/future-state-1',
-  second: '/future-state-2',
-  manage: '/user-management',
-  login: '/login',
-};
-
-export const HEADER_TYPES = {
-  topic: 'topic',
-  title: 'title',
-};
+import { HEADER_TYPES, USER_ROLES } from './enums';
+import LINKS from './links';
 
 export const DEFAULT_LAYOUT_SETTINGS = {
   sidebar: {
@@ -27,27 +15,27 @@ export const DEFAULT_LAYOUT_SETTINGS = {
   },
 };
 
-export const ROUTE_MAP = [
+const ROUTES = [
   {
-    location: LOCATION_MAP.current,
+    path: LINKS.current,
     component: CanvasBoard,
     settings: DEFAULT_LAYOUT_SETTINGS,
     role: [USER_ROLES.user, USER_ROLES.facilitator],
   },
   {
-    location: LOCATION_MAP.first,
+    path: LINKS.futureState1,
     component: CanvasBoard,
     settings: DEFAULT_LAYOUT_SETTINGS,
     role: [USER_ROLES.user, USER_ROLES.facilitator],
   },
   {
-    location: LOCATION_MAP.second,
+    path: LINKS.futureState2,
     component: CanvasBoard,
     settings: DEFAULT_LAYOUT_SETTINGS,
     role: [USER_ROLES.user, USER_ROLES.facilitator],
   },
   {
-    location: LOCATION_MAP.manage,
+    path: LINKS.userManagement,
     component: UserManagement,
     settings: {
       ...DEFAULT_LAYOUT_SETTINGS,
@@ -59,8 +47,8 @@ export const ROUTE_MAP = [
     role: [USER_ROLES.admin, USER_ROLES.facilitator],
   },
   {
-    location: LOCATION_MAP.login,
-    component: Login,
+    path: LINKS.register,
+    component: Register,
     settings: {
       sidebar: {
         display: false,
@@ -70,6 +58,22 @@ export const ROUTE_MAP = [
         type: HEADER_TYPES.topic,
       },
     },
-    role: [USER_ROLES.guest],
+    role: [],
+  },
+  {
+    path: LINKS.screenName,
+    component: ScreenName,
+    settings: {
+      sidebar: {
+        display: false,
+      },
+      header: {
+        display: false,
+        type: HEADER_TYPES.topic,
+      },
+    },
+    role: [],
   },
 ];
+
+export default ROUTES;

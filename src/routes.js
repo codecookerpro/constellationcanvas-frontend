@@ -1,33 +1,34 @@
-import { Suspense } from 'react';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { Suspense, useMemo } from 'react';
+import { Route, Switch } from 'react-router-dom';
 
 import Layout from './components/Layout';
 
-import { ROUTE_MAP as routes } from 'constants/routes';
+import ROUTES from 'constants/routes';
+import { useSelector } from 'react-redux';
 
-const Routes = () => (
-  <Suspense fallback={<div />}>
-    <BrowserRouter>
+const Routes = () => {
+  const profile = useSelector((state) => state.auth.profile);
+  const routes = useMemo(() => {
+    return ROUTES.filter((route) => !route.role.length || route.role.includes(profile?.role));
+  }, [profile]);
+
+  return (
+    <Suspense fallback={<div />}>
       <Switch>
         {routes.map((route) => (
           <Route
-            key={route.location}
-            path={route.location}
-            render={(props) => {
-              const Component = route.component;
-
-              return (
-                <Layout {...route.settings}>
-                  <Component />
-                </Layout>
-              );
-            }}
+            key={route.path}
+            path={route.path}
+            render={(props) => (
+              <Layout {...route.settings}>
+                <route.component {...props} />
+              </Layout>
+            )}
           />
         ))}
-        <Redirect to="/current-state" />
       </Switch>
-    </BrowserRouter>
-  </Suspense>
-);
+    </Suspense>
+  );
+};
 
 export default Routes;

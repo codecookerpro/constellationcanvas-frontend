@@ -13,7 +13,7 @@ const useDynamicSize = (group, type, ref) => {
       const { defaultArea } = WIDGET_GROUPS.find((g) => g.type === group);
       const scale = Math.sqrt(defaultArea / area);
       setDim({ width: width * scale, height: height * scale });
-      setTimeout(() => ref.current.updateRect());
+      setTimeout(() => ref.current?.updateRect());
     });
     img.src = getImgUrl(group, type);
     // eslint-disable-next-line

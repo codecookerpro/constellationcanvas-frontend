@@ -36,17 +36,17 @@ const useStyles = makeStyles({
 export default function GroupBox(props) {
   const { pathname } = useLocation();
   const history = useHistory();
-  const { title, location } = props;
-  const classes = useStyles({ active: pathname.startsWith(location) });
+  const { title, path } = props;
+  const classes = useStyles({ active: pathname.startsWith(path) });
 
   const handleClick = (e) => {
     e.preventDefault();
 
-    history.push(location);
+    history.push(path);
   };
 
   return (
-    <Link className={classes.root} href={location} onClick={handleClick}>
+    <Link className={classes.root} href={path} onClick={handleClick}>
       {title}
       <ChevronRightIcon className={classes.expand} />
     </Link>
