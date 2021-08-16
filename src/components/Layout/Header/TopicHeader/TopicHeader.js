@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TopicHeader = () => {
   const classes = useStyles();
-  const topic = useSelector(({ main }) => main[main.index].topic);
+  const topic = useSelector(({ board }) => board.name);
   const [value, setValue] = useState(topic);
 
   const dispatch = useDispatch();
