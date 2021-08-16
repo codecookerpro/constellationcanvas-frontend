@@ -58,7 +58,7 @@ const ROUTES = [
         type: HEADER_TYPES.topic,
       },
     },
-    role: [],
+    role: [USER_ROLES.unknown],
   },
   {
     path: LINKS.screenName,
@@ -72,7 +72,7 @@ const ROUTES = [
         type: HEADER_TYPES.topic,
       },
     },
-    role: [],
+    role: [USER_ROLES.admin, USER_ROLES.facilitator, USER_ROLES.user],
   },
 ];
 

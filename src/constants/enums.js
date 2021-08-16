@@ -4,6 +4,7 @@ export const USER_ROLES = keyMirror({
   admin: null,
   facilitator: null,
   user: null,
+  unknown: null,
 });
 
 export const HEADER_TYPES = keyMirror({
