@@ -16,8 +16,9 @@ export const inviteToAccessToken = (params) => (dispatch) => {
     .catch((error) => dispatch(handleError(error)));
 };
 
-export const updateOwnProfile = (params) => (dispatch) => {
-  API.updateOwnProfile(params).then((data) => {
+export const updateOwnProfile = (params) => (dispatch, getState) => {
+  const { uuid } = getState().auth.profile;
+  API.updateOwnProfile(uuid, params).then((data) => {
     localStorage.setItem('profile', JSON.stringify(data));
     dispatch(setUserInfo(null, data));
     dispatch(setLoading(false));

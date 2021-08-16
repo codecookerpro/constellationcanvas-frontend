@@ -9,7 +9,7 @@ import axios from 'services/axios';
 const useInitApp = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const userRole = useSelector((state) => state.auth.profile.role);
+  const { role: userRole, name: userName } = useSelector((state) => state.auth.profile);
 
   useEffect(() => {
     const accessToken = localStorage.accessToken;
@@ -19,9 +19,24 @@ const useInitApp = () => {
       return;
     }
 
+    axios.interceptors.request.use(
+      (config) => {
+        config.headers['Authorization'] = `Bearer ${accessToken}`;
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+
     if (userRole === USER_ROLES.unknown) {
       const storedProfile = JSON.parse(localStorage.profile);
       dispatch(setUserInfo(accessToken, storedProfile));
+      return;
+    }
+
+    if (!userName) {
+      history.push(LINKS.screenName);
       return;
     }
 
@@ -42,18 +57,8 @@ const useInitApp = () => {
       default:
         break;
     }
-
-    axios.interceptors.request.use(
-      (config) => {
-        config.headers['Authorization'] = `Bearer ${accessToken}`;
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
     // eslint-disable-next-line
-  }, [userRole]);
+  }, [userRole, userName]);
 };
 
 export default useInitApp;
