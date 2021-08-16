@@ -24,16 +24,10 @@ export const composeUrl = (urlData) => {
   }
 };
 
-/**
- * Used to send JSON data via GET query parameter
- * @param {String|String[]} urlData string or array of strings
- * @param {Object} data request data
- * @returns {Promise<AxiosResponse<any>>}
- */
-export const get = async (urlData, params) => await apiAxios.get(composeUrl(urlData), params);
-export const post = async (urlData, params) => await apiAxios.post(composeUrl(urlData), params);
-export const put = async (urlData, params) => await apiAxios.put(composeUrl(urlData), params);
-export const del = async (urlData, params) => await apiAxios.delete(composeUrl(urlData), { params });
-export const patch = async (urlData, params) => await apiAxios.patch(composeUrl(urlData), { params });
+export const get = async (url, params) => await apiAxios.get(composeUrl(url), { params });
+export const post = async (url, params) => await apiAxios.post(composeUrl(url), params);
+export const put = async (url, params) => await apiAxios.put(composeUrl(url), params);
+export const del = async (url, params) => await apiAxios.delete(composeUrl(url), { params });
+export const patch = async (url, params) => await apiAxios.patch(composeUrl(url), params);
 
 export default apiAxios;

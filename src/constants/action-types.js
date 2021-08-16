@@ -20,6 +20,9 @@ const ActionTypes = keyMirror({
 
   // auth
   SET_USER_INFO: null,
+
+  // aux
+  SET_LOADING: null,
 });
 
 export default ActionTypes;

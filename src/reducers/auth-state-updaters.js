@@ -5,6 +5,6 @@ export const INITIAL_AUTH_STATE = {
 
 export const setUserInfoUpdater = (state, { payload: { profile, accessToken } }) => ({
   ...state,
-  profile,
-  accessToken,
+  profile: profile || state.profile,
+  accessToken: accessToken || state.accessToken,
 });
