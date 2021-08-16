@@ -1,5 +1,9 @@
+import { USER_ROLES } from 'constants/enums';
+
 export const INITIAL_AUTH_STATE = {
-  profile: null,
+  profile: {
+    role: USER_ROLES.unknown,
+  },
   accessToken: null,
 };
 

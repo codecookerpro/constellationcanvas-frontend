@@ -9,7 +9,7 @@ import axios from 'services/axios';
 const useInitApp = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const profile = useSelector((state) => state.auth.profile);
+  const userRole = useSelector((state) => state.auth.profile.role);
 
   useEffect(() => {
     const accessToken = localStorage.accessToken;
@@ -19,23 +19,28 @@ const useInitApp = () => {
       return;
     }
 
-    if (!profile) {
+    if (userRole === USER_ROLES.unknown) {
       const storedProfile = JSON.parse(localStorage.profile);
       dispatch(setUserInfo(accessToken, storedProfile));
       return;
     }
 
-    // if (!profile.name) {
-    //   history.push(LINKS.screenName);
-    // } else
-    if (profile.role === USER_ROLES.admin) {
-      history.push(LINKS.userManagement);
-    } else if (history.location.pathname === '/') {
-      if (profile.role === USER_ROLES.facilitator) {
+    switch (userRole) {
+      case USER_ROLES.admin:
         history.push(LINKS.userManagement);
-      } else {
-        history.push(LINKS.current);
-      }
+        break;
+      case USER_ROLES.facilitator:
+        if ([LINKS.register, LINKS.screenName].includes(history.location.pathname)) {
+          history.push(LINKS.userManagement);
+        }
+        break;
+      case USER_ROLES.user:
+        if ([LINKS.register, LINKS.screenName].includes(history.location.pathname)) {
+          history.push(LINKS.userManagement);
+        }
+        break;
+      default:
+        break;
     }
 
     axios.interceptors.request.use(
@@ -48,7 +53,7 @@ const useInitApp = () => {
       }
     );
     // eslint-disable-next-line
-  }, [profile]);
+  }, [userRole]);
 };
 
 export default useInitApp;

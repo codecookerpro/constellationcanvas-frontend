@@ -7,21 +7,19 @@ import ROUTES from 'constants/routes';
 import { useSelector } from 'react-redux';
 
 const Routes = () => {
-  const profile = useSelector((state) => state.auth.profile);
-  const routes = useMemo(() => {
-    return ROUTES.filter((route) => !route.role.length || route.role.includes(profile?.role));
-  }, [profile]);
+  const userRole = useSelector((state) => state.auth.profile.role);
+  const routes = useMemo(() => ROUTES.filter(({ role }) => role.includes(userRole)), [userRole]);
 
   return (
     <Suspense fallback={<div />}>
       <Switch>
-        {routes.map((route) => (
+        {routes.map(({ path, settings, component: Component }) => (
           <Route
-            key={route.path}
-            path={route.path}
+            key={path}
+            path={path}
             render={(props) => (
-              <Layout {...route.settings}>
-                <route.component {...props} />
+              <Layout {...settings}>
+                <Component {...props} />
               </Layout>
             )}
           />
