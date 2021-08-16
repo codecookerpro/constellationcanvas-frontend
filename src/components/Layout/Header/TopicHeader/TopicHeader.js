@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 
 import { StyledLabel, StyledInput } from './styled-components';
 
-import { setTopic } from 'actions/boards';
+import { updateBoard } from 'actions/boards';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +32,7 @@ const TopicHeader = () => {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      dispatch(setTopic(e.target.value));
+      dispatch(updateBoard({ name: e.target.value }));
     }
   };
 

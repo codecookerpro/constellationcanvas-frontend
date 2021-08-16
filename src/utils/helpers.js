@@ -3,7 +3,7 @@ export const keyMirror = (obj) =>
     Object.keys(obj).reduce(
       (acc, key) => ({
         ...acc,
-        [key]: obj[key] ? obj[key] : key,
+        [key]: obj[key] !== null ? obj[key] : key,
       }),
       {}
     )

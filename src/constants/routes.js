@@ -17,19 +17,7 @@ export const DEFAULT_LAYOUT_SETTINGS = {
 
 const ROUTES = [
   {
-    path: LINKS.current,
-    component: CanvasBoard,
-    settings: DEFAULT_LAYOUT_SETTINGS,
-    role: [USER_ROLES.user, USER_ROLES.facilitator],
-  },
-  {
-    path: LINKS.futureState1,
-    component: CanvasBoard,
-    settings: DEFAULT_LAYOUT_SETTINGS,
-    role: [USER_ROLES.user, USER_ROLES.facilitator],
-  },
-  {
-    path: LINKS.futureState2,
+    path: LINKS.board,
     component: CanvasBoard,
     settings: DEFAULT_LAYOUT_SETTINGS,
     role: [USER_ROLES.user, USER_ROLES.facilitator],

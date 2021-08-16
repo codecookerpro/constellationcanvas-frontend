@@ -5,6 +5,10 @@ import { setUsers } from './auth';
 import { setLoading } from './auxiliary';
 import { handleError } from './error';
 
+export const setBoardDetail = createAction(ActionTypes.SET_BOARD_DETAIL, (payload) => payload);
+export const setCanvasIndex = createAction(ActionTypes.SET_CANVAS_INDEX, (payload) => payload);
+export const setBoard = createAction(ActionTypes.SET_TOPIC, (payload) => payload);
+
 export const getBoardDetail = () => (dispatch, getState) => {
   dispatch(setLoading(true));
 
@@ -18,20 +22,22 @@ export const getBoardDetail = () => (dispatch, getState) => {
     .catch((error) => dispatch(handleError(error)));
 };
 
-export const setBoardDetail = createAction(ActionTypes.SET_BOARD_DETAIL, (payload) => payload);
+export const switchCanvas = (index) => (dispatch, getState) => {
+  dispatch(setLoading(true));
 
-export const setIndex = (index) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.SET_INDEX,
-    index,
+  const { boardUUID } = getState().auth.profile;
+  API.switchCanvas(boardUUID, index).then(() => {
+    dispatch(setCanvasIndex(index));
+    dispatch(getBoardDetail());
   });
 };
 
-export const setTopic = (topic) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.SET_TOPIC,
-    topic,
-  });
+export const updateBoard = (params) => (dispatch) => {
+  API.updateBoard(params)
+    .then((data) => {
+      dispatch(setBoard(data));
+    })
+    .catch((error) => dispatch(handleError(error)));
 };
 
 export const setCopiedWidget = (widget) => (dispatch) => {

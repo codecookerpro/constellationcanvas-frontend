@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 import authStateReducer from './auth-state';
-import mainStateReducer from './main-state';
+import mainStateReducer from './board-state';
 import auxStateReducer from './aux-state';
 
 const reducers = combineReducers({

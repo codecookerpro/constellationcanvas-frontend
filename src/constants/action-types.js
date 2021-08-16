@@ -3,8 +3,7 @@ import { keyMirror } from 'utils';
 const ActionTypes = keyMirror({
   // canvas
   SET_BOARD_DETAIL: null,
-  SET_PARTICIPANTS: null,
-  SET_INDEX: null,
+  SET_CANVAS_INDEX: null,
   SET_TOPIC: null,
   SET_COPIED_WIDGET: null,
   ADD_WIDGET: null,

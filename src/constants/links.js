@@ -1,7 +1,5 @@
 const LINKS = {
-  current: '/current-state',
-  futureState1: '/future-state-1',
-  futureState2: '/future-state-2',
+  board: '/board/:index',
   userManagement: '/user-management',
   register: '/register',
   screenName: '/screen-name',
