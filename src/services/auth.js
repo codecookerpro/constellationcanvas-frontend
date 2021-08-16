@@ -4,6 +4,6 @@ export const inviteToAccessToken = async (params) => {
   return await post('auth', params);
 };
 
-export const updateOwnProfile = async (params) => {
-  return await patch(['users', 'profile'], params);
+export const updateOwnProfile = async (uuid, data) => {
+  return await patch(['users', uuid], data);
 };
