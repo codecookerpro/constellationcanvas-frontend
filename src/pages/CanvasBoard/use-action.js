@@ -13,7 +13,7 @@ import {
   sendToBack,
   bringForward,
   sendBackward,
-} from 'actions/canvasboards';
+} from 'actions/boards';
 import LINKS from 'constants/links';
 import { CANVAS_STATES } from 'reducers/constants';
 

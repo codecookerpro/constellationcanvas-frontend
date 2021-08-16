@@ -2,6 +2,8 @@ import { keyMirror } from 'utils';
 
 const ActionTypes = keyMirror({
   // canvas
+  SET_BOARD_DETAIL: null,
+  SET_PARTICIPANTS: null,
   SET_INDEX: null,
   SET_TOPIC: null,
   SET_COPIED_WIDGET: null,
@@ -20,6 +22,7 @@ const ActionTypes = keyMirror({
 
   // auth
   SET_USER_INFO: null,
+  SET_USERS: null,
 
   // aux
   SET_LOADING: null,

@@ -144,8 +144,8 @@ const WidgetEditor = ({
           ...copiedWidget,
           transform: {
             ...copiedWidget.transform,
-            tx: contextState.mouseX - baseX,
-            ty: contextState.mouseY - baseY,
+            tx: (contextState.mouseX - baseX) / zoom,
+            ty: (contextState.mouseY - baseY) / zoom,
           },
         };
         addWidget(newWidget);

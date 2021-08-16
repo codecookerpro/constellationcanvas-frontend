@@ -5,6 +5,9 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 
 import { generateAvatarName } from 'utils/helpers';
+import { useDispatch } from 'react-redux';
+import { setUserInfo } from 'actions';
+import { USER_ROLES } from 'constants/enums';
 
 const useStyles = makeStyles({
   root: {
@@ -41,9 +44,15 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AccountBox(props) {
+export default function AccountBox({ displayName }) {
   const classes = useStyles();
-  const { displayName } = props;
+  const dispatch = useDispatch();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.clear();
+    dispatch(setUserInfo('', { role: USER_ROLES.unknown }));
+  };
 
   return (
     <Box className={classes.root}>
@@ -52,7 +61,7 @@ export default function AccountBox(props) {
       </Box>
       <Box className={classes.info}>
         <Typography className={classes.username}>{displayName}</Typography>
-        <Link className={classes.logout} href="/logout">
+        <Link className={classes.logout} onClick={handleLogout}>
           Log out
         </Link>
       </Box>

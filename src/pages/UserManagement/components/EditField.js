@@ -3,19 +3,22 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
 import BorderColorIcon from '@material-ui/icons/BorderColorOutlined';
 import DoneIcon from '@material-ui/icons/Done';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'right',
     padding: '1px 0',
   },
   input: {
-    '& .Mui-disabled': {
+    border: 'none',
+    '&:disabled': {
       color: 'black',
+    },
+    '&:focus': {
+      outline: 'none',
     },
   },
   editing: {
@@ -62,10 +65,8 @@ const EditField = (props) => {
     e.preventDefault();
 
     if (!editing) {
-      setTimeout(() => {
-        input.current.focus();
-      }, 100);
       setEditing(true);
+      setTimeout(() => input.current.focus());
     } else {
       handleSubmit();
     }
@@ -73,8 +74,8 @@ const EditField = (props) => {
 
   return (
     <Box className={clsx(classes.root, editing && classes.editing)}>
-      <InputBase
-        inputRef={input}
+      <input
+        ref={input}
         className={classes.input}
         disabled={!editing}
         value={value}

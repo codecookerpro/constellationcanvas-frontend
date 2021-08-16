@@ -5,8 +5,8 @@ import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
-import { setIndex } from 'actions/canvasboards';
-import { SIDEBAR_ITEMS as items } from 'components/Layout/constants';
+import { setIndex } from 'actions/boards';
+import { SIDEBAR_ITEMS } from 'components/Layout/constants';
 
 const useStyles = makeStyles({
   root: {
@@ -60,7 +60,7 @@ export default function MyCanvasPanel() {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const canvases = items[0].children;
+  const canvases = SIDEBAR_ITEMS[0].children;
 
   return (
     <Box className={classes.root}>
