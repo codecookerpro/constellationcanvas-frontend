@@ -7,7 +7,7 @@ export const getUniqueId = () => {
 };
 
 export const getMaxDepth = (widgets) => {
-  return _.max(widgets.map((w) => w.depth));
+  return _.max(widgets.map((w) => w.depth)) || 0;
 };
 
 export const bringToFront = (widgets, id) => {

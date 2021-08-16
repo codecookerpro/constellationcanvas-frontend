@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 
 import { StyledLabel, StyledInput } from './styled-components';
 
-import { setTopic } from 'actions/canvasboards';
+import { setTopic } from 'actions/boards';
 
 const useStyles = makeStyles((theme) => ({
   root: {

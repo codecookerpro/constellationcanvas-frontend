@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Table from '@material-ui/core/Table';
@@ -12,6 +12,8 @@ import SyncIcon from '@material-ui/icons/SyncOutlined';
 import MoreHorizIcon from '@material-ui/icons/MoreHorizOutlined';
 
 import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu } from '../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { getBoardDetail, getInviteCode, inviteUser, resendCode, updateUser } from 'actions';
 
 const useStyles = makeStyles({
   root: {
@@ -32,7 +34,7 @@ const useStyles = makeStyles({
   },
 });
 
-const TABLE_COLUMN_MAP = [
+const TABLE_COLUMNS = [
   {
     label: 'Email',
     width: 300,
@@ -58,65 +60,38 @@ const TABLE_COLUMN_MAP = [
   },
 ];
 
-const USER_MAP = [
-  {
-    uuid: 'b6b7d521-805e-458a-8595-4a671373bdb6',
-    email: 'sean@abc.com',
-    name: 'Sean Call',
-    inviteCode: '23908wevonowei',
-    type: 'free',
-    date: '2021-04-01',
-  },
-  {
-    uuid: 'b6b7d521-805e-458a-8595-4a671373bdb7',
-    email: 'rob@abc.com',
-    name: 'Rob Jones',
-    inviteCode: 'ergew3363434w',
-    type: 'free',
-    date: '2021-04-01',
-  },
-  {
-    uuid: 'b6b7d521-805e-458a-8595-4a671373bdb8',
-    email: 'victor@abc.com',
-    name: 'Victor Ashford',
-    inviteCode: '34fw0nwe09233',
-    type: 'free',
-    date: '2021-04-01',
-  },
-];
-
 export default function FacilitatorUserManagement(props) {
   const classes = useStyles();
-  const [users, setUsers] = useState(USER_MAP);
+  const dispatch = useDispatch();
+  const {
+    users: allUsers,
+    profile: { uuid: currentUser },
+  } = useSelector((state) => state.auth);
+  const users = useMemo(() => allUsers.filter((u) => u.uuid !== currentUser), [allUsers, currentUser]);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [menuState, setMenuState] = useState({
     id: null,
     anchorEl: null,
   });
 
+  // eslint-disable-next-line
+  useEffect(() => dispatch(getBoardDetail()), []);
+
   const handleInviteDialogOpen = () => {
     setInviteDialogOpen(true);
   };
 
-  const handleInviteDialogClose = () => {
+  const handleSubmit = (email) => {
     setInviteDialogOpen(false);
+    dispatch(inviteUser(email));
   };
 
   const handleUserChange = (id, type, value) => {
-    setUsers(
-      users.map((user) =>
-        user.uuid !== id
-          ? user
-          : {
-              ...user,
-              [type]: value,
-            }
-      )
-    );
+    dispatch(updateUser(id, { [type]: value }));
   };
 
   const handleSync = (id) => {
-    alert(id);
+    dispatch(getInviteCode(id));
   };
 
   const handleMenuOpen = (e, id) => {
@@ -134,12 +109,11 @@ export default function FacilitatorUserManagement(props) {
   };
 
   const handleUserDelete = () => {
-    setUsers(users.filter((user) => user.uuid !== menuState.id));
     handleMenuClose();
   };
 
   const handleCodeResend = () => {
-    alert(menuState.id);
+    dispatch(resendCode(menuState.id));
     handleMenuClose();
   };
 
@@ -154,7 +128,7 @@ export default function FacilitatorUserManagement(props) {
         <Table>
           <TableHead>
             <TableRow>
-              {TABLE_COLUMN_MAP.map((column) => (
+              {TABLE_COLUMNS.map((column) => (
                 <TableCell key={column.label} width={column.width}>
                   {column.label}
                 </TableCell>
@@ -195,7 +169,7 @@ export default function FacilitatorUserManagement(props) {
         </UserActionMenu>
       </UserTableContainer>
 
-      <InviteDialog open={inviteDialogOpen} handleClose={handleInviteDialogClose} title="Invite User" />
+      <InviteDialog open={inviteDialogOpen} title="Invite User" onSubmit={handleSubmit} onClose={() => setInviteDialogOpen(false)} />
     </Box>
   );
 }

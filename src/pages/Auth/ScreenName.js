@@ -1,20 +1,19 @@
 import { Box } from '@material-ui/core';
-import { setLoading, updateOwnProfile } from 'actions';
+import { updateUser } from 'actions';
 import { Title, Input, Button, Label } from 'components/form-components';
 import { PROJECT_TITLE } from 'constants/user-interface';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './use-styles';
 
 const SetScreenName = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [screenName, setScreenName] = useState('');
-
+  const userUUID = useSelector((state) => state.auth.profile.uuid);
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(setLoading(true));
-    dispatch(updateOwnProfile({ name: screenName }));
+    dispatch(updateUser(userUUID, { name: screenName }));
   };
 
   const handleReset = (e) => {
