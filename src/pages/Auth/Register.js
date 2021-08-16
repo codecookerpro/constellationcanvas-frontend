@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { inviteToAccessToken } from 'actions/auth';
 import useStyles from './use-styles';
+import { setLoading } from 'actions';
 
 const Login = () => {
   const classes = useStyles();
@@ -13,7 +14,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    dispatch(setLoading(true));
     dispatch(inviteToAccessToken({ inviteCode }));
   };
 

@@ -1,5 +1,7 @@
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
@@ -22,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     backgroundColor: 'white',
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
   },
   sidePane: {
     display: 'flex',
@@ -82,14 +88,17 @@ export default function Layout(props) {
   const classes = useStyles();
   const { sidebar, header } = props;
 
-  const name = useSelector((state) => state.auth.profile?.name);
-
+  const profile = useSelector((state) => state.auth.profile);
+  const auxState = useSelector((state) => state.aux);
   const Header = header.display ? headers[header.type] : undefined;
 
   return (
     <Box className={classes.root}>
       <CssBaseline />
       <GlobalStyle />
+      <Backdrop className={classes.backdrop} open={auxState.loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {sidebar.display && (
         <Box className={classes.sidePane}>
           <Box className={classes.logo}>
@@ -107,7 +116,7 @@ export default function Layout(props) {
               <Header />
             </Box>
             <Box className={classes.account}>
-              <AccountBox displayName={name} />
+              <AccountBox displayName={profile?.name} />
             </Box>
           </Box>
         )}

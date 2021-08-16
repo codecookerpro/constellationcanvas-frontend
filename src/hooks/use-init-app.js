@@ -25,9 +25,10 @@ const useInitApp = () => {
       return;
     }
 
-    if (!profile.name) {
-      history.push(LINKS.screenName);
-    } else if (profile.role === USER_ROLES.admin) {
+    // if (!profile.name) {
+    //   history.push(LINKS.screenName);
+    // } else
+    if (profile.role === USER_ROLES.admin) {
       history.push(LINKS.userManagement);
     } else if (history.location.pathname === '/') {
       if (profile.role === USER_ROLES.facilitator) {
