@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     border: 'none',
+    backgroundColor: 'inherit',
     '&:disabled': {
       color: 'black',
     },
@@ -24,13 +25,13 @@ const useStyles = makeStyles((theme) => ({
   editing: {
     border: '1px solid #e5e5e5',
     padding: '0px 5px',
-    margin: '0px -5px',
+    margin: '0px -6px',
   },
 }));
 
 const EditField = (props) => {
   const classes = useStyles();
-  const [value, setValue] = useState(props.value);
+  const [value, setValue] = useState(props.value || '');
   const [editing, setEditing] = useState(false);
   const input = useRef();
   const button = useRef();

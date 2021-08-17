@@ -1,4 +1,4 @@
-import { post, patch, get, put } from 'services/axios';
+import { post, patch, get, put, del } from 'services/axios';
 
 export const inviteToAccessToken = async (params) => {
   return await post('auth', params);
@@ -12,6 +12,10 @@ export const inviteUser = async (params) => {
   return await post(['invite', 'user'], params);
 };
 
+export const inviteFacilitator = async (params) => {
+  return await post(['invite', 'facilitator'], params);
+};
+
 export const getUsers = async (params) => {
   return await get('users', params);
 };
@@ -22,4 +26,8 @@ export const resendCode = async (userUUID) => {
 
 export const getInviteCode = async (userUUID) => {
   return await put(['invite', 'invite-code', userUUID]);
+};
+
+export const deleteUser = async (uuid) => {
+  return await del(['users', uuid]);
 };

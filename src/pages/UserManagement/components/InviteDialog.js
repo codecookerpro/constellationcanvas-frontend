@@ -4,11 +4,13 @@ import { Title, Button, Input, Label, Dialog } from 'components/form-components'
 
 const InviteDialog = ({ title, open, onClose, onSubmit }) => {
   const [email, setEmail] = useState('');
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onClose();
+
     onSubmit(email);
   };
+
   const handleChange = (e) => {
     setEmail(e.target.value);
   };

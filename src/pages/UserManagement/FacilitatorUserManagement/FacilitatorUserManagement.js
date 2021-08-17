@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Table from '@material-ui/core/Table';
@@ -11,21 +12,28 @@ import MenuItem from '@material-ui/core/MenuItem';
 import SyncIcon from '@material-ui/icons/SyncOutlined';
 import MoreHorizIcon from '@material-ui/icons/MoreHorizOutlined';
 
-import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu } from '../components';
-import { useDispatch, useSelector } from 'react-redux';
-import { getBoardDetail, getInviteCode, inviteUser, resendCode, updateUser } from 'actions';
+import { getBoard, getInviteCode, inviteUser, resendCode, updateUser, deleteUser } from 'actions';
+
+import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu, ConfirmDialog } from '../components';
+
+import { TABLE_COLUMN_MAP } from '../constants';
+import { HEADER_HEIGHT } from 'constants/user-interface';
 
 const useStyles = makeStyles({
   root: {
     paddingLeft: 30,
     paddingRight: 60,
     paddingTop: 60,
+    paddingBottom: 60,
   },
   toolbar: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     marginBottom: 30,
+  },
+  tableContainer: {
+    maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 170px)`,
   },
   inviteCell: {
     display: 'flex',
@@ -34,56 +42,46 @@ const useStyles = makeStyles({
   },
 });
 
-const TABLE_COLUMNS = [
-  {
-    label: 'Email',
-    width: 300,
-  },
-  {
-    label: 'Screen Name',
-    width: 250,
-  },
-  {
-    label: 'Invite Code',
-    width: 150,
-  },
-  {
-    label: 'Type',
-    width: 50,
-  },
-  {
-    label: 'Date (Y-M-D)',
-    width: 150,
-  },
-  {
-    label: 'Actions',
-  },
-];
-
 export default function FacilitatorUserManagement(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
     users: allUsers,
-    profile: { uuid: currentUser },
+    profile: { uuid: currentUser, boardUUID },
   } = useSelector((state) => state.auth);
   const users = useMemo(() => allUsers.filter((u) => u.uuid !== currentUser), [allUsers, currentUser]);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [menuState, setMenuState] = useState({
     id: null,
     anchorEl: null,
   });
 
   // eslint-disable-next-line
-  useEffect(() => dispatch(getBoardDetail()), []);
+  useEffect(() => dispatch(getBoard()), []);
 
   const handleInviteDialogOpen = () => {
     setInviteDialogOpen(true);
   };
 
   const handleSubmit = (email) => {
+    setTimeout(handleMenuClose, 200);
     setInviteDialogOpen(false);
-    dispatch(inviteUser(email));
+    dispatch(inviteUser(email, boardUUID));
+  };
+
+  const handleConfirmDialogOpen = () => {
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDialogClose = () => {
+    setTimeout(handleMenuClose, 200);
+    setConfirmDialogOpen(false);
+  };
+
+  const handleConfirm = () => {
+    dispatch(deleteUser(menuState.id));
+    handleConfirmDialogClose();
   };
 
   const handleUserChange = (id, type, value) => {
@@ -109,7 +107,7 @@ export default function FacilitatorUserManagement(props) {
   };
 
   const handleUserDelete = () => {
-    handleMenuClose();
+    handleConfirmDialogOpen();
   };
 
   const handleCodeResend = () => {
@@ -124,11 +122,11 @@ export default function FacilitatorUserManagement(props) {
         <InviteButton onClick={handleInviteDialogOpen}>Invite User</InviteButton>
       </Box>
 
-      <UserTableContainer>
-        <Table>
+      <UserTableContainer className={classes.tableContainer} alter>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
-              {TABLE_COLUMNS.map((column) => (
+              {TABLE_COLUMN_MAP.map((column) => (
                 <TableCell key={column.label} width={column.width}>
                   {column.label}
                 </TableCell>
@@ -170,6 +168,8 @@ export default function FacilitatorUserManagement(props) {
       </UserTableContainer>
 
       <InviteDialog open={inviteDialogOpen} title="Invite User" onSubmit={handleSubmit} onClose={() => setInviteDialogOpen(false)} />
+
+      <ConfirmDialog open={confirmDialogOpen} onClose={handleConfirmDialogClose} onSubmit={handleConfirm} title="Warning" />
     </Box>
   );
 }

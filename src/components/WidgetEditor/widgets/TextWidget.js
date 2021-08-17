@@ -48,7 +48,7 @@ const useStyles = makeStyles({
 
 const TextWidget = (props) => {
   const {
-    id,
+    uuid,
     data,
     type,
     group,
@@ -64,18 +64,18 @@ const TextWidget = (props) => {
   const textRef = useRef();
   const [editable, setEditable] = useState(false);
   const handleTextChange = (e) => {
-    onDataChange(id, { text: e.target.value });
+    onDataChange(uuid, { text: e.target.value });
   };
   const handleDoubleClick = (e) => {
     e.preventDefault();
     setEditable(true);
-    onTransformStart(id);
+    onTransformStart(uuid);
     setTimeout(() => textRef.current.focus());
   };
 
   const handleFocusOut = () => {
     setEditable(false);
-    onTransformEnd(id);
+    onTransformEnd(uuid);
   };
 
   return (

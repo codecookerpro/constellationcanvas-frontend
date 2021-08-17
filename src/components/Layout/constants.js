@@ -1,8 +1,7 @@
 import { MyCanvasPanel, ParticipantPanel, ToolBoxPanel } from './Sidebar/Panels';
 import { TopicHeader, TitleHeader } from './Header';
 
-import { CANVAS_STATES } from 'reducers/constants';
-import { HEADER_TYPES, USER_ROLES } from 'constants/enums';
+import { CANVAS_STATES, HEADER_TYPES, USER_ROLES } from 'constants/enums';
 import LINKS from 'constants/links';
 
 export const HEADER_MAP = {

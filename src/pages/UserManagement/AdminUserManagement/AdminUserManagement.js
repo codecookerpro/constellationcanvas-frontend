@@ -1,133 +1,232 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import PersonAddIcon from '@material-ui/icons/PersonAddOutlined';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableBody from '@material-ui/core/TableBody';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
+import IconButton from '@material-ui/core/IconButton';
+import MenuItem from '@material-ui/core/MenuItem';
+import SyncIcon from '@material-ui/icons/SyncOutlined';
+import MoreHorizIcon from '@material-ui/icons/MoreHorizOutlined';
+import AddBoxIcon from '@material-ui/icons/AddBoxOutlined';
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBoxOutlined';
 
-import AdminUserManagementTable from './components/AdminUserManagementTable';
-import InviteDialog from './components/InviteDialog';
+import { getUsers, toggleUserOpen, updateUser, getInviteCode, resendCode, inviteUser, inviteFacilitator, deleteUser } from 'actions';
+
+import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu, ConfirmDialog } from '../components';
+
+import { getUserCount, getDisplayUsers } from '../helpers';
 
 import { USER_ROLES } from 'constants/enums';
+import { TABLE_COLUMN_MAP, USER_ACTION_MENU, USER_ACTION_TYPE, INVITE_DIALOG_TITLE } from '../constants';
+import { HEADER_HEIGHT } from 'constants/user-interface';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   root: {
-    padding: 60,
     paddingLeft: 30,
+    paddingRight: 60,
+    paddingTop: 60,
+    paddingBottom: 60,
   },
   toolbar: {
     display: 'flex',
-    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'flex-end',
     marginBottom: 30,
   },
-  label: {
-    color: '#6c6c6e',
-    fontSize: 16,
-    fontWeight: 500,
-    fontStyle: 'italic',
-    letterSpacing: 0.56,
+  tableContainer: {
+    maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 170px)`,
   },
-  invite: {
-    marginLeft: 'auto',
-    padding: '7px 37px',
-    color: 'white',
-    backgroundColor: '#4a95d7',
-    borderRadius: 9999,
-    textTransform: 'capitalize',
+  light: {
+    backgroundColor: '#f6f6f6 !important',
   },
-}));
-
-const initialUsers = [
-  {
-    email: 'james@abc.com',
-    screenName: 'James Smith',
-    inviteCode: 'uond039283323',
-    type: 'free',
-    date: '2021-04-01',
-    role: USER_ROLES.facilitator,
-    open: false,
-    users: [
-      {
-        email: 'sean@abc.com',
-        screenName: 'Seen Call',
-        inviteCode: '23908wevonowei',
-        type: 'free',
-        date: '2021-04-01',
-        role: USER_ROLES.user,
-      },
-      {
-        email: 'rob@abc.com',
-        screenName: 'Rob Jones',
-        inviteCode: '23908wevonowei',
-        type: 'free',
-        date: '2021-04-01',
-        role: USER_ROLES.user,
-      },
-      {
-        email: 'victor@abc.com',
-        screenName: 'Victor Ashford',
-        inviteCode: '23908wevonowei',
-        type: 'free',
-        date: '2021-04-01',
-        role: USER_ROLES.user,
-      },
-    ],
+  white: {
+    backgroundColor: 'white !important',
   },
-  {
-    email: 'sean@abc.com',
-    screenName: 'Amy Baker',
-    inviteCode: '2948thsoeif0021',
-    type: 'paid',
-    date: '2021-05-02',
-    role: USER_ROLES.facilitator,
-    open: false,
-    users: [],
+  inviteCell: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  {
-    email: 'boris@abc.com',
-    screenName: 'None',
-    inviteCode: '2044ufns0392jm',
-    type: 'free',
-    date: '2021-05-02',
-    role: USER_ROLES.facilitator,
-    open: false,
-    users: [],
+  more: {
+    borderLeft: '2px solid gray',
+    borderBottom: '2px solid gray',
+    width: 10,
+    height: 10,
+    marginLeft: 20,
   },
-];
+});
 
 export default function AdminUserManagement(props) {
   const classes = useStyles();
-  const [users, setUsers] = useState(initialUsers);
-  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const { users } = useSelector((state) => state.auth);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [menuState, setMenuState] = useState({
+    id: null,
+    role: null,
+    anchorEl: null,
+  });
 
-  const toggleOpen = (email, open) => {
-    setUsers(
-      users.map((user) =>
-        user.email !== email
-          ? user
-          : {
-              ...user,
-              open,
-            }
-      )
-    );
+  const displayUsers = getDisplayUsers(users);
+
+  useEffect(() => dispatch(getUsers()), [dispatch]);
+
+  const handleInviteDialogOpen = () => {
+    setInviteDialogOpen(true);
   };
 
-  const userCount = users.map((user) => user.users?.length | 0).reduce((a, b) => a + b);
+  const handleInviteDialogClose = () => {
+    setTimeout(handleMenuClose, 200);
+    setInviteDialogOpen(false);
+  };
+
+  const handleSubmit = (email) => {
+    if (menuState.role === USER_ROLES.facilitator) {
+      dispatch(inviteUser(email, users.find((user) => user.uuid === menuState.id).boardUUID));
+    } else {
+      dispatch(inviteFacilitator(email));
+    }
+
+    handleInviteDialogClose();
+  };
+
+  const handleConfirmDialogOpen = () => {
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmDialogClose = () => {
+    setTimeout(handleMenuClose, 200);
+    setConfirmDialogOpen(false);
+  };
+
+  const handleConfirm = () => {
+    dispatch(deleteUser(menuState.id));
+    handleConfirmDialogClose();
+  };
+
+  const handleUserDataChange = (id, type, value) => {
+    dispatch(updateUser(id, { [type]: value }));
+  };
+
+  const handleSync = (id) => {
+    dispatch(getInviteCode(id));
+  };
+
+  const handleMenuOpen = (e, id, role) => {
+    setMenuState({
+      id,
+      role,
+      anchorEl: e.currentTarget,
+    });
+  };
+
+  const handleMenuClose = () => {
+    setMenuState({
+      id: null,
+      role: null,
+      anchorEl: null,
+    });
+  };
+
+  const handleMenuClick = (type) => {
+    if (type === USER_ACTION_TYPE.invite) {
+      setMenuState({
+        ...menuState,
+        anchorEl: null,
+      });
+      setInviteDialogOpen(true);
+    } else if (type === USER_ACTION_TYPE.resend) {
+      dispatch(resendCode(menuState.id));
+      handleMenuClose();
+    } else if (type === USER_ACTION_TYPE.delete) {
+      handleConfirmDialogOpen();
+      setMenuState({
+        ...menuState,
+        anchorEl: null,
+      });
+    }
+  };
 
   return (
     <Box className={classes.root}>
       <Box className={classes.toolbar}>
-        <Typography className={classes.label}>
-          {users.length} Facilitators, {userCount} Users total
-        </Typography>
-        <Button className={classes.invite} startIcon={<PersonAddIcon fontSize="small" />} onClick={() => setOpen(true)}>
-          Invite Facilitator
-        </Button>
+        <TableDescription>
+          {getUserCount(users, USER_ROLES.facilitator)} Facilitators, {getUserCount(users, USER_ROLES.user)} Users total
+        </TableDescription>
+        <InviteButton onClick={handleInviteDialogOpen}>Invite Facilitator</InviteButton>
       </Box>
-      <AdminUserManagementTable users={users} toggleOpen={toggleOpen} />
-      <InviteDialog open={open} handleClose={() => setOpen(false)} />
+
+      <UserTableContainer className={classes.tableContainer}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              {TABLE_COLUMN_MAP.map((column, index) => (
+                <TableCell key={index} minwidth={column.width}>
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody className={classes.tableBody}>
+            {displayUsers.map((user) => (
+              <TableRow key={user.uuid} className={user.role === USER_ROLES.user ? classes.white : classes.light}>
+                <TableCell>
+                  {user.role === USER_ROLES.facilitator && (
+                    <IconButton size="small" onClick={(e) => dispatch(toggleUserOpen(user.uuid))}>
+                      {user.open ? <IndeterminateCheckBoxIcon /> : <AddBoxIcon />}
+                    </IconButton>
+                  )}
+                  {user.role === USER_ROLES.user && <Box className={classes.more}></Box>}
+                </TableCell>
+                <TableCell>
+                  <EditField value={user.email} handleChange={(value) => handleUserDataChange(user.uuid, 'email', value)} />
+                </TableCell>
+                <TableCell>
+                  <EditField value={user.name} handleChange={(value) => handleUserDataChange(user.uuid, 'name', value)} />
+                </TableCell>
+                <TableCell>
+                  <Box className={classes.inviteCell}>
+                    {user.inviteCode}
+                    <IconButton onClick={(e) => handleSync(user.uuid)}>
+                      <SyncIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+                <TableCell style={{ textTransform: 'uppercase' }}>{user.type}</TableCell>
+                <TableCell>{user.date}</TableCell>
+                <TableCell>
+                  <IconButton onClick={(e) => handleMenuOpen(e, user.uuid, user.role)}>
+                    <MoreHorizIcon fontSize="small" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </UserTableContainer>
+
+      <UserActionMenu anchorEl={menuState.anchorEl} keepMounted open={Boolean(menuState.anchorEl)} onClose={handleMenuClose}>
+        {USER_ACTION_MENU.filter((item) => item.role.includes(menuState.role)).map((item, index) => (
+          <MenuItem key={index} onClick={(e) => handleMenuClick(item.type)}>
+            {item.label}
+          </MenuItem>
+        ))}
+      </UserActionMenu>
+
+      <InviteDialog
+        open={inviteDialogOpen}
+        onClose={handleInviteDialogClose}
+        onSubmit={handleSubmit}
+        title={INVITE_DIALOG_TITLE[menuState.role ? USER_ROLES.user : USER_ROLES.facilitator]}
+      />
+
+      <ConfirmDialog open={confirmDialogOpen} onClose={handleConfirmDialogClose} onSubmit={handleConfirm} title="Warning" />
     </Box>
   );
 }

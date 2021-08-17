@@ -1,31 +1,25 @@
 import ActionTypes from 'constants/action-types';
 import { createAction } from 'redux-actions';
-import * as API from 'services/boards';
 import { setUsers } from './auth';
 import { setLoading } from './auxiliary';
 import { handleError } from './error';
+import * as API from 'services/boards';
 
-export const setCopiedWidget = createAction(ActionTypes.SET_COPIED_WIDGET, (widget) => widget);
-export const addWidget = createAction(ActionTypes.ADD_WIDGET, (widget) => widget);
-export const removeWidget = createAction(ActionTypes.REMOVE_WIDGET, (widgetId) => widgetId);
-export const setWidgetTransform = createAction(ActionTypes.SET_WIDGET_TRANSFORM, (payload) => payload);
-export const setWidgetData = createAction(ActionTypes.SET_WIDGET_DATA, (payload) => payload);
-export const setWidgetHovered = createAction(ActionTypes.SET_WIDGET_HOVERED, (widgetId) => widgetId);
-export const bringToFront = createAction(ActionTypes.BRING_TO_FRONT, (widgetId) => widgetId);
-export const sendToBack = createAction(ActionTypes.SEND_TO_BACK, (widgetId) => widgetId);
-export const bringForward = createAction(ActionTypes.BRING_FORWARD, (widgetId) => widgetId);
-export const sendBackward = createAction(ActionTypes.SEND_BACKWARD, (widgetId) => widgetId);
-export const setBoardDetail = createAction(ActionTypes.SET_BOARD_DETAIL, (payload) => payload);
+export const addFigure = createAction(ActionTypes.ADD_FIGURE, (payload) => payload);
+export const removeFigure = createAction(ActionTypes.REMOVE_FIGURE, (payload) => payload);
+export const setFigure = createAction(ActionTypes.SET_FIGURE, (payload) => payload);
+export const setCopiedFigure = createAction(ActionTypes.SET_COPIED_FIGURE, (payload) => payload);
+export const setBoard = createAction(ActionTypes.SET_BOARD, (payload) => payload);
 export const setCanvasIndex = createAction(ActionTypes.SET_CANVAS_INDEX, (payload) => payload);
-export const setBoard = createAction(ActionTypes.SET_TOPIC, (payload) => payload);
+export const setFigureHovered = createAction(ActionTypes.SET_FIGURE_HOVERED, (payload) => payload);
 
-export const getBoardDetail = () => (dispatch, getState) => {
+export const getBoard = () => (dispatch, getState) => {
   dispatch(setLoading(true));
 
   const { boardUUID } = getState().auth.profile;
-  API.getBoardDetail(boardUUID)
+  API.getBoard(boardUUID)
     .then((data) => {
-      dispatch(setBoardDetail(data));
+      dispatch(setBoard(data));
       dispatch(setUsers(data.participants));
       dispatch(setLoading(false));
     })
@@ -33,12 +27,9 @@ export const getBoardDetail = () => (dispatch, getState) => {
 };
 
 export const switchCanvas = (index) => (dispatch, getState) => {
-  dispatch(setLoading(true));
-
   const { boardUUID } = getState().auth.profile;
   API.switchCanvas(boardUUID, index).then(() => {
     dispatch(setCanvasIndex(index));
-    dispatch(getBoardDetail());
   });
 };
 
@@ -46,6 +37,38 @@ export const updateBoard = (params) => (dispatch) => {
   API.updateBoard(params)
     .then((data) => {
       dispatch(setBoard(data));
+    })
+    .catch((error) => dispatch(handleError(error)));
+};
+
+export const createFigure = (figure) => (dispatch, getState) => {
+  dispatch(setLoading(true));
+
+  const { index: canvas, uuid: boardUUID } = getState().board;
+  API.createFigure({ ...figure, canvas, boardUUID })
+    .then((data) => {
+      dispatch(addFigure(data));
+      dispatch(setLoading(false));
+    })
+    .catch((error) => dispatch(handleError(error)));
+};
+
+export const updateFigure = (figure) => (dispatch, getState) => {
+  const { index: canvas, uuid: boardUUID } = getState().board;
+  API.updateFigure(figure.uuid, { ...figure, canvas, boardUUID })
+    .then((data) => {
+      dispatch(setFigure(data));
+    })
+    .catch((error) => dispatch(handleError(error)));
+};
+
+export const deleteFigure = (figureUUID) => (dispatch) => {
+  dispatch(setLoading(true));
+
+  API.deleteFigure(figureUUID)
+    .then(() => {
+      dispatch(removeFigure(figureUUID));
+      dispatch(setLoading(false));
     })
     .catch((error) => dispatch(handleError(error)));
 };

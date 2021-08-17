@@ -1,11 +1,20 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { WidgetEditor } from 'components';
-import useActions from './use-action';
+import { useParams } from 'react-router';
+import { getBoard, switchCanvas } from 'actions';
 
 export default function CanvasBoard() {
-  const { figures: widgets, copiedWidget } = useSelector((state) => state.board);
-  const actions = useActions();
+  const { index } = useParams();
+  const { figures, copiedFigure } = useSelector((state) => state.board);
+  const dispatch = useDispatch();
+  const filteredFigures = useMemo(() => figures.filter((f) => f.canvas === parseInt(index)), [index, figures]);
 
-  return <WidgetEditor {...actions} widgets={widgets} copiedWidget={copiedWidget} />;
+  // eslint-disable-next-line
+  useEffect(() => dispatch(switchCanvas(parseInt(index))), [index]);
+
+  // eslint-disable-next-line
+  useEffect(() => dispatch(getBoard()), []);
+
+  return <WidgetEditor figures={filteredFigures} copiedFigure={copiedFigure} />;
 }

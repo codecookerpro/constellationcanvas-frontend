@@ -11,10 +11,12 @@ import {
   WIDGET_GROUP_TYPES,
   WIDGET_EDITOR_SCALE_LIMIT,
 } from './constants';
-import { getHoveredWidgets, getForwardWidget, getBackwardWidget } from './helper';
+import { getHoveredFigures, getForwardWidget, getBackwardWidget, getMaxDepth } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
 import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
+import { useDispatch } from 'react-redux';
+import { createFigure, deleteFigure, setCopiedFigure, updateFigure, setFigureHovered, setFigure } from 'actions';
 
 const useStyles = makeStyles({
   root: {
@@ -23,50 +25,38 @@ const useStyles = makeStyles({
     position: 'relative',
     overflow: 'hidden',
   },
-  widgetZoompane: {
+  figureZoompane: {
     width: '100%',
     height: '100%',
     position: 'absolute',
     top: 0,
     left: 0,
   },
-  widgetStage: {
+  figureStage: {
     width: '100%',
     height: '100%',
     zIndex: 0,
   },
 });
 
-const WidgetEditor = ({
-  widgets = [],
-  addWidget,
-  removeWidget,
-  setWidgetTransform,
-  setWidgetData,
-  setWidgetHovered,
-  bringToFront,
-  sendToBack,
-  bringForward,
-  sendBackward,
-  copiedWidget = { id: null },
-  setCopiedWidget,
-}) => {
+const WidgetEditor = ({ figures, copiedFigure }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [transforming, setTransforming] = useState(null);
   const [contextState, setContextState] = useState({
-    id: null,
+    uuid: null,
     mouseX: null,
     mouseY: null,
   });
   const [ctrlPressed, setCtrlPressed] = useState(false);
-  const [selectedWidgets, setSelectedWidgets] = useState([]);
+  const [selectedFigures, setSelectedFigures] = useState([]);
 
   const stageRef = useRef();
   const rootRef = useRef();
 
   const blockedPanZoom = useMemo(
-    () => transforming || contextState.mouseY || widgets.filter((w) => w.hovered && w.type.match(WIDGET_GROUP_TYPES.text)).length,
-    [transforming, contextState, widgets]
+    () => transforming || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
+    [transforming, contextState, figures]
   );
 
   const { transform, zoom, panZoomHandlers, setContainer, setZoom } = usePanZoom({
@@ -83,95 +73,110 @@ const WidgetEditor = ({
     event.preventDefault();
     const { offsetX, offsetY, type } = JSON.parse(event.dataTransfer.getData('application/constellation-widget'));
     const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
-    const tx = (event.clientX - baseX) / zoom - offsetX;
-    const ty = (event.clientY - baseY) / zoom - offsetY;
-    const newWidget = {
+    const tx = `${(event.clientX - baseX) / zoom - offsetX}px`;
+    const ty = `${(event.clientY - baseY) / zoom - offsetY}px`;
+    const figure = {
       type,
       data: {},
-      transform: { tx, ty, rotate: 0, sx: 1, sy: 1 },
+      transform: { tx, ty, rotate: '0deg', sx: '1', sy: '1' },
+      depth: getMaxDepth(figures) + 1,
     };
-    addWidget(newWidget);
+
+    dispatch(createFigure(figure));
   };
 
-  const handleTransform = ({ id, transform }) => {
-    setWidgetTransform({ id, transform });
+  const handleTransform = ({ uuid, transform }) => {
+    dispatch(setFigure({ uuid, transform }));
   };
 
-  const handleDataChange = (id, data) => {
-    setWidgetData({ id, data });
+  const handleDataChange = (uuid, data) => {
+    dispatch(setFigure({ uuid, data }));
   };
 
-  const handleTransformStart = (id) => {
-    setTransforming(id);
+  const handleTransformStart = (uuid) => {
+    setTransforming(uuid);
   };
 
-  const handleTransformEnd = (id) => {
+  const handleTransformEnd = (uuid) => {
+    dispatch(updateFigure(figures.find((f) => f.uuid === uuid)));
     setTransforming(null);
   };
 
   const handleContextClick = (e, type) => {
     e.preventDefault();
+    const { uuid, mouseX, mouseY } = contextState;
+    const figure = figures.find((f) => f.uuid === contextState.uuid);
 
-    if (type === CONTEXTMENU_TYPES.front) {
-      bringToFront(contextState.id);
-    } else if (type === CONTEXTMENU_TYPES.back) {
-      sendToBack(contextState.id);
-    } else if (type === CONTEXTMENU_TYPES.forward) {
-      const fwidget = getForwardWidget(widgets, contextState.id, stageRef);
-      if (fwidget !== undefined) {
-        bringForward({
-          id: contextState.id,
-          forwardId: fwidget.id,
-        });
-      }
-    } else if (type === CONTEXTMENU_TYPES.backward) {
-      const bwidget = getBackwardWidget(widgets, contextState.id, stageRef);
-      if (bwidget !== undefined) {
-        sendBackward({
-          id: contextState.id,
-          backwardId: bwidget.id,
-        });
-      }
-    } else if (type === CONTEXTMENU_TYPES.copy) {
-      setCopiedWidget(widgets.find((w) => w.id === contextState.id));
-    } else if (type === CONTEXTMENU_TYPES.cut) {
-      setCopiedWidget(widgets.find((w) => w.id === contextState.id));
-      removeWidget(contextState.id);
-    } else if (type === CONTEXTMENU_TYPES.paste) {
-      if (copiedWidget.id !== null) {
+    switch (type) {
+      case CONTEXTMENU_TYPES.front:
+        const maxDepth = getMaxDepth(figures);
+        figures
+          .filter((f) => f.uuid === figure.uuid || f.depth > figure.depth)
+          .map((f) => ({ ...f, depth: f.uuid === figure.uuid ? maxDepth : f.depth - 1 }))
+          .forEach((f) => dispatch(updateFigure(f)));
+        break;
+      case CONTEXTMENU_TYPES.back:
+        figures
+          .filter((f) => f.uuid === figure.uuid || f.depth < figure.depth)
+          .map((f) => ({ ...f, depth: f.uuid === figure.uuid ? 0 : f.depth + 1 }))
+          .forEach((f) => dispatch(updateFigure(f)));
+        break;
+      case CONTEXTMENU_TYPES.forward:
+        const forwardFigure = getForwardWidget(figures, figure.uuid, stageRef);
+        if (forwardFigure) {
+          dispatch(updateFigure({ ...figure, depth: forwardFigure.depth }));
+          dispatch(updateFigure({ ...forwardFigure, depth: figure.depth }));
+        }
+        break;
+      case CONTEXTMENU_TYPES.backward:
+        const backwardFigure = getBackwardWidget(figures, figure.uuid, stageRef);
+        if (backwardFigure) {
+          dispatch(updateFigure({ ...figure, depth: backwardFigure.depth }));
+          dispatch(updateFigure({ ...backwardFigure, depth: figure.depth }));
+        }
+        break;
+      case CONTEXTMENU_TYPES.copy:
+        dispatch(setCopiedFigure(uuid));
+        break;
+      case CONTEXTMENU_TYPES.cut:
+        dispatch(setCopiedFigure(uuid));
+        dispatch(deleteFigure(uuid));
+        break;
+      case CONTEXTMENU_TYPES.paste:
         const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
-        const newWidget = {
-          ...copiedWidget,
+        const newFigure = {
+          ...copiedFigure,
+          depth: getMaxDepth(figures) + 1,
           transform: {
-            ...copiedWidget.transform,
-            tx: (contextState.mouseX - baseX) / zoom,
-            ty: (contextState.mouseY - baseY) / zoom,
+            ...copiedFigure.transform,
+            tx: (mouseX - baseX) / zoom,
+            ty: (mouseY - baseY) / zoom,
           },
         };
-        addWidget(newWidget);
-      }
-    } else if (type === CONTEXTMENU_TYPES.delete) {
-      removeWidget(contextState.id);
+        dispatch(createFigure(newFigure));
+        break;
+      case CONTEXTMENU_TYPES.delete:
+        dispatch(deleteFigure(uuid));
+        break;
+
+      default:
+        break;
     }
 
     setContextState({
-      id: null,
+      uuid: null,
       mouseX: null,
       mouseY: null,
     });
   };
 
   const handleMouseMove = (e) => {
-    if (e.buttons === 0 && e.ctrlKey === false) {
-      const hoveredWidgets = getHoveredWidgets(e, widgets, stageRef);
-      const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
-
-      if (contextState.mouseY === null) {
-        setWidgetHovered(frontWidget?.id);
-      }
+    if (e.buttons === 0 && e.ctrlKey === false && contextState.mouseY === null && figures.length) {
+      const hovered = getHoveredFigures(e, figures, stageRef);
+      dispatch(setFigureHovered(hovered[0]?.uuid));
     } else if (!transforming && !e.ctrlKey && !contextState.id && e.buttons === 1) {
       setContextState({
-        id: null,
+        uuid: null,
         mouseX: null,
         mouseY: null,
       });
@@ -188,17 +193,17 @@ const WidgetEditor = ({
   const handleContextMenu = (e) => {
     e.preventDefault();
 
-    const hoveredWidgets = getHoveredWidgets(e, widgets, stageRef);
-    const frontWidget = hoveredWidgets.sort((a, b) => b.depth - a.depth)?.[0];
+    const hoveredFigures = getHoveredFigures(e, figures, stageRef);
+    const frontWidget = hoveredFigures.sort((a, b) => b.depth - a.depth)?.[0];
     if (frontWidget === undefined) {
       setContextState({
-        id: null,
+        uuid: null,
         mouseX: e.clientX,
         mouseY: e.clientY,
       });
     } else {
       setContextState({
-        id: frontWidget.id,
+        uuid: frontWidget.uuid,
         mouseX: e.clientX,
         mouseY: e.clientY,
       });
@@ -215,7 +220,7 @@ const WidgetEditor = ({
     <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
       <div
         {...panZoomHandlers}
-        className={classes.widgetZoompane}
+        className={classes.figureZoompane}
         ref={(el) => setContainer(el)}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -223,16 +228,16 @@ const WidgetEditor = ({
         onContextMenu={handleContextMenu}
         onWheel={handleWheel}
       >
-        <div className={classes.widgetStage} ref={stageRef} style={{ transform }}>
-          {widgets.map((widget) => {
-            const group = widget.type.match(/([a-zA-Z]*)/)[0];
-            const WidgetComponent = WIDGET_MAP[widget.type] || WIDGET_MAP[group];
+        <div className={classes.figureStage} ref={stageRef} style={{ transform }}>
+          {figures.map((figure) => {
+            const group = figure.type.match(/([a-zA-Z]*)/)[0];
+            const WidgetComponent = WIDGET_MAP[figure.type] || WIDGET_MAP[group];
             return (
               <WidgetComponent
-                {...widget}
+                {...figure}
                 group={group}
                 zoom={zoom}
-                key={widget.id}
+                key={figure.uuid}
                 onTransform={handleTransform}
                 onDataChange={handleDataChange}
                 onTransformStart={handleTransformStart}
@@ -257,7 +262,7 @@ const WidgetEditor = ({
               }
               if (context.type === CONTEXTMENU_TYPES.paste) {
                 return (
-                  <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={copiedWidget.id === null}>
+                  <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={copiedFigure.id === null}>
                     {context.label}
                   </MenuItem>
                 );
@@ -275,7 +280,7 @@ const WidgetEditor = ({
         <Selecto
           selectableTargets={['.widget']}
           onSelect={(e) => {
-            setSelectedWidgets([]);
+            setSelectedFigures([]);
             e.added.forEach((el) => {
               el.classList.add('selected');
             });
@@ -285,7 +290,7 @@ const WidgetEditor = ({
           }}
         />
       )}
-      <WidgetGroup targets={selectedWidgets} />
+      <WidgetGroup targets={selectedFigures} />
     </div>
   );
 };
