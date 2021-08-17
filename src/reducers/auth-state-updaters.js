@@ -18,3 +18,15 @@ export const setUsersUpdater = (state, { payload: users }) => ({
   ...state,
   users,
 });
+
+export const toggleUserOpenUpdater = (state, { payload: { id } }) => ({
+  ...state,
+  users: state.users.map((user) =>
+    user.uuid !== id
+      ? user
+      : {
+          ...user,
+          open: !user.open,
+        }
+  ),
+});

@@ -3,6 +3,7 @@ import { handleError } from './error';
 import ActionTypes from 'constants/action-types';
 import * as API from 'services/auth';
 import { setLoading } from './auxiliary';
+import { USER_ROLES } from 'constants/enums';
 
 export const inviteToAccessToken = (params) => (dispatch) => {
   dispatch(setLoading(true));
@@ -36,14 +37,23 @@ export const updateUser = (userUUID, params) => (dispatch, getState) => {
   });
 };
 
-export const inviteUser = (email) => (dispatch, getState) => {
+export const inviteUser = (email, boardUUID) => (dispatch, getState) => {
   dispatch(setLoading(true));
 
-  const {
-    users,
-    profile: { boardUUID },
-  } = getState().auth;
+  const { users } = getState().auth;
   API.inviteUser({ email, boardUUID })
+    .then((data) => {
+      dispatch(setUsers([...users, data]));
+      dispatch(setLoading(false));
+    })
+    .catch((error) => dispatch(handleError(error)));
+};
+
+export const inviteFacilitator = (email) => (dispatch, getState) => {
+  dispatch(setLoading(true));
+
+  const { users } = getState().auth;
+  API.inviteFacilitator({ email })
     .then((data) => {
       dispatch(setUsers([...users, data]));
       dispatch(setLoading(false));
@@ -57,7 +67,8 @@ export const getUsers = () => (dispatch, getState) => {
   const { boardUUID, uuid } = getState().auth.profile;
   API.getUsers({ boardUUID })
     .then(({ results }) => {
-      dispatch(setUsers(results.filter((u) => u.uuid !== uuid)));
+      const users = results.filter((u) => u.uuid !== uuid && (u.role === USER_ROLES.user || u.role === USER_ROLES.facilitator));
+      dispatch(setUsers(users.map((user) => ({ ...user, open: false }))));
       dispatch(setLoading(false));
     })
     .catch((error) => dispatch(handleError(error)));
@@ -79,5 +90,18 @@ export const getInviteCode = (userUUID) => (dispatch, getState) => {
     .catch((error) => dispatch(handleError(error)));
 };
 
+export const deleteUser = (userUUID) => (dispatch, getState) => {
+  dispatch(setLoading(true));
+
+  const users = getState().auth.users;
+  API.deleteUser(userUUID)
+    .then(() => {
+      dispatch(setUsers(users.filter((u) => u.uuid !== userUUID)));
+      dispatch(setLoading(false));
+    })
+    .catch((error) => dispatch(handleError(error)));
+};
+
 export const setUserInfo = createAction(ActionTypes.SET_USER_INFO, (accessToken, profile) => ({ profile, accessToken }));
 export const setUsers = createAction(ActionTypes.SET_USERS, (payload) => payload);
+export const toggleUserOpen = createAction(ActionTypes.TOGGLE_USER_OPEN, (id) => ({ id }));

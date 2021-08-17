@@ -16,6 +16,7 @@ const ActionTypes = keyMirror({
   // auth
   SET_USER_INFO: null,
   SET_USERS: null,
+  TOGGLE_USER_OPEN: null,
 
   // aux
   SET_LOADING: null,

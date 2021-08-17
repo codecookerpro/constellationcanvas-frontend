@@ -1,11 +1,12 @@
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 
-import { generateAvatarName } from 'utils/helpers';
-import { useDispatch } from 'react-redux';
+import { Avatar } from 'components/';
+
 import { setUserInfo } from 'actions';
 import { USER_ROLES } from 'constants/enums';
 
@@ -56,9 +57,7 @@ export default function AccountBox({ displayName }) {
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.avatar}>
-        <Typography>{generateAvatarName(displayName)}</Typography>
-      </Box>
+      <Avatar displayName={displayName} />
       <Box className={classes.info}>
         <Typography className={classes.username}>{displayName}</Typography>
         <Link className={classes.logout} onClick={handleLogout}>

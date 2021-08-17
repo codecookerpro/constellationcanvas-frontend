@@ -23,21 +23,21 @@ const Login = () => {
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.rectangle}>
+      <form className={classes.rectangle} onSubmit={handleSubmit}>
         <Title className={classes.title}>{PROJECT_TITLE}</Title>
 
         <Label>Participant Code:</Label>
-        <Input placeholder="Enter participant code..." value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} />
+        <Input placeholder="Enter participant code..." value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} required autoFocus />
 
         <Box className={classes.buttonWrapper}>
-          <Button color="primary" variant="contained" onClick={handleSubmit}>
+          <Button type="submit" color="primary" variant="contained">
             SUBMIT
           </Button>
           <Button color="secondary" variant="contained" style={{ marginLeft: 16 }} onClick={handleReset}>
             RESET
           </Button>
         </Box>
-      </Box>
+      </form>
     </Box>
   );
 };

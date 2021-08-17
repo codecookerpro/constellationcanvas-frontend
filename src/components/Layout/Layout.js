@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Container, Snackbar, Backdrop, CircularProgress, CssBaseline } from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import { createGlobalStyle } from 'styled-components/macro';
 
 import AccountBox from './AccountBox';
@@ -98,14 +99,17 @@ export default function Layout({ sidebar, header, children }) {
 
       <Snackbar
         anchorOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'right',
         }}
         open={!!auxState.error}
-        autoHideDuration={6000}
-        onClose={() => dispatch(setError(null))}
-        message={auxState.error?.message || auxState.error?.info}
-      />
+        autoHideDuration={3000}
+      >
+        <Alert variant="filled" elevation={6} severity="error" onClose={() => dispatch(setError(null))}>
+          <AlertTitle>Error</AlertTitle>
+          {auxState.error?.message || auxState.error?.info}
+        </Alert>
+      </Snackbar>
 
       {sidebar.display && (
         <Box className={classes.sidePane}>

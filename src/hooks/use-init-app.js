@@ -1,5 +1,5 @@
 import { setUserInfo } from 'actions/auth';
-import { USER_ROLES } from 'constants/enums';
+import { CANVAS_STATES, USER_ROLES } from 'constants/enums';
 import LINKS from 'constants/links';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -51,7 +51,7 @@ const useInitApp = () => {
         break;
       case USER_ROLES.user:
         if ([LINKS.register, LINKS.screenName, LINKS.root].includes(history.location.pathname)) {
-          history.push(LINKS.userManagement);
+          history.push(LINKS.board.replace(':index', CANVAS_STATES.current));
         }
         break;
       default:

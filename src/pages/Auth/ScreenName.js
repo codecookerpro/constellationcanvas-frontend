@@ -23,21 +23,21 @@ const SetScreenName = () => {
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.rectangle}>
+      <form className={classes.rectangle} onSubmit={handleSubmit}>
         <Title className={classes.title}>{PROJECT_TITLE}</Title>
 
         <Label>Screen Name:</Label>
-        <Input placeholder="Enter a screen name..." value={screenName} onChange={(e) => setScreenName(e.target.value)} />
+        <Input placeholder="Enter a screen name..." value={screenName} onChange={(e) => setScreenName(e.target.value)} required autoFocus />
 
         <Box className={classes.buttonWrapper}>
-          <Button color="primary" variant="contained" onClick={handleSubmit}>
+          <Button type="submit" color="primary" variant="contained" onClick={handleSubmit}>
             SUBMIT
           </Button>
           <Button color="secondary" variant="contained" style={{ marginLeft: 16 }} onClick={handleReset}>
             RESET
           </Button>
         </Box>
-      </Box>
+      </form>
     </Box>
   );
 };
