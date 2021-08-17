@@ -13,7 +13,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHorizOutlined';
 
 import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu } from '../components';
 import { useDispatch, useSelector } from 'react-redux';
-import { getBoardDetail, getInviteCode, inviteUser, resendCode, updateUser } from 'actions';
+import { getBoard, getInviteCode, inviteUser, resendCode, updateUser } from 'actions';
 
 const useStyles = makeStyles({
   root: {
@@ -75,7 +75,7 @@ export default function FacilitatorUserManagement(props) {
   });
 
   // eslint-disable-next-line
-  useEffect(() => dispatch(getBoardDetail()), []);
+  useEffect(() => dispatch(getBoard()), []);
 
   const handleInviteDialogOpen = () => {
     setInviteDialogOpen(true);

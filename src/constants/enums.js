@@ -37,3 +37,9 @@ export const USER_ACTIONS = [
     role: USER_ROLES.user,
   },
 ];
+
+export const CANVAS_STATES = keyMirror({
+  current: 0,
+  futureState1: 1,
+  futureState2: 2,
+});

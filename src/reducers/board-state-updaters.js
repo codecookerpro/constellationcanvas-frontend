@@ -1,5 +1,5 @@
-import { CANVAS_STATES } from './constants';
-import { getUniqueId, getMaxDepth, bringToFront, sendToBack } from './helper';
+import _ from 'lodash';
+import { CANVAS_STATES } from 'constants/enums';
 
 export const INITIAL_BOARD_STATE = Object.freeze({
   index: CANVAS_STATES.current,
@@ -7,7 +7,7 @@ export const INITIAL_BOARD_STATE = Object.freeze({
   name: '',
   figures: [],
   uuid: null,
-  copiedWidget: {
+  copiedFigure: {
     id: null,
   },
 });
@@ -22,108 +22,27 @@ export const setCanvasIndexUpdater = (state, { payload: index }) => ({
   index,
 });
 
-export const setCopiedWidgetUpdater = (state, { payload: widget }) => ({
+export const setCopiedFigureUpdater = (state, { payload: copiedFigure }) => ({
   ...state,
-  copiedWidget: widget,
+  copiedFigure,
 });
 
-export const setBoard = (state, payload) => ({
+export const addFigureUpdater = (state, { payload }) => ({
   ...state,
-  ...payload,
+  figures: [...state.figures, payload],
 });
 
-export const addWidgetUpdater = (state, { payload }) => ({
-  ...state,
-  figures: state.figures.concat({
-    ...payload,
-    id: getUniqueId(),
-    depth: getMaxDepth(state.figures) + 1,
-  }),
-});
-
-export const removeWidgetUpdater = (state, { payload: id }) => ({
+export const removeFigureUpdater = (state, { payload: id }) => ({
   ...state,
   figures: state.figures.filter((w) => w.id !== id),
 });
 
-export const setWidgetTransformUpdater = (state, { payload: { id, transform } }) => ({
+export const setFigureUpdater = (state, { payload: figure }) => ({
   ...state,
-  figures: state.figures.map((w) => (w.id !== id ? w : { ...w, transform: { ...w.transform, ...transform } })),
+  figures: state.figures.map((f) => (f.uuid === figure.uuid ? _.merge({}, f, figure) : f)),
 });
 
-export const setWidgetDataUpdater = (state, { payload: { id, data } }) => ({
+export const setFigureHoveredUpdater = (state, { payload: figureId }) => ({
   ...state,
-  figures: state.figures.map((w) => (w.id !== id ? w : { ...w, data: { ...w.data, ...data } })),
+  figures: state.figures.map((f) => ({ ...f, hovered: f.uuid === figureId })),
 });
-
-export const setWidgetHoveredUpdater = (state, { payload: id }) => ({
-  ...state,
-  figures: state.figures.map((w) => ({
-    ...w,
-    hovered: w.id === id,
-  })),
-});
-
-export const bringToFrontUpdater = (state, { payload: id }) => ({
-  ...state,
-  figures: bringToFront(state.figures, id),
-});
-
-export const sendToBackUpdater = (state, { payload: id }) => ({
-  ...state,
-  figures: sendToBack(state.figures, id),
-});
-
-export const bringForwardUpdater = (state, payload) => {
-  const { id, forwardId } = payload;
-  const widget = state.figures.find((w) => w.id === id);
-  const fwidget = state.figures.find((w) => w.id === forwardId);
-
-  return {
-    ...state,
-    figures: state.figures.map((w) => {
-      if (w.id === id) {
-        return {
-          ...w,
-          depth: fwidget.depth,
-        };
-      }
-
-      if (w.id === forwardId) {
-        return {
-          ...w,
-          depth: widget.depth,
-        };
-      }
-
-      return w;
-    }),
-  };
-};
-
-export const sendBackwardUpdater = (state, payload) => {
-  const { id, backwardId } = payload;
-  const widget = state.figures.find((w) => w.id === id);
-  const bwidget = state.figures.find((w) => w.id === backwardId);
-
-  return {
-    ...state,
-    figures: state.figures.map((w) => {
-      if (w.id === id) {
-        return {
-          ...w,
-          depth: bwidget.depth,
-        };
-      }
-
-      if (w.id === backwardId) {
-        return {
-          ...w,
-          depth: widget.depth,
-        };
-      }
-
-      return w;
-    }),
-  };
-};

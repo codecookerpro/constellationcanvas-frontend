@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import ObjectID from 'bson-objectid';
 import pointInPolygon from 'point-in-polygon';
 import overlap from 'polygon-overlap';
 import { isNumber } from 'utils';
@@ -48,22 +49,21 @@ export const transformToString = ({ tx = 0, ty = 0, rotate = 0, sx = 1, sy = 1 }
   return `translate(${tx}, ${ty}) rotate(${rotate}) scale(${sx}, ${sy})`;
 };
 
-export const getForwardWidget = (widgets, id, ref) => {
-  const widget = widgets.find((w) => w.id === id);
-  const overlapedWidgets = getOverlapedWidgets(widgets, ref, id);
+export const getForwardWidget = (figures, uuid, ref) => {
+  const figure = figures.find((f) => f.uuid === uuid);
+  const overlaped = getOverlapedFigures(figures, ref, uuid);
+  const depth = _.min(overlaped.map((f) => (f.depth <= figure.depth ? Infinity : f.depth)));
 
-  const depth = _.min(overlapedWidgets.map((w) => (w.depth - widget.depth <= 0 ? Infinity : w.depth)));
-
-  return overlapedWidgets.find((w) => w.depth === depth);
+  return overlaped.find((f) => f.depth === depth);
 };
 
-export const getBackwardWidget = (widgets, id, ref) => {
-  const widget = widgets.find((w) => w.id === id);
-  const overlapedWidgets = getOverlapedWidgets(widgets, ref, id);
+export const getBackwardWidget = (figures, uuid, ref) => {
+  const figure = figures.find((f) => f.uuid === uuid);
+  const overlaped = getOverlapedFigures(figures, ref, uuid);
 
-  const depth = _.max(overlapedWidgets.map((w) => (w.depth - widget.depth >= 0 ? -1 : w.depth)));
+  const depth = _.max(overlaped.map((f) => (f.depth >= figure.depth ? -Infinity : f.depth)));
 
-  return overlapedWidgets.find((w) => w.depth === depth);
+  return overlaped.find((f) => f.depth === depth);
 };
 
 export const extendPolygon = (polygon, dist = 30) => {
@@ -89,8 +89,8 @@ export const extendPolygon = (polygon, dist = 30) => {
   });
 };
 
-export const getWidgetBoundaries = (ref, id) => {
-  const widget = ref.current.querySelector(`#widget-${id}`);
+export const getWidgetBoundaries = (ref, uuid) => {
+  const widget = ref.current.querySelector(`#widget-${uuid}`);
 
   const points = [
     widget?.querySelector('.moveable-rotation-control'),
@@ -106,25 +106,31 @@ export const getWidgetBoundaries = (ref, id) => {
   return points;
 };
 
-export const getHoveredWidgets = (e, widgets, ref) => {
-  return widgets
-    .map((w) => {
-      const points = getWidgetBoundaries(ref, w.id);
-      const hovered = pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
-      return { ...w, hovered };
+export const getHoveredFigures = (e, figures, ref) => {
+  return figures
+    .filter((f) => {
+      const points = getWidgetBoundaries(ref, f.uuid);
+      return pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
     })
-    .filter((w) => w.hovered);
+    .sort((a, b) => b.depth - a.depth);
 };
 
-export const getOverlapedWidgets = (widgets, ref, id) => {
-  const points1 = getWidgetBoundaries(ref, id);
+export const getOverlapedFigures = (figures, ref, uuid) => {
+  const points1 = getWidgetBoundaries(ref, uuid);
 
-  return widgets
-    .map((w) => {
-      const points2 = getWidgetBoundaries(ref, w.id);
-      const overlaped = overlap(points1, points2);
-      return { ...w, overlaped };
+  return figures
+    .filter((f) => {
+      const points2 = getWidgetBoundaries(ref, f.uuid);
+      return overlap(points1, points2);
     })
-    .filter((w) => w.overlaped)
     .sort((a, b) => b.depth - a.depth);
+};
+
+export const getUniqueId = () => {
+  const ts = new Date().getTime();
+  return ObjectID(ts).toHexString();
+};
+
+export const getMaxDepth = (figures) => {
+  return _.max(figures.map((f) => f.depth)) || 0;
 };

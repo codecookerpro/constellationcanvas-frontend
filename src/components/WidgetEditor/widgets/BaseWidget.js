@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 const BaseWidget = React.forwardRef((props, ref) => {
-  const { id, depth, children, target, transform, hovered, zoom, onTransform, onTransformStart, onTransformEnd } = props;
+  const { uuid, depth, children, target, transform, hovered, zoom, onTransform, onTransformStart, onTransformEnd } = props;
   const containerRef = useRef();
   const classes = useStyles({ depth, hovered });
 
@@ -37,12 +37,12 @@ const BaseWidget = React.forwardRef((props, ref) => {
     ty = ty - dy + dy / zoom;
     const newTransfrom = { ...parseTransform(transform), tx, ty };
     target.style.transform = transformToString(newTransfrom);
-    onTransform({ id, type: TRANS_TYPES.drag, transform: newTransfrom });
+    onTransform({ uuid, type: TRANS_TYPES.drag, transform: newTransfrom });
   };
 
   const handleRotate = ({ target, transform }) => {
     target.style.transform = transform;
-    onTransform({ id, type: TRANS_TYPES.rotate, transform: parseTransform(transform) });
+    onTransform({ uuid, type: TRANS_TYPES.rotate, transform: parseTransform(transform) });
   };
 
   const handleScale = ({ target, transform, scale: [sx, sy] }) => {
@@ -52,7 +52,7 @@ const BaseWidget = React.forwardRef((props, ref) => {
     }
 
     target.style.transform = transform;
-    onTransform({ id, type: TRANS_TYPES.scale, transform: parseTransform(transform) });
+    onTransform({ uuid, type: TRANS_TYPES.scale, transform: parseTransform(transform) });
   };
 
   const handleDragGroup = ({ events }) => {
@@ -68,15 +68,15 @@ const BaseWidget = React.forwardRef((props, ref) => {
   };
 
   const handleTransformStart = (e) => {
-    onTransformStart(id);
+    onTransformStart(uuid);
   };
 
   const handleTransformEnd = () => {
-    onTransformEnd(id);
+    onTransformEnd(uuid);
   };
 
   return (
-    <div ref={containerRef} className={clsx(classes.root, 'widget-container')} id={`widget-${id}`}>
+    <div ref={containerRef} className={clsx(classes.root, 'widget-container')} id={`widget-${uuid}`}>
       {children}
       <Moveable
         draggable={true}
