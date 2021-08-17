@@ -27,12 +27,9 @@ export const getBoard = () => (dispatch, getState) => {
 };
 
 export const switchCanvas = (index) => (dispatch, getState) => {
-  dispatch(setLoading(true));
-
   const { boardUUID } = getState().auth.profile;
   API.switchCanvas(boardUUID, index).then(() => {
     dispatch(setCanvasIndex(index));
-    dispatch(getBoard());
   });
 };
 
