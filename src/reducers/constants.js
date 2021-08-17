@@ -1,7 +1,7 @@
 import { keyMirror } from 'utils';
 
 export const CANVAS_STATES = keyMirror({
-  current: null,
-  futureState1: null,
-  futureState2: null,
+  current: 0,
+  futureState1: 1,
+  futureState2: 2,
 });

@@ -31,18 +31,15 @@ export const SIDEBAR_ITEMS = [
     children: [
       {
         title: 'Current State',
-        path: LINKS.current,
-        index: CANVAS_STATES.current,
+        path: LINKS.board.replace(':index', CANVAS_STATES.current),
       },
       {
         title: 'Future State 1',
-        path: LINKS.futureState1,
-        index: CANVAS_STATES.futureState1,
+        path: LINKS.board.replace(':index', CANVAS_STATES.futureState1),
       },
       {
         title: 'Future State 2',
-        path: LINKS.futureState2,
-        index: CANVAS_STATES.futureState2,
+        path: LINKS.board.replace(':index', CANVAS_STATES.futureState2),
       },
     ],
   },

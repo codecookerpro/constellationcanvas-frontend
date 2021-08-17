@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useParams } from 'react-router';
 import { useDispatch } from 'react-redux';
 import {
-  setIndex,
+  switchCanvas,
   setCopiedWidget,
   addWidget,
   removeWidget,
@@ -14,19 +14,13 @@ import {
   bringForward,
   sendBackward,
 } from 'actions/boards';
-import LINKS from 'constants/links';
-import { CANVAS_STATES } from 'reducers/constants';
 
 const useActions = () => {
   const dispatch = useDispatch();
-  const { pathname } = useLocation();
+  const { index } = useParams();
 
-  useEffect(() => {
-    const key = Object.keys(LINKS).find((key) => pathname.startsWith(LINKS[key]));
-    if (key) {
-      dispatch(setIndex(CANVAS_STATES[key]));
-    }
-  }, [dispatch, pathname]);
+  // eslint-disable-next-line
+  useEffect(() => dispatch(switchCanvas(parseInt(index))), [index]);
 
   return {
     addWidget: (widget) => dispatch(addWidget(widget)),

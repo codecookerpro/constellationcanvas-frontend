@@ -5,6 +5,20 @@ import { setUsers } from './auth';
 import { setLoading } from './auxiliary';
 import { handleError } from './error';
 
+export const setCopiedWidget = createAction(ActionTypes.SET_COPIED_WIDGET, (widget) => widget);
+export const addWidget = createAction(ActionTypes.ADD_WIDGET, (widget) => widget);
+export const removeWidget = createAction(ActionTypes.REMOVE_WIDGET, (widgetId) => widgetId);
+export const setWidgetTransform = createAction(ActionTypes.SET_WIDGET_TRANSFORM, (payload) => payload);
+export const setWidgetData = createAction(ActionTypes.SET_WIDGET_DATA, (payload) => payload);
+export const setWidgetHovered = createAction(ActionTypes.SET_WIDGET_HOVERED, (widgetId) => widgetId);
+export const bringToFront = createAction(ActionTypes.BRING_TO_FRONT, (widgetId) => widgetId);
+export const sendToBack = createAction(ActionTypes.SEND_TO_BACK, (widgetId) => widgetId);
+export const bringForward = createAction(ActionTypes.BRING_FORWARD, (widgetId) => widgetId);
+export const sendBackward = createAction(ActionTypes.SEND_BACKWARD, (widgetId) => widgetId);
+export const setBoardDetail = createAction(ActionTypes.SET_BOARD_DETAIL, (payload) => payload);
+export const setCanvasIndex = createAction(ActionTypes.SET_CANVAS_INDEX, (payload) => payload);
+export const setBoard = createAction(ActionTypes.SET_TOPIC, (payload) => payload);
+
 export const getBoardDetail = () => (dispatch, getState) => {
   dispatch(setLoading(true));
 
@@ -18,100 +32,20 @@ export const getBoardDetail = () => (dispatch, getState) => {
     .catch((error) => dispatch(handleError(error)));
 };
 
-export const setBoardDetail = createAction(ActionTypes.SET_BOARD_DETAIL, (payload) => payload);
+export const switchCanvas = (index) => (dispatch, getState) => {
+  dispatch(setLoading(true));
 
-export const setIndex = (index) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.SET_INDEX,
-    index,
+  const { boardUUID } = getState().auth.profile;
+  API.switchCanvas(boardUUID, index).then(() => {
+    dispatch(setCanvasIndex(index));
+    dispatch(getBoardDetail());
   });
 };
 
-export const setTopic = (topic) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.SET_TOPIC,
-    topic,
-  });
+export const updateBoard = (params) => (dispatch) => {
+  API.updateBoard(params)
+    .then((data) => {
+      dispatch(setBoard(data));
+    })
+    .catch((error) => dispatch(handleError(error)));
 };
-
-export const setCopiedWidget = (widget) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.SET_COPIED_WIDGET,
-    widget,
-  });
-};
-
-export const addWidget = (widget) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.ADD_WIDGET,
-    widget,
-  });
-};
-
-export const removeWidget = (id) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.REMOVE_WIDGET,
-    id,
-  });
-};
-
-export const setWidgetTransform =
-  ({ id, transform }) =>
-  (dispatch) => {
-    dispatch({
-      type: ActionTypes.SET_WIDGET_TRANSFORM,
-      id,
-      transform,
-    });
-  };
-
-export const setWidgetData =
-  ({ id, data }) =>
-  (dispatch) => {
-    dispatch({
-      type: ActionTypes.SET_WIDGET_DATA,
-      id,
-      data,
-    });
-  };
-
-export const setWidgetHovered = (id) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.SET_WIDGET_HOVERED,
-    id,
-  });
-};
-
-export const bringToFront = (id) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.BRING_TO_FRONT,
-    id,
-  });
-};
-
-export const sendToBack = (id) => (dispatch) => {
-  dispatch({
-    type: ActionTypes.SEND_TO_BACK,
-    id,
-  });
-};
-
-export const bringForward =
-  ({ id, forwardId }) =>
-  (dispatch) => {
-    dispatch({
-      type: ActionTypes.BRING_FORWARD,
-      id,
-      forwardId,
-    });
-  };
-
-export const sendBackward =
-  ({ id, backwardId }) =>
-  (dispatch) => {
-    dispatch({
-      type: ActionTypes.SEND_BACKWARD,
-      id,
-      backwardId,
-    });
-  };
