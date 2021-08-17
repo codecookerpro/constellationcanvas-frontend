@@ -1,4 +1,5 @@
 const LINKS = {
+  root: '/',
   board: '/board/:index',
   userManagement: '/user-management',
   register: '/register',

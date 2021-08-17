@@ -45,12 +45,12 @@ const useInitApp = () => {
         history.push(LINKS.userManagement);
         break;
       case USER_ROLES.facilitator:
-        if ([LINKS.register, LINKS.screenName].includes(history.location.pathname)) {
+        if ([LINKS.register, LINKS.screenName, LINKS.root].includes(history.location.pathname)) {
           history.push(LINKS.userManagement);
         }
         break;
       case USER_ROLES.user:
-        if ([LINKS.register, LINKS.screenName].includes(history.location.pathname)) {
+        if ([LINKS.register, LINKS.screenName, LINKS.root].includes(history.location.pathname)) {
           history.push(LINKS.userManagement);
         }
         break;
