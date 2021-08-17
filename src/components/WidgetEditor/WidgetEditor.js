@@ -16,7 +16,7 @@ import usePanZoom from 'use-pan-and-zoom';
 import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
 import { useDispatch } from 'react-redux';
-import { createFigure, removeFigure, setCopiedFigure, updateFigure, setFigureHovered, setFigure } from 'actions';
+import { createFigure, deleteFigure, setCopiedFigure, updateFigure, setFigureHovered, setFigure } from 'actions';
 
 const useStyles = makeStyles({
   root: {
@@ -140,7 +140,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
         break;
       case CONTEXTMENU_TYPES.cut:
         dispatch(setCopiedFigure(uuid));
-        dispatch(removeFigure(uuid));
+        dispatch(deleteFigure(uuid));
         break;
       case CONTEXTMENU_TYPES.paste:
         const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
@@ -156,7 +156,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
         dispatch(createFigure(newFigure));
         break;
       case CONTEXTMENU_TYPES.delete:
-        removeFigure(uuid);
+        dispatch(deleteFigure(uuid));
         break;
 
       default:

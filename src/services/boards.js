@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { get, patch, post, put } from './axios';
+import { del, get, patch, post, put } from './axios';
 
 export const getBoard = async (boardUUID) => {
   return await get(['boards', boardUUID]);
@@ -19,4 +19,8 @@ export const createFigure = async (params) => {
 
 export const updateFigure = async (figureUUID, params) => {
   return await patch(['boards', 'figure', figureUUID], _.pick(params, ['canvas', 'data', 'transform', 'boardUUID', 'type', 'depth']));
+};
+
+export const deleteFigure = async (figureUUID) => {
+  return await del(['boards', 'figure', figureUUID]);
 };

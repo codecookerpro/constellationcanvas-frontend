@@ -22,9 +22,9 @@ export const setCanvasIndexUpdater = (state, { payload: index }) => ({
   index,
 });
 
-export const setCopiedFigureUpdater = (state, { payload: copiedFigure }) => ({
+export const setCopiedFigureUpdater = (state, { payload: uuid }) => ({
   ...state,
-  copiedFigure,
+  copiedFigure: state.figures.find((f) => f.uuid === uuid),
 });
 
 export const addFigureUpdater = (state, { payload }) => ({
@@ -32,9 +32,9 @@ export const addFigureUpdater = (state, { payload }) => ({
   figures: [...state.figures, payload],
 });
 
-export const removeFigureUpdater = (state, { payload: id }) => ({
+export const removeFigureUpdater = (state, { payload: uuid }) => ({
   ...state,
-  figures: state.figures.filter((w) => w.id !== id),
+  figures: state.figures.filter((f) => f.uuid !== uuid),
 });
 
 export const setFigureUpdater = (state, { payload: figure }) => ({

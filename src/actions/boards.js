@@ -64,3 +64,14 @@ export const updateFigure = (figure) => (dispatch, getState) => {
     })
     .catch((error) => dispatch(handleError(error)));
 };
+
+export const deleteFigure = (figureUUID) => (dispatch) => {
+  dispatch(setLoading(true));
+
+  API.deleteFigure(figureUUID)
+    .then(() => {
+      dispatch(removeFigure(figureUUID));
+      dispatch(setLoading(false));
+    })
+    .catch((error) => dispatch(handleError(error)));
+};
