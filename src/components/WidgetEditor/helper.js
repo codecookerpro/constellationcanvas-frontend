@@ -34,8 +34,8 @@ export const parseTransform = (trans) => {
   }
 
   if (sTokens) {
-    sx = parseFloat(sTokens[1]);
-    sy = parseFloat(sTokens[2]);
+    sx = sTokens[1];
+    sy = sTokens[2];
   }
 
   return { tx, ty, rotate, sx, sy, ...(t3dTokens && { tz }) };

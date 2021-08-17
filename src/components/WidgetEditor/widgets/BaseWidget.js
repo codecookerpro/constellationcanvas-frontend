@@ -24,20 +24,18 @@ const BaseWidget = React.forwardRef((props, ref) => {
   const containerRef = useRef();
   const classes = useStyles({ depth, hovered });
 
-  useEffect(
-    () =>
-      toArray(target).forEach((tar) => {
-        tar.current.style.transform = transformToString(transform);
-      }),
-    [target, transform]
-  );
+  useEffect(() => {
+    toArray(target).forEach((tar) => {
+      tar.current.style.transform = transformToString(transform);
+    });
+    ref.current.updateRect();
+  }, [target, transform, ref]);
 
   const handleDrag = ({ target, transform, translate: [tx, ty], dist: [dx, dy] }) => {
     tx = tx - dx + dx / zoom;
     ty = ty - dy + dy / zoom;
-    const newTransfrom = { ...parseTransform(transform), tx, ty };
-    target.style.transform = transformToString(newTransfrom);
-    onTransform({ uuid, type: TRANS_TYPES.drag, transform: newTransfrom });
+    target.style.transform = transformToString({ ...parseTransform(transform), tx, ty });
+    onTransform({ uuid, type: TRANS_TYPES.drag, transform: parseTransform(target.style.transform) });
   };
 
   const handleRotate = ({ target, transform }) => {

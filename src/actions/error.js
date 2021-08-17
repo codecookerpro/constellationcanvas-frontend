@@ -1,4 +1,7 @@
-import ActionTypes from 'constants/action-types';
-import { createAction } from 'redux-actions';
+import { setError, setLoading } from './auxiliary';
 
-export const handleError = createAction(ActionTypes.HANDLE_ERROR, (payload) => payload);
+export const handleError = (error) => (dispatch) => {
+  dispatch(setLoading(false));
+  dispatch(setError(error));
+  console.log(error);
+};

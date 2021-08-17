@@ -19,6 +19,7 @@ const ActionTypes = keyMirror({
 
   // aux
   SET_LOADING: null,
+  SET_ERROR: null,
 });
 
 export default ActionTypes;

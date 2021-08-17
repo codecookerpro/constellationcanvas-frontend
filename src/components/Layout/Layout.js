@@ -1,10 +1,6 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
+import { Box, Container, Snackbar, Backdrop, CircularProgress, CssBaseline } from '@material-ui/core';
 import { createGlobalStyle } from 'styled-components/macro';
 
 import AccountBox from './AccountBox';
@@ -13,6 +9,7 @@ import Title from 'components/form-components/Title';
 
 import { HEADER_MAP as headers } from './constants';
 import { SIDEBAR_WIDTH, HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE } from 'constants/user-interface';
+import { setError } from 'actions';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -84,10 +81,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Layout(props) {
+export default function Layout({ sidebar, header, children }) {
   const classes = useStyles();
-  const { sidebar, header } = props;
-
+  const dispatch = useDispatch();
   const profile = useSelector((state) => state.auth.profile);
   const auxState = useSelector((state) => state.aux);
   const Header = header.display ? headers[header.type] : undefined;
@@ -99,6 +95,18 @@ export default function Layout(props) {
       <Backdrop className={classes.backdrop} open={auxState.loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={!!auxState.error}
+        autoHideDuration={6000}
+        onClose={() => dispatch(setError(null))}
+        message={auxState.error?.message || auxState.error?.info}
+      />
+
       {sidebar.display && (
         <Box className={classes.sidePane}>
           <Box className={classes.logo}>
@@ -120,7 +128,7 @@ export default function Layout(props) {
             </Box>
           </Box>
         )}
-        <Box className={classes.content}>{props.children}</Box>
+        <Box className={classes.content}>{children}</Box>
       </Container>
     </Box>
   );

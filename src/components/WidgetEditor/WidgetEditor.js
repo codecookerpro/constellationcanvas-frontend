@@ -16,7 +16,7 @@ import usePanZoom from 'use-pan-and-zoom';
 import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
 import { useDispatch } from 'react-redux';
-import { createFigure, removeFigure, setCopiedFigure, setFigure, setFigureHovered } from 'actions';
+import { createFigure, removeFigure, setCopiedFigure, updateFigure, setFigureHovered, setFigure } from 'actions';
 
 const useStyles = makeStyles({
   root: {
@@ -73,12 +73,12 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     event.preventDefault();
     const { offsetX, offsetY, type } = JSON.parse(event.dataTransfer.getData('application/constellation-widget'));
     const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
-    const tx = (event.clientX - baseX) / zoom - offsetX;
-    const ty = (event.clientY - baseY) / zoom - offsetY;
+    const tx = `${(event.clientX - baseX) / zoom - offsetX}px`;
+    const ty = `${(event.clientY - baseY) / zoom - offsetY}px`;
     const figure = {
       type,
       data: {},
-      transform: { tx, ty, rotate: 0, sx: 1, sy: 1 },
+      transform: { tx, ty, rotate: '0deg', sx: '1', sy: '1' },
       depth: getMaxDepth(figures) + 1,
     };
 
@@ -97,7 +97,8 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     setTransforming(uuid);
   };
 
-  const handleTransformEnd = (id) => {
+  const handleTransformEnd = (uuid) => {
+    dispatch(updateFigure(figures.find((f) => f.uuid === uuid)));
     setTransforming(null);
   };
 
@@ -112,26 +113,26 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
         figures
           .filter((f) => f.uuid === figure.uuid || f.depth > figure.depth)
           .map((f) => ({ ...f, depth: f.uuid === figure.uuid ? maxDepth : f.depth - 1 }))
-          .forEach((f) => dispatch(setFigure(f)));
+          .forEach((f) => dispatch(updateFigure(f)));
         break;
       case CONTEXTMENU_TYPES.back:
         figures
           .filter((f) => f.uuid === figure.uuid || f.depth < figure.depth)
           .map((f) => ({ ...f, depth: f.uuid === figure.uuid ? 0 : f.depth + 1 }))
-          .forEach((f) => dispatch(setFigure(f)));
+          .forEach((f) => dispatch(updateFigure(f)));
         break;
       case CONTEXTMENU_TYPES.forward:
         const forwardFigure = getForwardWidget(figures, figure.uuid, stageRef);
         if (forwardFigure) {
-          dispatch(setFigure({ ...figure, depth: forwardFigure.depth }));
-          dispatch(setFigure({ ...forwardFigure, depth: figure.depth }));
+          dispatch(updateFigure({ ...figure, depth: forwardFigure.depth }));
+          dispatch(updateFigure({ ...forwardFigure, depth: figure.depth }));
         }
         break;
       case CONTEXTMENU_TYPES.backward:
         const backwardFigure = getBackwardWidget(figures, figure.uuid, stageRef);
         if (backwardFigure) {
-          dispatch(setFigure({ ...figure, depth: backwardFigure.depth }));
-          dispatch(setFigure({ ...backwardFigure, depth: figure.depth }));
+          dispatch(updateFigure({ ...figure, depth: backwardFigure.depth }));
+          dispatch(updateFigure({ ...backwardFigure, depth: figure.depth }));
         }
         break;
       case CONTEXTMENU_TYPES.copy:

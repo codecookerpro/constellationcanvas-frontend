@@ -55,3 +55,12 @@ export const createFigure = (figure) => (dispatch, getState) => {
     })
     .catch((error) => dispatch(handleError(error)));
 };
+
+export const updateFigure = (figure) => (dispatch, getState) => {
+  const { index: canvas, uuid: boardUUID } = getState().board;
+  API.updateFigure(figure.uuid, { ...figure, canvas, boardUUID })
+    .then((data) => {
+      dispatch(setFigure(data));
+    })
+    .catch((error) => dispatch(handleError(error)));
+};
