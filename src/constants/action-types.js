@@ -1,6 +1,6 @@
 import { keyMirror } from 'utils';
 
-const ActionTypes = keyMirror({
+export const ActionTypes = keyMirror({
   // canvas
   SET_BOARD: null,
   SET_CANVAS_INDEX: null,

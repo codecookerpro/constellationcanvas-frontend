@@ -15,7 +15,7 @@ export const DEFAULT_LAYOUT_SETTINGS = {
   },
 };
 
-const ROUTES = [
+export const ROUTES = [
   {
     path: LINKS.board,
     component: CanvasBoard,

@@ -1,4 +1,4 @@
-const LINKS = {
+export const LINKS = {
   root: '/',
   board: '/board/:index',
   userManagement: '/user-management',
