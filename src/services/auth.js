@@ -33,7 +33,7 @@ export const getInviteCode = async (userUUID) => {
 };
 
 export const deleteUser = async (uuid) => {
-  return await del(['users', uuid]);
+  return await del(['users', 'user', uuid]);
 };
 
 export const deleteFacilitator = async (uuid) => {

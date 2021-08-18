@@ -3,7 +3,7 @@ import { keyMirror } from 'utils';
 import AdminUserManagement from './AdminUserManagement';
 import FacilitatorUserManagement from './FacilitatorUserManagement';
 
-import { USER_ROLES } from 'constants/enums';
+import { USER_ROLES } from 'utils/constants/enums';
 
 export const USER_MANAGEMENT_MAP = {
   [USER_ROLES.admin]: AdminUserManagement,

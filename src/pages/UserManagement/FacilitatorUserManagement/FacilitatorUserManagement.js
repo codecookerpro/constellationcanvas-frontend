@@ -17,7 +17,7 @@ import { getBoard, getInviteCode, inviteUser, resendCode, updateUser, deleteUser
 import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu, ConfirmDialog } from '../components';
 
 import { TABLE_COLUMN_MAP } from '../constants';
-import { HEADER_HEIGHT } from 'constants/ui';
+import { HEADER_HEIGHT } from 'utils/constants/ui';
 
 const useStyles = makeStyles({
   root: {

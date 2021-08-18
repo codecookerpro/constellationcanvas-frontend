@@ -1,8 +1,9 @@
 import { createAction } from 'redux-actions';
-import ActionTypes from 'constants/action-types';
+import ActionTypes from 'utils/constants/action-types';
 import * as API from 'services/auth';
 import { setLoading } from './auxiliary';
-import { USER_ROLES } from 'constants/enums';
+import { USER_ROLES } from 'utils/constants/enums';
+import axios from 'services/axios';
 
 export const inviteToAccessToken = (params) => (dispatch) => {
   dispatch(setLoading(true));
@@ -10,6 +11,16 @@ export const inviteToAccessToken = (params) => (dispatch) => {
   API.inviteToAccessToken(params).then(({ data, accessToken }) => {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('profile', JSON.stringify(data));
+
+    axios.interceptors.request.use(
+      (config) => {
+        config.headers['Authorization'] = `Bearer ${accessToken}`;
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
 
     dispatch(setUserInfo(accessToken, data));
     dispatch(setLoading(false));

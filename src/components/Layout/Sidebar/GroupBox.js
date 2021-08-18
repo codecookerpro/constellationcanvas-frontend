@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
-import { MAIN_BORDER } from 'constants/ui';
+import { MAIN_BORDER } from 'utils/constants/ui';
 
 const useStyles = makeStyles({
   root: ({ active }) => ({

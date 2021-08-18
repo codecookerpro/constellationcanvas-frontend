@@ -1,4 +1,4 @@
-import ActionTypes from 'constants/action-types';
+import ActionTypes from 'utils/constants/action-types';
 import { createAction } from 'redux-actions';
 import { setUsers } from './auth';
 import { setLoading } from './auxiliary';

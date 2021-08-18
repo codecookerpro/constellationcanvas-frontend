@@ -1,6 +1,6 @@
 import CanvasBoard from 'pages/CanvasBoard';
 import UserManagement from 'pages/UserManagement';
-import { Register, ScreenName } from 'pages/Auth';
+import { Register, ScreenName, Invite } from 'pages/Auth';
 
 import { HEADER_TYPES, USER_ROLES } from './enums';
 import LINKS from './links';
@@ -16,6 +16,19 @@ export const DEFAULT_LAYOUT_SETTINGS = {
 };
 
 export const ROUTES = [
+  {
+    path: LINKS.invite,
+    component: Invite,
+    settings: {
+      sidebar: {
+        display: false,
+      },
+      header: {
+        display: false,
+      },
+    },
+    role: [USER_ROLES.unknown],
+  },
   {
     path: LINKS.board,
     component: CanvasBoard,

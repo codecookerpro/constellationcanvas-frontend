@@ -9,7 +9,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHorizOutlined';
 
 import { StyledTableCell } from './styled-components';
 
-import { USER_ROLES } from 'constants/enums';
+import { USER_ROLES } from 'utils/constants/enums';
 
 const useStyles = makeStyles((theme) => ({
   root: (props) => ({

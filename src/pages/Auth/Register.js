@@ -1,6 +1,6 @@
 import { Box } from '@material-ui/core';
 import { Title, Input, Button, Label } from 'components/form-components';
-import { PROJECT_TITLE } from 'constants/ui';
+import { PROJECT_TITLE } from 'utils/constants/ui';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { inviteToAccessToken } from 'actions/auth';

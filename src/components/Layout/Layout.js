@@ -9,7 +9,7 @@ import Sidebar from './Sidebar';
 import Title from 'components/form-components/Title';
 
 import { HEADER_MAP as headers } from './constants';
-import { SIDEBAR_WIDTH, HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE } from 'constants/ui';
+import { SIDEBAR_WIDTH, HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE } from 'utils/constants/ui';
 import { setError } from 'actions';
 
 const GlobalStyle = createGlobalStyle`
@@ -87,8 +87,8 @@ export default function Layout({ sidebar, header, children }) {
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.auth.profile);
   const { loading, error } = useSelector((state) => state.aux);
-  const Header = header.display ? headers[header.type] : undefined;
-  const errorMsg = error?.data?.message;
+  const Header = header.display && headers?.[header.type];
+  const errorMsg = error?.data?.message || error?.data?.info;
 
   const handleToastyClose = () => {
     dispatch(setError(null));

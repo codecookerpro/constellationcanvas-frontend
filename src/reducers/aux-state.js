@@ -1,4 +1,4 @@
-import ActionTypes from 'constants/action-types';
+import ActionTypes from 'utils/constants/action-types';
 import { handleActions } from 'redux-actions';
 import * as auxStateUpdaters from './aux-state-updaters';
 
