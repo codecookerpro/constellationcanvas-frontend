@@ -26,6 +26,7 @@ const useStyles = makeStyles({
   logout: {
     color: '#624ad7',
     fontSize: 13,
+    cursor: 'pointer',
   },
 });
 

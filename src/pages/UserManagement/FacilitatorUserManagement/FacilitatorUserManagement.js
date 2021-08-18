@@ -122,7 +122,7 @@ export default function FacilitatorUserManagement(props) {
         <InviteButton onClick={handleInviteDialogOpen}>Invite User</InviteButton>
       </Box>
 
-      <UserTableContainer className={classes.tableContainer} alter>
+      <UserTableContainer className={classes.tableContainer}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
