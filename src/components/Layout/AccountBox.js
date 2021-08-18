@@ -1,4 +1,3 @@
-import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -6,9 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 
 import { Avatar } from 'components/';
-
-import { setUserInfo } from 'actions';
-import { USER_ROLES } from 'constants/enums';
 
 const useStyles = makeStyles({
   root: {
@@ -47,12 +43,11 @@ const useStyles = makeStyles({
 
 export default function AccountBox({ displayName }) {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.clear();
-    dispatch(setUserInfo('', { role: USER_ROLES.unknown }));
+    window.location.reload();
   };
 
   return (

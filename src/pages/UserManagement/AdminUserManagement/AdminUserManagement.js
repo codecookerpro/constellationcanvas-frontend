@@ -14,7 +14,17 @@ import MoreHorizIcon from '@material-ui/icons/MoreHorizOutlined';
 import AddBoxIcon from '@material-ui/icons/AddBoxOutlined';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBoxOutlined';
 
-import { getUsers, toggleUserOpen, updateUser, getInviteCode, resendCode, inviteUser, inviteFacilitator, deleteUser } from 'actions';
+import {
+  getUsers,
+  toggleUserOpen,
+  updateUser,
+  getInviteCode,
+  resendCode,
+  inviteUser,
+  inviteFacilitator,
+  deleteUser,
+  deleteFacilitator,
+} from 'actions';
 
 import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu, ConfirmDialog } from '../components';
 
@@ -105,7 +115,11 @@ export default function AdminUserManagement(props) {
   };
 
   const handleConfirm = () => {
-    dispatch(deleteUser(menuState.id));
+    if (menuState.role === USER_ROLES.facilitator) {
+      dispatch(deleteFacilitator(menuState.id));
+    } else {
+      dispatch(deleteUser(menuState.id));
+    }
     handleConfirmDialogClose();
   };
 
