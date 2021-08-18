@@ -10,9 +10,9 @@ const apiAxios = axios.create({
   },
 });
 
-apiAxios.interceptors.response.use((response) => {
-  return response.data;
-});
+// apiAxios.interceptors.response.use((response) => {
+//   return response.data;
+// });
 
 export const composeUrl = (urlData) => {
   if (typeof urlData === 'string') {

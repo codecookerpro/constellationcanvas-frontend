@@ -86,14 +86,19 @@ export default function Layout({ sidebar, header, children }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.auth.profile);
-  const auxState = useSelector((state) => state.aux);
+  const { loading, error } = useSelector((state) => state.aux);
   const Header = header.display ? headers[header.type] : undefined;
+  const errorMsg = error?.data?.message;
+
+  const handleToastyClose = () => {
+    dispatch(setError(null));
+  };
 
   return (
     <Box className={classes.root}>
       <CssBaseline />
       <GlobalStyle />
-      <Backdrop className={classes.backdrop} open={auxState.loading}>
+      <Backdrop className={classes.backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
 
@@ -102,12 +107,21 @@ export default function Layout({ sidebar, header, children }) {
           vertical: 'bottom',
           horizontal: 'right',
         }}
-        open={!!auxState.error}
+        open={!!error}
         autoHideDuration={3000}
+        onClose={handleToastyClose}
       >
-        <Alert variant="filled" elevation={6} severity="error" onClose={() => dispatch(setError(null))}>
-          <AlertTitle>Error</AlertTitle>
-          {auxState.error?.message || auxState.error?.info}
+        <Alert variant="filled" elevation={6} severity="error" onClose={handleToastyClose}>
+          <AlertTitle>{error?.statusText}</AlertTitle>
+          {Array.isArray(errorMsg) ? (
+            <ul>
+              {errorMsg.map((msg, idx) => (
+                <li key={idx}>{msg}</li>
+              ))}
+            </ul>
+          ) : (
+            errorMsg
+          )}
         </Alert>
       </Snackbar>
 

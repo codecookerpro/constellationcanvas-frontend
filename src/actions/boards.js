@@ -2,7 +2,6 @@ import ActionTypes from 'constants/action-types';
 import { createAction } from 'redux-actions';
 import { setUsers } from './auth';
 import { setLoading } from './auxiliary';
-import { handleError } from './error';
 import * as API from 'services/boards';
 
 export const addFigure = createAction(ActionTypes.ADD_FIGURE, (payload) => payload);
@@ -17,13 +16,11 @@ export const getBoard = () => (dispatch, getState) => {
   dispatch(setLoading(true));
 
   const { boardUUID } = getState().auth.profile;
-  API.getBoard(boardUUID)
-    .then((data) => {
-      dispatch(setBoard(data));
-      dispatch(setUsers(data.participants));
-      dispatch(setLoading(false));
-    })
-    .catch((error) => dispatch(handleError(error)));
+  API.getBoard(boardUUID).then((data) => {
+    dispatch(setBoard(data));
+    dispatch(setUsers(data.participants));
+    dispatch(setLoading(false));
+  });
 };
 
 export const switchCanvas = (index) => (dispatch, getState) => {
@@ -34,41 +31,34 @@ export const switchCanvas = (index) => (dispatch, getState) => {
 };
 
 export const updateBoard = (params) => (dispatch) => {
-  API.updateBoard(params)
-    .then((data) => {
-      dispatch(setBoard(data));
-    })
-    .catch((error) => dispatch(handleError(error)));
+  API.updateBoard(params).then((data) => {
+    dispatch(setBoard(data));
+  });
 };
 
 export const createFigure = (figure) => (dispatch, getState) => {
   dispatch(setLoading(true));
 
   const { index: canvas, uuid: boardUUID } = getState().board;
-  API.createFigure({ ...figure, canvas, boardUUID })
-    .then((data) => {
-      dispatch(addFigure(data));
-      dispatch(setLoading(false));
-    })
-    .catch((error) => dispatch(handleError(error)));
+  API.createFigure({ ...figure, canvas, boardUUID }).then((data) => {
+    dispatch(addFigure(data));
+    dispatch(setLoading(false));
+  });
 };
 
 export const updateFigure = (figure) => (dispatch, getState) => {
   const { index: canvas, uuid: boardUUID } = getState().board;
-  API.updateFigure(figure.uuid, { ...figure, canvas, boardUUID })
-    .then((data) => {
-      dispatch(setFigure(data));
-    })
-    .catch((error) => dispatch(handleError(error)));
+  dispatch(setFigure(figure));
+  API.updateFigure(figure.uuid, { ...figure, canvas, boardUUID }).then((data) => {
+    dispatch(setFigure(data));
+  });
 };
 
 export const deleteFigure = (figureUUID) => (dispatch) => {
   dispatch(setLoading(true));
 
-  API.deleteFigure(figureUUID)
-    .then(() => {
-      dispatch(removeFigure(figureUUID));
-      dispatch(setLoading(false));
-    })
-    .catch((error) => dispatch(handleError(error)));
+  API.deleteFigure(figureUUID).then(() => {
+    dispatch(removeFigure(figureUUID));
+    dispatch(setLoading(false));
+  });
 };

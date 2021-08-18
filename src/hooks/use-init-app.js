@@ -1,3 +1,4 @@
+import { handleError } from 'actions';
 import { setUserInfo } from 'actions/auth';
 import { CANVAS_STATES, USER_ROLES } from 'constants/enums';
 import LINKS from 'constants/links';
@@ -59,6 +60,19 @@ const useInitApp = () => {
     }
     // eslint-disable-next-line
   }, [userRole, userName]);
+
+  useEffect(() => {
+    axios.interceptors.response.use(
+      (response) => {
+        return response.data;
+      },
+      (error) => {
+        dispatch(handleError(error?.response));
+        return Promise.reject(error);
+      }
+    );
+    // eslint-disable-next-line
+  }, []);
 };
 
 export default useInitApp;
