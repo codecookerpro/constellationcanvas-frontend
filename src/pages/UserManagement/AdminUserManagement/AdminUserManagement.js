@@ -30,9 +30,9 @@ import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditF
 
 import { getUserCount, getDisplayUsers } from '../helpers';
 
-import { USER_ROLES } from 'constants/enums';
+import { USER_ROLES } from 'utils/constants/enums';
 import { TABLE_COLUMN_MAP, USER_ACTION_MENU, USER_ACTION_TYPE, INVITE_DIALOG_TITLE } from '../constants';
-import { HEADER_HEIGHT } from 'constants/user-interface';
+import { HEADER_HEIGHT } from 'utils/constants/ui';
 
 const useStyles = makeStyles({
   root: {

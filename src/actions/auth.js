@@ -1,8 +1,9 @@
 import { createAction } from 'redux-actions';
-import ActionTypes from 'constants/action-types';
+import ActionTypes from 'utils/constants/action-types';
 import * as API from 'services/auth';
 import { setLoading } from './auxiliary';
-import { USER_ROLES } from 'constants/enums';
+import { USER_ROLES } from 'utils/constants/enums';
+import axios, { setupAxiosInterceptorsRequest } from 'services/axios';
 
 export const inviteToAccessToken = (params) => (dispatch) => {
   dispatch(setLoading(true));
@@ -10,6 +11,7 @@ export const inviteToAccessToken = (params) => (dispatch) => {
   API.inviteToAccessToken(params).then(({ data, accessToken }) => {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('profile', JSON.stringify(data));
+    setupAxiosInterceptorsRequest(axios, accessToken);
 
     dispatch(setUserInfo(accessToken, data));
     dispatch(setLoading(false));
@@ -30,6 +32,16 @@ export const updateUser = (userUUID, params) => (dispatch, getState) => {
     }
 
     dispatch(setUsers(users.map((u) => (u.uuid === userUUID ? data : u))));
+    dispatch(setLoading(false));
+  });
+};
+
+export const updateOwnProfile = (params) => (dispatch) => {
+  dispatch(setLoading(true));
+
+  API.updateOwnProfile(params).then((data) => {
+    localStorage.setItem('profile', JSON.stringify(data));
+    dispatch(setUserInfo(null, data));
     dispatch(setLoading(false));
   });
 };

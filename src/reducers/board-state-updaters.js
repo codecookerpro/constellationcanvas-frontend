@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { CANVAS_STATES } from 'constants/enums';
+import { CANVAS_STATES } from 'utils/constants/enums';
 
 export const INITIAL_BOARD_STATE = Object.freeze({
   index: CANVAS_STATES.current,

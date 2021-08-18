@@ -27,12 +27,8 @@ export const generateAvatarName = (name) => {
   return nameSplit[0].charAt(0).toUpperCase() + nameSplit[1].charAt(0).toUpperCase();
 };
 
-export const generateAvatarBackgroundColor = (name) => {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
+export const generateAvatarColor = (name) => {
+  const hash = (name || 'no name').split('').reduce((hash, ch) => ch.charCodeAt(0) + ((hash << 3) - hash), 0);
   const h = hash % 360;
-  return 'hsl(' + h + ', ' + 100 + '%, ' + 75 + '%)';
+  return `hsl(${h}, 100%, 75%)`;
 };

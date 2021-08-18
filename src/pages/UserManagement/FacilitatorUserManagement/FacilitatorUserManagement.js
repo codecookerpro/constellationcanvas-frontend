@@ -17,7 +17,7 @@ import { getBoard, getInviteCode, inviteUser, resendCode, updateUser, deleteUser
 import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu, ConfirmDialog } from '../components';
 
 import { TABLE_COLUMN_MAP } from '../constants';
-import { HEADER_HEIGHT } from 'constants/user-interface';
+import { HEADER_HEIGHT } from 'utils/constants/ui';
 
 const useStyles = makeStyles({
   root: {
@@ -122,7 +122,7 @@ export default function FacilitatorUserManagement(props) {
         <InviteButton onClick={handleInviteDialogOpen}>Invite User</InviteButton>
       </Box>
 
-      <UserTableContainer className={classes.tableContainer} alter>
+      <UserTableContainer className={classes.tableContainer}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>

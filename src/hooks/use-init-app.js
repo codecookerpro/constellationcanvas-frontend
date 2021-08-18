@@ -1,78 +1,28 @@
 import { handleError } from 'actions';
 import { setUserInfo } from 'actions/auth';
-import { CANVAS_STATES, USER_ROLES } from 'constants/enums';
-import LINKS from 'constants/links';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import axios from 'services/axios';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import axios, { setupAxiosInterceptorsRequest, setupAxiosInterceptorsResponse } from 'services/axios';
 
 const useInitApp = () => {
-  const history = useHistory();
   const dispatch = useDispatch();
-  const { role: userRole, name: userName } = useSelector((state) => state.auth.profile);
+  const accessToken = localStorage.accessToken;
+  const [initialized, setInitialized] = useState(false);
 
-  useEffect(() => {
-    const accessToken = localStorage.accessToken;
-
-    if (!accessToken) {
-      history.push(LINKS.register);
-      return;
-    }
-
-    axios.interceptors.request.use(
-      (config) => {
-        config.headers['Authorization'] = `Bearer ${accessToken}`;
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-
-    if (userRole === USER_ROLES.unknown) {
+  if (!initialized) {
+    if (accessToken) {
+      setupAxiosInterceptorsRequest(axios, accessToken);
       const storedProfile = JSON.parse(localStorage.profile);
       dispatch(setUserInfo(accessToken, storedProfile));
-      return;
     }
 
-    if (!userName) {
-      history.push(LINKS.screenName);
-      return;
-    }
+    setupAxiosInterceptorsResponse(axios, (error) => {
+      dispatch(handleError(error?.response));
+      return Promise.reject(error);
+    });
 
-    switch (userRole) {
-      case USER_ROLES.admin:
-        history.push(LINKS.userManagement);
-        break;
-      case USER_ROLES.facilitator:
-        if ([LINKS.register, LINKS.screenName, LINKS.root].includes(history.location.pathname)) {
-          history.push(LINKS.userManagement);
-        }
-        break;
-      case USER_ROLES.user:
-        if ([LINKS.register, LINKS.screenName, LINKS.root].includes(history.location.pathname)) {
-          history.push(LINKS.board.replace(':index', CANVAS_STATES.current));
-        }
-        break;
-      default:
-        break;
-    }
-    // eslint-disable-next-line
-  }, [userRole, userName]);
-
-  useEffect(() => {
-    axios.interceptors.response.use(
-      (response) => {
-        return response.data;
-      },
-      (error) => {
-        dispatch(handleError(error?.response));
-        return Promise.reject(error);
-      }
-    );
-    // eslint-disable-next-line
-  }, []);
+    setInitialized(true);
+  }
 };
 
 export default useInitApp;

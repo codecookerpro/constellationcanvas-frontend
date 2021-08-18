@@ -1,5 +1,6 @@
-const LINKS = {
+export const LINKS = {
   root: '/',
+  invite: '/invite/:inviteCode',
   board: '/board/:index',
   userManagement: '/user-management',
   register: '/register',

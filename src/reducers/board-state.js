@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions';
-import ActionTypes from 'constants/action-types';
+import ActionTypes from 'utils/constants/action-types';
 import * as boardStateUpdaters from './board-state-updaters';
 
 const actionHandler = {

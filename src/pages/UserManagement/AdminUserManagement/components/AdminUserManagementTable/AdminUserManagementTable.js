@@ -10,7 +10,7 @@ import Menu from '@material-ui/core/Menu';
 import { StyledTableCell, StyledMenuItem } from './styled-components';
 import Row from './Row';
 
-import { USER_ACTIONS, USER_ROLES } from 'constants/enums';
+import { USER_ACTIONS, USER_ROLES } from 'utils/constants/enums';
 
 const useStyles = makeStyles((theme) => ({
   menu: {

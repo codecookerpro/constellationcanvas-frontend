@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 
-import { generateAvatarName, generateAvatarBackgroundColor } from 'utils/helpers';
+import { generateAvatarName, generateAvatarColor } from 'utils/helpers';
 
 const useStyles = makeStyles({
   root: (props) => ({
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 const Avatar = ({ displayName }) => {
-  const classes = useStyles({ backgroundColor: generateAvatarBackgroundColor(displayName) });
+  const classes = useStyles({ backgroundColor: generateAvatarColor(displayName) });
 
   return (
     <Box className={classes.root}>

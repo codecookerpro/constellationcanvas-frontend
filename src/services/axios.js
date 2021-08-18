@@ -10,9 +10,23 @@ const apiAxios = axios.create({
   },
 });
 
-// apiAxios.interceptors.response.use((response) => {
-//   return response.data;
-// });
+export const setupAxiosInterceptorsRequest = (axios, accessToken) => {
+  axios.interceptors.request.use(
+    (config) => {
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+};
+
+export const setupAxiosInterceptorsResponse = (axios, errorHandler) => {
+  axios.interceptors.response.use((response) => {
+    return response.data;
+  }, errorHandler);
+};
 
 export const composeUrl = (urlData) => {
   if (typeof urlData === 'string') {

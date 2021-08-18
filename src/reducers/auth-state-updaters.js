@@ -1,4 +1,4 @@
-import { USER_ROLES } from 'constants/enums';
+import { USER_ROLES } from 'utils/constants/enums';
 
 export const INITIAL_AUTH_STATE = {
   profile: {

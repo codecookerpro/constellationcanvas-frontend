@@ -8,6 +8,10 @@ export const updateUser = async (uuid, data) => {
   return await patch(['users', uuid], data);
 };
 
+export const updateOwnProfile = async (data) => {
+  return await patch(['users', 'profile'], data);
+};
+
 export const inviteUser = async (params) => {
   return await post(['invite', 'user'], params);
 };
@@ -29,7 +33,7 @@ export const getInviteCode = async (userUUID) => {
 };
 
 export const deleteUser = async (uuid) => {
-  return await del(['users', uuid]);
+  return await del(['users', 'user', uuid]);
 };
 
 export const deleteFacilitator = async (uuid) => {

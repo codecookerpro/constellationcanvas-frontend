@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { USER_ROLES } from 'constants/enums';
+import { USER_ROLES } from 'utils/constants/enums';
 
 export function getUserCount(users, role) {
   return users.filter((user) => user.role === role).length;
