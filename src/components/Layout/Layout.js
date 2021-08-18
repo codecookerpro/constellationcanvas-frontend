@@ -9,7 +9,7 @@ import Sidebar from './Sidebar';
 import Title from 'components/form-components/Title';
 
 import { HEADER_MAP as headers } from './constants';
-import { SIDEBAR_WIDTH, HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE } from 'constants/user-interface';
+import { SIDEBAR_WIDTH, HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE } from 'constants/ui';
 import { setError } from 'actions';
 
 const GlobalStyle = createGlobalStyle`

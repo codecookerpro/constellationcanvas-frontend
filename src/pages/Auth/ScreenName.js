@@ -1,7 +1,7 @@
 import { Box } from '@material-ui/core';
 import { updateUser } from 'actions';
 import { Title, Input, Button, Label } from 'components/form-components';
-import { PROJECT_TITLE } from 'constants/user-interface';
+import { PROJECT_TITLE } from 'constants/ui';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './use-styles';

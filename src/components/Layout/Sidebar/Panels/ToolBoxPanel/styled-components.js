@@ -1,6 +1,6 @@
 import { Accordion, AccordionSummary, AccordionDetails } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { MAIN_BORDER } from 'constants/user-interface';
+import { MAIN_BORDER } from 'constants/ui';
 
 export const StyledAccordion = withStyles({
   root: {

@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
+import { WIDGET_IMG_BASE_URL } from 'constants/ui';
 import { WIDGET_DESCRIPTIONS } from 'components/WidgetEditor/constants';
 
 const useStyles = makeStyles((theme) => ({

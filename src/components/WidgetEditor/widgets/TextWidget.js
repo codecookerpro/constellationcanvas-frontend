@@ -1,6 +1,6 @@
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
-import { WIDGET_IMG_BASE_URL } from 'constants/user-interface';
+import { WIDGET_IMG_BASE_URL } from 'constants/ui';
 import { useRef, useState } from 'react';
 import { TEXT_WIDGET_DEFAULT_PROPS, WIDGET_GROUPS } from '../constants';
 import useDynamicSize from '../hooks/use-dynamic-size';
