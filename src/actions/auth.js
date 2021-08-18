@@ -34,6 +34,16 @@ export const updateUser = (userUUID, params) => (dispatch, getState) => {
   });
 };
 
+export const updateOwnProfile = (params) => (dispatch) => {
+  dispatch(setLoading(true));
+
+  API.updateOwnProfile(params).then((data) => {
+    localStorage.setItem('profile', JSON.stringify(data));
+    dispatch(setUserInfo(null, data));
+    dispatch(setLoading(false));
+  });
+};
+
 export const inviteUser = (email, boardUUID) => (dispatch, getState) => {
   dispatch(setLoading(true));
 
