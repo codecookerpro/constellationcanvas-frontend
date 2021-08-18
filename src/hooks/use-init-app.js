@@ -36,8 +36,6 @@ const useInitApp = () => {
 
     setInitialized(true);
   }
-
-  // eslint-disable-next-line
 };
 
 export default useInitApp;
