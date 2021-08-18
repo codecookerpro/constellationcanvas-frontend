@@ -108,7 +108,7 @@ export default function Layout({ sidebar, header, children }) {
           horizontal: 'right',
         }}
         open={!!error}
-        autoHideDuration={3000}
+        autoHideDuration={6000}
         onClose={handleToastyClose}
       >
         <Alert variant="filled" elevation={6} severity="error" onClose={handleToastyClose}>

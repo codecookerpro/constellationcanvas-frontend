@@ -14,7 +14,7 @@ export const updateBoard = async (boardUUID, params) => {
 };
 
 export const createFigure = async (params) => {
-  return await post(['boards', 'figure'], params);
+  return await post(['boards', 'figure'], _.pick(params, ['canvas', 'data', 'transform', 'boardUUID', 'type', 'depth']));
 };
 
 export const updateFigure = async (figureUUID, params) => {
