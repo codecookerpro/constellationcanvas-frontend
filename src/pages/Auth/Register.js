@@ -38,6 +38,7 @@ const Login = () => {
           </Button>
         </Box>
       </form>
+      <Box className={classes.copyright}>Copyright © 2021 Magnitude Educational Inc.</Box>
     </Box>
   );
 };
