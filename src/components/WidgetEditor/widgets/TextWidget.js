@@ -1,15 +1,15 @@
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
-import { WIDGET_IMG_BASE_URL } from 'constants/ui';
 import { useRef, useState } from 'react';
-import { TEXT_WIDGET_DEFAULT_PROPS, WIDGET_GROUPS } from '../constants';
+import { TEXT_WIDGET_DEFAULT_PROPS } from '../constants';
 import useDynamicSize from '../hooks/use-dynamic-size';
+import { getImgUrl } from '../helper';
 
 const useStyles = makeStyles({
   root: {
     width: (props) => props.width,
     height: (props) => props.height,
-    backgroundImage: ({ group, type }) => `url(${WIDGET_IMG_BASE_URL}${group}/${type}.${WIDGET_GROUPS.find((g) => g.type === group).imageType})`,
+    backgroundImage: ({ group, type }) => `url(${getImgUrl(group, type)})`,
     padding: ({ type, width, height }) => {
       const {
         padding: { top, right, bottom, left },
