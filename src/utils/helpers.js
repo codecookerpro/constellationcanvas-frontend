@@ -28,7 +28,7 @@ export const generateAvatarName = (name) => {
 };
 
 export const generateAvatarColor = (name) => {
-  const hash = name.split('').reduce((hash, ch) => ch.charCodeAt(0) + ((hash << 3) - hash), 0);
+  const hash = (name || 'no name').split('').reduce((hash, ch) => ch.charCodeAt(0) + ((hash << 3) - hash), 0);
   const h = hash % 360;
   return `hsl(${h}, 100%, 75%)`;
 };
