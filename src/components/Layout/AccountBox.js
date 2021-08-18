@@ -11,18 +11,6 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
   },
-  avatar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 50,
-    height: 50,
-    borderRadius: 9999,
-    backgroundColor: '#624ad7',
-    color: 'white',
-    fontSize: 16,
-    textTransform: 'uppercase',
-  },
   info: {
     display: 'flex',
     flexDirection: 'column',
