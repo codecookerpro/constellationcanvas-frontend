@@ -14,7 +14,7 @@ const useStyles = makeStyles({
 });
 
 export default function ParticipantPanel() {
-  const participants = useSelector((state) => state.board.participants);
+  const participants = useSelector((state) => state.auth.users);
   const classes = useStyles();
   const calcItemPadding = (idx) => ({
     paddingLeft: idx % 2 ? 17 : 0,
@@ -28,7 +28,7 @@ export default function ParticipantPanel() {
     <Grid container className={classes.root}>
       {participants.map(({ uuid, name }, idx) => (
         <Grid item xs={6} key={uuid} className={classes.item} style={calcItemPadding(idx)}>
-          <Participant uuid={uuid} name={name} active={true} onClick={handleParcipantClick} />
+          <Participant uuid={uuid} name={name} active={false} onClick={handleParcipantClick} />
         </Grid>
       ))}
     </Grid>
