@@ -20,9 +20,7 @@ export default function ParticipantPanel() {
     paddingLeft: idx % 2 ? 17 : 0,
     paddingRight: idx % 2 ? 0 : 17,
   });
-  const handleParcipantClick = (uuid) => {
-    alert(uuid);
-  };
+  const handleParcipantClick = (uuid) => {};
 
   return (
     <Grid container className={classes.root}>
