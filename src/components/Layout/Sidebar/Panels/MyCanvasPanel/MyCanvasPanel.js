@@ -3,7 +3,7 @@ import { Box, Link } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { SIDEBAR_ITEMS } from 'components/Layout/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { switchCanvas } from 'actions';
+import { setSelectedParticipant, switchCanvas } from 'actions';
 
 const useStyles = makeStyles({
   root: {
@@ -53,25 +53,29 @@ const useStyles = makeStyles({
 
 export default function MyCanvasPanel() {
   const classes = useStyles();
-  const index = useSelector((state) => state.board.index);
   const dispatch = useDispatch();
+  const index = useSelector((state) => state.board.index);
+  const { selectedParticipant } = useSelector((state) => state.board);
   const canvases = SIDEBAR_ITEMS[0].children;
 
   const handleClick = (e, idx) => {
     e.preventDefault();
+    dispatch(setSelectedParticipant(null));
     dispatch(switchCanvas(idx));
   };
 
   return (
     <Box className={classes.root}>
-      {canvases.map((canvas, idx) => {
-        return (
-          <Link className={idx === index ? classes.active : classes.link} key={canvas.title} onClick={(e) => handleClick(e, idx)}>
-            {canvas.title}
-            <ChevronRightIcon />
-          </Link>
-        );
-      })}
+      {canvases.map((canvas, idx) => (
+        <Link
+          className={!selectedParticipant && idx === index ? classes.active : classes.link}
+          key={canvas.title}
+          onClick={(e) => handleClick(e, idx)}
+        >
+          {canvas.title}
+          <ChevronRightIcon />
+        </Link>
+      ))}
     </Box>
   );
 }
