@@ -39,15 +39,15 @@ const Routes = () => {
             path={path}
             render={(props) =>
               authRequired ? (
-                <Layout {...settings}>
-                  <Component {...props} />
-                </Layout>
-              ) : (
                 <AuthGuard>
                   <Layout {...settings}>
                     <Component {...props} />
                   </Layout>
                 </AuthGuard>
+              ) : (
+                <Layout {...settings}>
+                  <Component {...props} />
+                </Layout>
               )
             }
           />
