@@ -6,9 +6,12 @@ import { getBoard, switchCanvas } from 'actions';
 
 export default function CanvasBoard() {
   const { index } = useParams();
-  const { figures, copiedFigure } = useSelector((state) => state.board);
+  const { figures, copiedFigure, selectedParticipant } = useSelector((state) => state.board);
   const dispatch = useDispatch();
-  const filteredFigures = useMemo(() => figures.filter((f) => f.canvas === parseInt(index)), [index, figures]);
+  const filteredFigures = useMemo(
+    () => figures.filter((f) => f.canvas === parseInt(index) && (!selectedParticipant || selectedParticipant === f.creatorUUID)),
+    [index, figures, selectedParticipant]
+  );
 
   // eslint-disable-next-line
   useEffect(() => dispatch(switchCanvas(parseInt(index))), [index]);

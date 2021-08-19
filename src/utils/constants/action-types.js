@@ -9,6 +9,7 @@ export const ActionTypes = keyMirror({
   REMOVE_FIGURE: null,
   SET_FIGURE: null,
   SET_FIGURE_HOVERED: null,
+  SET_SELECTED_PARTICIPANT: null,
 
   // error
   HANDLE_ERROR: null,

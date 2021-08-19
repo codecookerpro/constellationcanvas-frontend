@@ -11,6 +11,7 @@ export const setCopiedFigure = createAction(ActionTypes.SET_COPIED_FIGURE, (payl
 export const setBoard = createAction(ActionTypes.SET_BOARD, (payload) => payload);
 export const setCanvasIndex = createAction(ActionTypes.SET_CANVAS_INDEX, (payload) => payload);
 export const setFigureHovered = createAction(ActionTypes.SET_FIGURE_HOVERED, (payload) => payload);
+export const setSelectedParticipant = createAction(ActionTypes.SET_SELECTED_PARTICIPANT, (payload) => payload);
 
 export const getBoard = () => (dispatch, getState) => {
   dispatch(setLoading(true));

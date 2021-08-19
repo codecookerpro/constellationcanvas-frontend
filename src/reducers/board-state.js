@@ -10,6 +10,7 @@ const actionHandler = {
   [ActionTypes.REMOVE_FIGURE]: boardStateUpdaters.removeFigureUpdater,
   [ActionTypes.SET_FIGURE]: boardStateUpdaters.setFigureUpdater,
   [ActionTypes.SET_FIGURE_HOVERED]: boardStateUpdaters.setFigureHoveredUpdater,
+  [ActionTypes.SET_SELECTED_PARTICIPANT]: boardStateUpdaters.setSelectedParticipantUpdater,
 };
 
 export default handleActions(actionHandler, boardStateUpdaters.INITIAL_BOARD_STATE);

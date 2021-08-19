@@ -4,6 +4,7 @@ import { CANVAS_STATES } from 'utils/constants/enums';
 export const INITIAL_BOARD_STATE = Object.freeze({
   index: CANVAS_STATES.current,
   participants: [],
+  selectedParticipant: null,
   name: '',
   figures: [],
   uuid: null,
@@ -45,4 +46,9 @@ export const setFigureUpdater = (state, { payload: figure }) => ({
 export const setFigureHoveredUpdater = (state, { payload: figureId }) => ({
   ...state,
   figures: state.figures.map((f) => ({ ...f, hovered: f.uuid === figureId })),
+});
+
+export const setSelectedParticipantUpdater = (state, { payload: selectedParticipant }) => ({
+  ...state,
+  selectedParticipant,
 });
