@@ -27,13 +27,15 @@ export const ROUTES = [
         display: false,
       },
     },
-    role: [USER_ROLES.unknown],
+    validate: ({ role }) => role === USER_ROLES.unknown,
+    authRequired: false,
   },
   {
     path: LINKS.board,
     component: CanvasBoard,
     settings: DEFAULT_LAYOUT_SETTINGS,
-    role: [USER_ROLES.user, USER_ROLES.facilitator],
+    validate: ({ role, name }) => [USER_ROLES.user, USER_ROLES.facilitator].includes(role) && name,
+    authRequired: true,
   },
   {
     path: LINKS.userManagement,
@@ -45,7 +47,8 @@ export const ROUTES = [
         type: HEADER_TYPES.title,
       },
     },
-    role: [USER_ROLES.admin, USER_ROLES.facilitator],
+    validate: ({ name, role }) => [USER_ROLES.admin, USER_ROLES.facilitator].includes(role) && name,
+    authRequired: true,
   },
   {
     path: LINKS.register,
@@ -56,10 +59,10 @@ export const ROUTES = [
       },
       header: {
         display: false,
-        type: HEADER_TYPES.topic,
       },
     },
-    role: [USER_ROLES.unknown],
+    validate: (profile) => profile.role === USER_ROLES.unknown,
+    authRequired: false,
   },
   {
     path: LINKS.screenName,
@@ -70,10 +73,10 @@ export const ROUTES = [
       },
       header: {
         display: false,
-        type: HEADER_TYPES.topic,
       },
     },
-    role: [USER_ROLES.admin, USER_ROLES.facilitator, USER_ROLES.user],
+    validate: ({ name, role }) => role !== USER_ROLES.unknown && !name,
+    authRequired: true,
   },
 ];
 

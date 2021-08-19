@@ -8,22 +8,11 @@ import { ROUTES, LINKS, USER_ROLES, CANVAS_STATES } from 'utils/constants';
 import { AuthGuard } from 'hocs';
 
 const Routes = () => {
-  const { role: userRole, name: userName } = useSelector((state) => state.auth.profile);
-  const routes = useMemo(
-    () =>
-      ROUTES.filter(({ role, path }) => {
-        if (role.includes(userRole)) {
-          if (path === LINKS.screenName && userName) {
-            return false;
-          }
-          return true;
-        }
-        return false;
-      }),
-    [userRole, userName]
-  );
+  const profile = useSelector((state) => state.auth.profile);
+  const { role: userRole, name: userName } = profile;
+  const validatedRoutes = useMemo(() => ROUTES.filter((r) => r.validate(profile)), [profile]);
 
-  const redirect = useMemo(() => {
+  const redirectTo = useMemo(() => {
     if (userRole !== USER_ROLES.unknown && !userName) {
       return LINKS.screenName;
     }
@@ -44,12 +33,12 @@ const Routes = () => {
   return (
     <Suspense fallback={<div />}>
       <Switch>
-        {routes.map(({ path, settings, component: Component }) => (
+        {validatedRoutes.map(({ path, settings, authRequired, component: Component }) => (
           <Route
             key={path}
             path={path}
             render={(props) =>
-              userRole === USER_ROLES.unknown ? (
+              authRequired ? (
                 <Layout {...settings}>
                   <Component {...props} />
                 </Layout>
@@ -63,7 +52,7 @@ const Routes = () => {
             }
           />
         ))}
-        <Redirect to={redirect} />
+        <Redirect to={redirectTo} />
       </Switch>
     </Suspense>
   );
