@@ -31,8 +31,8 @@ export const switchCanvas = (index) => (dispatch, getState) => {
   });
 };
 
-export const updateBoard = (params) => (dispatch) => {
-  API.updateBoard(params).then((data) => {
+export const updateBoard = (boardUUID, params) => (dispatch) => {
+  API.updateBoard(boardUUID, params).then((data) => {
     dispatch(setBoard(data));
   });
 };
