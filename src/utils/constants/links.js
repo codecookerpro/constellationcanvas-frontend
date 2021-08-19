@@ -1,7 +1,7 @@
 export const LINKS = {
   root: '/',
   invite: '/invite/:inviteCode',
-  board: '/board/:index',
+  board: '/board',
   userManagement: '/user-management',
   register: '/register',
   screenName: '/screen-name',

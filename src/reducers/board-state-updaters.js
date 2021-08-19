@@ -1,8 +1,7 @@
 import _ from 'lodash';
-import { CANVAS_STATES } from 'utils/constants/enums';
 
 export const INITIAL_BOARD_STATE = Object.freeze({
-  index: CANVAS_STATES.current,
+  index: 0,
   participants: [],
   selectedParticipant: null,
   name: '',
@@ -40,7 +39,9 @@ export const removeFigureUpdater = (state, { payload: uuid }) => ({
 
 export const setFigureUpdater = (state, { payload: figure }) => ({
   ...state,
-  figures: state.figures.map((f) => (f.uuid === figure.uuid ? _.merge({}, f, figure) : f)),
+  figures: state.figures.find((f) => f.uuid === figure.uuid)
+    ? state.figures.map((f) => (f.uuid === figure.uuid ? _.merge({}, f, figure) : f))
+    : state.figures.concat(figure),
 });
 
 export const setFigureHoveredUpdater = (state, { payload: figureId }) => ({

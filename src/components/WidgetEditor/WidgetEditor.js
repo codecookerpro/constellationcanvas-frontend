@@ -16,7 +16,7 @@ import usePanZoom from 'use-pan-and-zoom';
 import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
 import { useDispatch } from 'react-redux';
-import { createFigure, deleteFigure, setCopiedFigure, updateFigure, setFigureHovered, setFigure } from 'actions';
+import { createFigure, deleteFigure, setCopiedFigure, updateFigure, setFigureHovered } from 'actions';
 
 const useStyles = makeStyles({
   root: {
@@ -85,20 +85,12 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     dispatch(createFigure(figure));
   };
 
-  const handleTransform = ({ uuid, transform }) => {
-    dispatch(setFigure({ uuid, transform }));
-  };
-
-  const handleDataChange = (uuid, data) => {
-    dispatch(setFigure({ uuid, data }));
-  };
-
   const handleTransformStart = (uuid) => {
     setTransforming(uuid);
   };
 
-  const handleTransformEnd = (uuid) => {
-    dispatch(updateFigure(figures.find((f) => f.uuid === uuid)));
+  const handleTransformEnd = (uuid, params) => {
+    dispatch(updateFigure({ uuid, ...params }));
     setTransforming(null);
   };
 
@@ -238,8 +230,6 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
                 group={group}
                 zoom={zoom}
                 key={figure.uuid}
-                onTransform={handleTransform}
-                onDataChange={handleDataChange}
                 onTransformStart={handleTransformStart}
                 onTransformEnd={handleTransformEnd}
               />

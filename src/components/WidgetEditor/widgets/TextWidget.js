@@ -1,6 +1,6 @@
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TEXT_WIDGET_DEFAULT_PROPS } from '../constants';
 import useDynamicSize from '../hooks/use-dynamic-size';
 import { getImgUrl } from '../helper';
@@ -53,7 +53,6 @@ const TextWidget = (props) => {
     type,
     group,
     transform: { sx, sy },
-    onDataChange,
     onTransformStart,
     onTransformEnd,
   } = props;
@@ -63,32 +62,30 @@ const TextWidget = (props) => {
   const wrapperRef = useRef();
   const textRef = useRef();
   const [editable, setEditable] = useState(false);
+  const [text, setText] = useState(data.text);
+
+  useEffect(() => setText(data.text), [data]);
+
   const handleTextChange = (e) => {
-    onDataChange(uuid, { text: e.target.value });
+    setText(e.target.value);
   };
+
   const handleDoubleClick = (e) => {
     e.preventDefault();
+    setTimeout(() => textRef.current.focus());
     setEditable(true);
     onTransformStart(uuid);
-    setTimeout(() => textRef.current.focus());
   };
 
   const handleFocusOut = () => {
     setEditable(false);
-    onTransformEnd(uuid);
+    onTransformEnd(uuid, { data: { text } });
   };
 
   return (
     <BaseWidget {...props} keepRatio={false} target={wrapperRef} ref={moveableRef}>
       <div ref={wrapperRef} className={classes.root} onDoubleClick={handleDoubleClick}>
-        <textarea
-          value={data?.text}
-          className={classes.textarea}
-          onChange={handleTextChange}
-          ref={textRef}
-          disabled={!editable}
-          onBlur={handleFocusOut}
-        />
+        <textarea value={text} className={classes.textarea} onChange={handleTextChange} ref={textRef} disabled={!editable} onBlur={handleFocusOut} />
       </div>
     </BaseWidget>
   );

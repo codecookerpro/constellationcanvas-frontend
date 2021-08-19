@@ -1,7 +1,7 @@
 import { MyCanvasPanel, ParticipantPanel, ToolBoxPanel } from './Sidebar/Panels';
 import { TopicHeader, TitleHeader } from './Header';
 
-import { CANVAS_STATES, HEADER_TYPES, USER_ROLES } from 'utils/constants/enums';
+import { HEADER_TYPES, USER_ROLES } from 'utils/constants/enums';
 import LINKS from 'utils/constants/links';
 
 export const HEADER_MAP = {
@@ -27,32 +27,22 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM_TYPES.canvas,
     role: [USER_ROLES.facilitator, USER_ROLES.user],
     component: MyCanvasPanel,
-    children: [
-      {
-        title: 'Current State',
-        path: LINKS.board.replace(':index', CANVAS_STATES.current),
-      },
-      {
-        title: 'Future State 1',
-        path: LINKS.board.replace(':index', CANVAS_STATES.futureState1),
-      },
-      {
-        title: 'Future State 2',
-        path: LINKS.board.replace(':index', CANVAS_STATES.futureState2),
-      },
-    ],
+    children: [{ title: 'Current State' }, { title: 'Future State 1' }, { title: 'Future State 2' }],
+    defaultExpand: ({ selectedParticipant, pathname }) => !selectedParticipant && pathname === LINKS.board,
   },
   {
     title: 'TOOLBOX',
     type: SIDEBAR_ITEM_TYPES.toolbox,
     role: [USER_ROLES.facilitator, USER_ROLES.user],
     component: ToolBoxPanel,
+    defaultExpand: () => false,
   },
   {
     title: 'PARTICIPANT',
     type: SIDEBAR_ITEM_TYPES.participant,
     role: [USER_ROLES.facilitator],
     component: ParticipantPanel,
+    defaultExpand: ({ selectedParticipant, pathname }) => selectedParticipant && pathname === LINKS.board,
   },
   {
     title: 'USER MANAGEMENT',

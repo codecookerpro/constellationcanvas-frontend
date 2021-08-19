@@ -4,7 +4,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import Layout from './components/Layout';
 
 import { useSelector } from 'react-redux';
-import { ROUTES, LINKS, USER_ROLES, CANVAS_STATES } from 'utils/constants';
+import { ROUTES, LINKS, USER_ROLES } from 'utils/constants';
 import { AuthGuard } from 'hocs';
 
 const Routes = () => {
@@ -24,7 +24,7 @@ const Routes = () => {
       case USER_ROLES.facilitator:
         return LINKS.userManagement;
       case USER_ROLES.user:
-        return LINKS.board.replace(':index', CANVAS_STATES.current);
+        return LINKS.board;
       default:
         return LINKS.root;
     }
