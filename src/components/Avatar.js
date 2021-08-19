@@ -1,7 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-
 import { generateAvatarName, generateAvatarColor } from 'utils/helpers';
 
 const useStyles = makeStyles({
@@ -9,24 +7,20 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 50,
-    height: 50,
+    width: props.boxSize,
+    height: props.boxSize,
     borderRadius: 9999,
     backgroundColor: props.backgroundColor,
     color: 'white',
-    fontSize: 16,
+    fontSize: props.fontSize,
     textTransform: 'uppercase',
   }),
 });
 
-const Avatar = ({ displayName }) => {
-  const classes = useStyles({ backgroundColor: generateAvatarColor(displayName) });
+const Avatar = ({ displayName, boxSize = 50, fontSize = 16 }) => {
+  const classes = useStyles({ boxSize, fontSize, backgroundColor: generateAvatarColor(displayName) });
 
-  return (
-    <Box className={classes.root}>
-      <Typography>{generateAvatarName(displayName)}</Typography>
-    </Box>
-  );
+  return <Box className={classes.root}>{generateAvatarName(displayName)}</Box>;
 };
 
 export default Avatar;
