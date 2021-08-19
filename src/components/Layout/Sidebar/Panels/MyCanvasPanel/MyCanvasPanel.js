@@ -1,9 +1,9 @@
-import { useLocation, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Link from '@material-ui/core/Link';
+import { Box, Link } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { SIDEBAR_ITEMS } from 'components/Layout/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { switchCanvas } from 'actions';
 
 const useStyles = makeStyles({
   root: {
@@ -53,25 +53,20 @@ const useStyles = makeStyles({
 
 export default function MyCanvasPanel() {
   const classes = useStyles();
-  const { pathname } = useLocation();
-  const history = useHistory();
+  const index = useSelector((state) => state.board.index);
+  const dispatch = useDispatch();
   const canvases = SIDEBAR_ITEMS[0].children;
+
+  const handleClick = (e, idx) => {
+    e.preventDefault();
+    dispatch(switchCanvas(idx));
+  };
 
   return (
     <Box className={classes.root}>
-      {canvases.map((canvas) => {
-        const active = pathname.startsWith(canvas.path);
-
+      {canvases.map((canvas, idx) => {
         return (
-          <Link
-            className={active ? classes.active : classes.link}
-            key={canvas.title}
-            href={canvas.path}
-            onClick={(e) => {
-              e.preventDefault();
-              history.push(canvas.path);
-            }}
-          >
+          <Link className={idx === index ? classes.active : classes.link} key={canvas.title} onClick={(e) => handleClick(e, idx)}>
             {canvas.title}
             <ChevronRightIcon />
           </Link>

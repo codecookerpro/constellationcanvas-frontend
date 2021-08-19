@@ -7,7 +7,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import GroupBox from './GroupBox';
 import { GroupAccordion, GroupAccordionSummary, GroupAccordionDetails } from './styled-components';
 
-import { SIDEBAR_ITEMS as items, SIDEBAR_ITEM_TYPES } from '../constants';
+import { SIDEBAR_ITEMS } from '../constants';
+import { LINKS } from 'utils/constants';
 
 const useStyles = makeStyles({
   group: {
@@ -31,32 +32,24 @@ export default function Sidebar(props) {
 
   return (
     <>
-      {items
-        .filter((item) => item.role.includes(role))
-        .map((item) => {
-          const Panel = item.component;
+      {SIDEBAR_ITEMS.filter((item) => item.role.includes(role)).map((item) => {
+        const Panel = item.component;
 
-          if (!Panel) {
-            return <GroupBox key={item.title} title={item.title} path={item.path} />;
-          }
+        if (!Panel) {
+          return <GroupBox key={item.title} title={item.title} path={item.path} />;
+        }
 
-          let active = item.type === SIDEBAR_ITEM_TYPES.canvas;
-
-          if (item.type === SIDEBAR_ITEM_TYPES.canvas) {
-            active = item.children.findIndex((child) => pathname.startsWith(child.path)) !== -1;
-          }
-
-          return (
-            <GroupAccordion key={item.title} defaultExpanded={active}>
-              <GroupAccordionSummary expandIcon={<ExpandMoreIcon className={classes.expand} />}>
-                <Typography className={classes.group}>{item.title}</Typography>
-              </GroupAccordionSummary>
-              <GroupAccordionDetails>
-                <Panel />
-              </GroupAccordionDetails>
-            </GroupAccordion>
-          );
-        })}
+        return (
+          <GroupAccordion key={item.title} defaultExpanded={pathname === LINKS.board}>
+            <GroupAccordionSummary expandIcon={<ExpandMoreIcon className={classes.expand} />}>
+              <Typography className={classes.group}>{item.title}</Typography>
+            </GroupAccordionSummary>
+            <GroupAccordionDetails>
+              <Panel />
+            </GroupAccordionDetails>
+          </GroupAccordion>
+        );
+      })}
     </>
   );
 }
