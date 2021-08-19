@@ -51,7 +51,7 @@ export const SIDEBAR_ITEMS = [
   {
     title: 'PARTICIPANT',
     type: SIDEBAR_ITEM_TYPES.participant,
-    role: [USER_ROLES.facilitator, USER_ROLES.user],
+    role: [USER_ROLES.facilitator],
     component: ParticipantPanel,
   },
   {
