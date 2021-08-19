@@ -1,6 +1,8 @@
 import { Grid, makeStyles } from '@material-ui/core';
 import { setSelectedParticipant } from 'actions';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
+import { LINKS } from 'utils/constants';
 import Participant from './Participant';
 
 const useStyles = makeStyles({
@@ -19,6 +21,7 @@ export default function ParticipantPanel() {
   const selectedParticipant = useSelector((state) => state.board.selectedParticipant);
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const calcItemPadding = (idx) => ({
     paddingLeft: idx % 2 ? 17 : 0,
@@ -26,6 +29,7 @@ export default function ParticipantPanel() {
   });
 
   const handleParcipantClick = (uuid) => {
+    history.push(LINKS.board);
     dispatch(setSelectedParticipant(uuid));
   };
 

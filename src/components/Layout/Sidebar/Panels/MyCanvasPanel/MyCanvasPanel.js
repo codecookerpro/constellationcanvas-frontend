@@ -61,7 +61,7 @@ export default function MyCanvasPanel() {
     <Box className={classes.root}>
       {canvases.map((canvas, idx) => (
         <Link
-          className={clsx(classes.link, { active: !selectedParticipant && idx === index })}
+          className={clsx(classes.link, { active: !selectedParticipant && idx === index && history.location.pathname === LINKS.board })}
           key={canvas.title}
           onClick={(e) => handleClick(e, idx)}
         >

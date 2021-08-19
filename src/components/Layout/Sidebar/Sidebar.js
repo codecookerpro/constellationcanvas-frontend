@@ -3,12 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
 import GroupBox from './GroupBox';
 import { GroupAccordion, GroupAccordionSummary, GroupAccordionDetails } from './styled-components';
-
 import { SIDEBAR_ITEMS } from '../constants';
-import { LINKS } from 'utils/constants';
 
 const useStyles = makeStyles({
   group: {
@@ -28,6 +25,7 @@ const useStyles = makeStyles({
 export default function Sidebar(props) {
   const classes = useStyles();
   const role = useSelector((state) => state.auth.profile?.role);
+  const { selectedParticipant } = useSelector((state) => state.board);
   const { pathname } = useLocation();
 
   return (
@@ -40,7 +38,7 @@ export default function Sidebar(props) {
         }
 
         return (
-          <GroupAccordion key={item.title} defaultExpanded={pathname === LINKS.board}>
+          <GroupAccordion key={item.title} defaultExpanded={item.defaultExpand({ selectedParticipant, pathname })}>
             <GroupAccordionSummary expandIcon={<ExpandMoreIcon className={classes.expand} />}>
               <Typography className={classes.group}>{item.title}</Typography>
             </GroupAccordionSummary>
