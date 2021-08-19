@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
-import { TRANS_TYPES, WIDGET_SCALE_LIMIT } from '../constants';
+import { WIDGET_SCALE_LIMIT } from '../constants';
 import { parseTransform, transformToString } from '../helper';
 import { toArray } from 'utils';
 
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 const BaseWidget = React.forwardRef((props, ref) => {
-  const { uuid, depth, children, target, transform, hovered, zoom, onTransform, onTransformStart, onTransformEnd } = props;
+  const { uuid, depth, children, target, transform, hovered, zoom, onTransformStart, onTransformEnd } = props;
   const containerRef = useRef();
   const classes = useStyles({ depth, hovered });
 
@@ -35,12 +35,10 @@ const BaseWidget = React.forwardRef((props, ref) => {
     tx = tx - dx + dx / zoom;
     ty = ty - dy + dy / zoom;
     target.style.transform = transformToString({ ...parseTransform(transform), tx, ty });
-    onTransform({ uuid, type: TRANS_TYPES.drag, transform: parseTransform(target.style.transform) });
   };
 
   const handleRotate = ({ target, transform }) => {
     target.style.transform = transform;
-    onTransform({ uuid, type: TRANS_TYPES.rotate, transform: parseTransform(transform) });
   };
 
   const handleScale = ({ target, transform, scale: [sx, sy] }) => {
@@ -50,7 +48,6 @@ const BaseWidget = React.forwardRef((props, ref) => {
     }
 
     target.style.transform = transform;
-    onTransform({ uuid, type: TRANS_TYPES.scale, transform: parseTransform(transform) });
   };
 
   const handleDragGroup = ({ events }) => {
@@ -69,8 +66,8 @@ const BaseWidget = React.forwardRef((props, ref) => {
     onTransformStart(uuid);
   };
 
-  const handleTransformEnd = () => {
-    onTransformEnd(uuid);
+  const handleTransformEnd = (e) => {
+    onTransformEnd(uuid, { transform: parseTransform(e.target.style.transform) });
   };
 
   return (

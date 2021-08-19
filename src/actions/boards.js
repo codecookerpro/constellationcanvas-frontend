@@ -49,9 +49,7 @@ export const createFigure = (figure) => (dispatch, getState) => {
 export const updateFigure = (figure) => (dispatch, getState) => {
   const { index: canvas, uuid: boardUUID } = getState().board;
   dispatch(setFigure(figure));
-  API.updateFigure(figure.uuid, { ...figure, canvas, boardUUID }).then((data) => {
-    dispatch(setFigure(data));
-  });
+  API.updateFigure(figure.uuid, { ...figure, canvas, boardUUID });
 };
 
 export const deleteFigure = (figureUUID) => (dispatch) => {
