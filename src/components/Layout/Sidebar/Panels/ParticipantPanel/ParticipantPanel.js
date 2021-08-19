@@ -2,7 +2,7 @@ import { Grid, makeStyles } from '@material-ui/core';
 import { setSelectedParticipant } from 'actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { LINKS } from 'utils/constants';
+import { LINKS, USER_ROLES } from 'utils/constants';
 import Participant from './Participant';
 
 const useStyles = makeStyles({
@@ -17,7 +17,14 @@ const useStyles = makeStyles({
 });
 
 export default function ParticipantPanel() {
-  const participants = useSelector((state) => state.auth.users);
+  const participants = useSelector((state) => state.auth.users).sort((a, b) => {
+    if (a.role === USER_ROLES.facilitator) {
+      return -1;
+    } else if (b.role === USER_ROLES.facilitator) {
+      return 1;
+    }
+    return 0;
+  });
   const selectedParticipant = useSelector((state) => state.board.selectedParticipant);
   const classes = useStyles();
   const dispatch = useDispatch();
