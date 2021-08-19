@@ -9,14 +9,14 @@ export const StyledLabel = styled(Box)(({ theme }) => ({
 
 export const StyledInput = styledComponent.input`
   ::-webkit-input-placeholder {
-      font-style: italic;
-      font-size: 22px;
-      font-weight: 300;
-      letter-spacing: 0.76px;
-      color: #cacaca;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.76px;
+    color: #cacaca;
   }
   :focus {
-      outline: none;
+    outline: none;
   }
   font-size: 22px;
   font-weight: 300;

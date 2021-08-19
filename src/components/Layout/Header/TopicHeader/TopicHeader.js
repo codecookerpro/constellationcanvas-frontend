@@ -1,10 +1,7 @@
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-
+import { Box, makeStyles } from '@material-ui/core';
 import { StyledLabel, StyledInput } from './styled-components';
-
 import { updateBoard } from 'actions/boards';
 
 const useStyles = makeStyles((theme) => ({
@@ -20,26 +17,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TopicHeader = () => {
-  const classes = useStyles();
-  const topic = useSelector(({ board }) => board.name);
-  const [value, setValue] = useState(topic);
-
   const dispatch = useDispatch();
+  const classes = useStyles();
+  const { uuid, name } = useSelector((state) => state.board);
+  const [topic, setTopic] = useState(name);
+
+  useEffect(() => setTopic(name), [name]);
 
   const handleChange = (e) => {
-    setValue(e.target.value);
+    setTopic(e.target.value);
   };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      dispatch(updateBoard({ name: e.target.value }));
+      dispatch(updateBoard(uuid, { name: topic }));
     }
   };
 
   return (
     <Box className={classes.root}>
       <StyledLabel ml="36px">TOPIC:</StyledLabel>
-      <StyledInput placeholder="Type the topic for the canvas…" value={value} onChange={handleChange} onKeyDown={handleKeyDown} />
+      <StyledInput placeholder="Type the topic for the canvas…" value={topic} onChange={handleChange} onKeyDown={handleKeyDown} />
     </Box>
   );
 };
