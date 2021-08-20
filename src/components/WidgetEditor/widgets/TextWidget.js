@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { TEXT_WIDGET_DEFAULT_PROPS } from '../constants';
 import useDynamicSize from '../hooks/use-dynamic-size';
 import { getImgUrl } from '../helper';
+import clsx from 'clsx';
 
 const useStyles = makeStyles({
   root: {
@@ -84,7 +85,7 @@ const TextWidget = (props) => {
 
   return (
     <BaseWidget {...props} keepRatio={false} target={wrapperRef} ref={moveableRef}>
-      <div ref={wrapperRef} className={classes.root} onDoubleClick={handleDoubleClick}>
+      <div ref={wrapperRef} className={clsx(classes.root, 'widget')} id={uuid} onDoubleClick={handleDoubleClick}>
         <textarea value={text} className={classes.textarea} onChange={handleTextChange} ref={textRef} disabled={!editable} onBlur={handleFocusOut} />
       </div>
     </BaseWidget>

@@ -1,5 +1,4 @@
 import React, { memo, useEffect, useRef } from 'react';
-import clsx from 'clsx';
 import Moveable from 'react-moveable';
 import { makeStyles } from '@material-ui/core';
 import { WIDGET_SCALE_LIMIT } from '../constants';
@@ -71,7 +70,7 @@ const BaseWidget = React.forwardRef((props, ref) => {
   };
 
   return (
-    <div ref={containerRef} className={clsx(classes.root, 'widget-container')} id={`widget-${uuid}`}>
+    <div ref={containerRef} className={classes.root} id={`widget-container-${uuid}`}>
       {children}
       <Moveable
         draggable={true}

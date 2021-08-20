@@ -4,6 +4,7 @@ import { WIDGET_GROUPS } from '../constants';
 import { getImgUrl } from '../helper';
 import BaseWidget from './BaseWidget';
 import useDynamicSize from '../hooks/use-dynamic-size';
+import clsx from 'clsx';
 
 const useStyles = makeStyles({
   root: {
@@ -24,7 +25,7 @@ const FigureWidget = (props) => {
 
   return (
     <BaseWidget {...props} draggable={draggable} scalable={scalable} rotatable={rotatable} keepRatio={keepRatio} target={figureRef} ref={moveableRef}>
-      <div ref={figureRef} className={classes.root} />
+      <div ref={figureRef} className={clsx(classes.root, 'widget')} id={props.uuid} />
     </BaseWidget>
   );
 };

@@ -1,23 +1,26 @@
 import React from 'react';
 import Moveable from 'react-moveable';
+import { WIDGET_SCALE_LIMIT } from './constants';
+import { parseTransform, transformToString } from './helper';
 
-export default function WidgetGroup({ targets, onTransform }) {
-  const handleDrag = (ev) => {
-    ev.target.style.transform = ev.transform;
-    // onTransform({ id, type: TRANS_TYPES.drag, transform: parseTransform(ev.transform) });
+export default function WidgetGroup({ targets, zoom, onTransformStart, onTransformEnd }) {
+  const handleDrag = ({ target, transform, translate: [tx, ty], dist: [dx, dy] }) => {
+    tx = tx - dx + dx / zoom;
+    ty = ty - dy + dy / zoom;
+    target.style.transform = transformToString({ ...parseTransform(transform), tx, ty });
   };
 
   const handleRotate = (ev) => {
     ev.target.style.transform = ev.drag.transform;
-    // onTransform({ id, type: TRANS_TYPES.rotate, transform: parseTransform(ev.drag.transform) });
   };
 
-  const handleResize = (ev) => {
-    const { width, height, drag, target } = ev;
-    target.style.width = `${width}px`;
-    target.style.height = `${height}px`;
-    target.style.transform = drag.transform;
-    // onTransform({ id, type: TRANS_TYPES.resize, transform: { ...parseTransform(drag.transform), w: width, h: height } });
+  const handleScale = ({ target, transform, scale: [sx, sy] }) => {
+    const { xMin, yMin, xMax, yMax } = WIDGET_SCALE_LIMIT;
+    if (sx < xMin || sy < yMin || sx > xMax || sy > yMax) {
+      return;
+    }
+
+    target.style.transform = transform;
   };
 
   const handleDragGroup = ({ events }) => {
@@ -28,17 +31,18 @@ export default function WidgetGroup({ targets, onTransform }) {
     events.forEach((ev) => handleRotate(ev));
   };
 
-  const handleResizeGroup = ({ events }) => {
-    events.forEach((ev) => handleResize(ev));
+  const handleScaleGroup = ({ events }) => {
+    events.forEach((ev) => handleScale(ev));
   };
 
   const handleTransformStart = (e) => {
-    e.target.focus();
-    // onTransformStart(id);
+    onTransformStart(e.targets.map((target) => target.id));
   };
 
-  const handleTransformEnd = () => {
-    // onTransformEnd(id);
+  const handleTransformEnd = (e) => {
+    e.targets.forEach((target) => {
+      onTransformEnd(target.id, { transform: parseTransform(target.style.transform) });
+    });
   };
 
   return (
@@ -50,31 +54,29 @@ export default function WidgetGroup({ targets, onTransform }) {
       throttleDrag={0}
       startDragRotate={0}
       throttleDragRotate={0}
-      zoom={1}
-      origin={true}
-      originDraggable={true}
-      originRelative={true}
+      zoom={1 / zoom}
+      origin={false}
+      originDraggable={false}
+      originRelative={false}
       rotatable={true}
       throttleRotate={0}
       rotationPosition={'top'}
       padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-      resizable={true}
-      keepRatio={false}
+      resizable={false}
+      scalable={true}
+      keepRatio={true}
       throttleResize={0}
       renderDirections={['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se']}
       edge={false}
       onDragGroup={handleDragGroup}
       onRotateGroup={handleRotateGroup}
-      onResizeGroup={handleResizeGroup}
-      onDrag={handleDrag}
-      onRotate={handleRotate}
-      onResize={handleResize}
-      onDragStart={handleTransformStart}
-      onRotateStart={handleTransformStart}
-      onResizeStart={handleTransformStart}
-      onDragEnd={handleTransformEnd}
-      onRotateEnd={handleTransformEnd}
-      onResizeEnd={handleTransformEnd}
+      onScaleGroup={handleScaleGroup}
+      onDragGroupStart={handleTransformStart}
+      onRotateGroupStart={handleTransformStart}
+      onScaleGroupStart={handleTransformStart}
+      onDragGroupEnd={handleTransformEnd}
+      onRotateGroupEnd={handleTransformEnd}
+      onScaleGroupEnd={handleTransformEnd}
     />
   );
 }

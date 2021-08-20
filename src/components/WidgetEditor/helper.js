@@ -90,7 +90,7 @@ export const extendPolygon = (polygon, dist = 30) => {
 };
 
 export const getWidgetBoundaries = (ref, uuid) => {
-  const widget = ref.current.querySelector(`#widget-${uuid}`);
+  const widget = ref.current.querySelector(`#widget-container-${uuid}`);
 
   const points = [
     widget?.querySelector('.moveable-rotation-control'),
