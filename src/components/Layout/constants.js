@@ -28,21 +28,18 @@ export const SIDEBAR_ITEMS = [
     role: [USER_ROLES.facilitator, USER_ROLES.user],
     component: MyCanvasPanel,
     children: [{ title: 'Current State' }, { title: 'Future State 1' }, { title: 'Future State 2' }],
-    defaultExpand: ({ selectedParticipant, pathname }) => !selectedParticipant && pathname === LINKS.board,
   },
   {
     title: 'TOOLBOX',
     type: SIDEBAR_ITEM_TYPES.toolbox,
     role: [USER_ROLES.facilitator, USER_ROLES.user],
     component: ToolBoxPanel,
-    defaultExpand: () => false,
   },
   {
     title: 'PARTICIPANT',
     type: SIDEBAR_ITEM_TYPES.participant,
     role: [USER_ROLES.facilitator],
     component: ParticipantPanel,
-    defaultExpand: ({ selectedParticipant, pathname }) => selectedParticipant && pathname === LINKS.board,
   },
   {
     title: 'USER MANAGEMENT',

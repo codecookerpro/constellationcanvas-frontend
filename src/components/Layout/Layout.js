@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Layout({ sidebar, header, children }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const profile = useSelector((state) => state.auth.profile);
+  const { profile, users } = useSelector((state) => state.auth);
   const { loading, error } = useSelector((state) => state.aux);
   const Header = header.display && headers?.[header.type];
   const errorMsg = error?.data?.message || error?.data?.info;
@@ -131,7 +131,7 @@ export default function Layout({ sidebar, header, children }) {
             <Title>{PROJECT_TITLE}</Title>
           </Box>
           <Box className={classes.sidebar}>
-            <Sidebar />
+            <Sidebar users={users} userRole={profile.role} />
           </Box>
         </Box>
       )}

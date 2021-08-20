@@ -17,6 +17,7 @@ import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
 import { useDispatch } from 'react-redux';
 import { createFigure, deleteFigure, setCopiedFigure, updateFigure, setFigureHovered } from 'actions';
+import { toArray } from 'utils';
 
 const useStyles = makeStyles({
   root: {
@@ -42,21 +43,21 @@ const useStyles = makeStyles({
 const WidgetEditor = ({ figures, copiedFigure }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [transforming, setTransforming] = useState(null);
+  const [activeFigures, setActiveFigures] = useState([]);
   const [contextState, setContextState] = useState({
     uuid: null,
     mouseX: null,
     mouseY: null,
   });
   const [ctrlPressed, setCtrlPressed] = useState(false);
-  const [selectedFigures, setSelectedFigures] = useState([]);
+  const [figureGroup, setFigureGroup] = useState([]);
 
   const stageRef = useRef();
   const rootRef = useRef();
 
   const blockedPanZoom = useMemo(
-    () => transforming || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
-    [transforming, contextState, figures]
+    () => activeFigures.length || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
+    [activeFigures, contextState, figures]
   );
 
   const { transform, zoom, panZoomHandlers, setContainer, setZoom } = usePanZoom({
@@ -85,13 +86,13 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     dispatch(createFigure(figure));
   };
 
-  const handleTransformStart = (uuid) => {
-    setTransforming(uuid);
+  const handleTransformStart = (uuids) => {
+    setActiveFigures(toArray(uuids));
   };
 
   const handleTransformEnd = (uuid, params) => {
     dispatch(updateFigure({ uuid, ...params }));
-    setTransforming(null);
+    setTimeout(() => setActiveFigures([]));
   };
 
   const handleContextClick = (e, type) => {
@@ -163,10 +164,22 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
   };
 
   const handleMouseMove = (e) => {
-    if (e.buttons === 0 && e.ctrlKey === false && contextState.mouseY === null && figures.length) {
-      const hovered = getHoveredFigures(e, figures, stageRef);
-      dispatch(setFigureHovered(hovered[0]?.uuid));
-    } else if (!transforming && !e.ctrlKey && !contextState.id && e.buttons === 1) {
+    if (e.buttons === 0 && e.ctrlKey === false && figures.length) {
+      const hoveredFigures = getHoveredFigures(e, figures, stageRef);
+
+      if (hoveredFigures.length === 0) {
+        dispatch(setFigureHovered(null));
+      } else {
+        const hovered = hoveredFigures[0].uuid;
+        if (figureGroup.map((f) => f.id).includes(hovered)) {
+          dispatch(setFigureHovered(null));
+        } else {
+          dispatch(setFigureHovered(hovered));
+        }
+      }
+    }
+
+    if (!blockedPanZoom && !e.ctrlKey && e.buttons === 1) {
       setContextState({
         uuid: null,
         mouseX: null,
@@ -175,12 +188,6 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
       panZoomHandlers.onMouseMove(e);
     }
   };
-
-  useEffect(() => {
-    window.addEventListener('keydown', (e) => setCtrlPressed(e.key === 'Control' ? true : ctrlPressed));
-    window.addEventListener('keyup', (e) => setCtrlPressed(e.key === 'Control' ? false : ctrlPressed));
-    // eslint-disable-next-line
-  }, []);
 
   const handleContextMenu = (e) => {
     e.preventDefault();
@@ -208,6 +215,48 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setActiveFigures([]);
+      setFigureGroup([]);
+    } else if (e.key === 'Control') {
+      setCtrlPressed(true);
+    }
+  };
+
+  const handleKeyUp = (e) => {
+    if (e.key === 'Control') {
+      setCtrlPressed(false);
+    }
+  };
+
+  const handleClick = (e) => {
+    e.preventDefault();
+
+    if (!e.ctrlKey && !activeFigures.length) {
+      setFigureGroup([]);
+    }
+  };
+
+  const handleSelectFigures = (e) => {
+    if (e.selected.length > 1) {
+      e.added.forEach((el) => {
+        el.classList.add('selected');
+      });
+      e.removed.forEach((el) => {
+        el.classList.remove('selected');
+      });
+
+      setFigureGroup(e.selected);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
       <div
@@ -218,6 +267,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
         onDragOver={handleDragOver}
         onMouseMove={handleMouseMove}
         onContextMenu={handleContextMenu}
+        onClick={handleClick}
         onWheel={handleWheel}
       >
         <div className={classes.figureStage} ref={stageRef} style={{ transform }}>
@@ -235,6 +285,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
               />
             );
           })}
+          <WidgetGroup targets={figureGroup} zoom={zoom} onTransformStart={handleTransformStart} onTransformEnd={handleTransformEnd} />
           <Menu
             style={{ zIndex: 99999 }}
             keepMounted
@@ -266,21 +317,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
           </Menu>
         </div>
       </div>
-      {ctrlPressed && !transforming && (
-        <Selecto
-          selectableTargets={['.widget']}
-          onSelect={(e) => {
-            setSelectedFigures([]);
-            e.added.forEach((el) => {
-              el.classList.add('selected');
-            });
-            e.removed.forEach((el) => {
-              el.classList.remove('selected');
-            });
-          }}
-        />
-      )}
-      <WidgetGroup targets={selectedFigures} />
+      {ctrlPressed && activeFigures.length === 0 && <Selecto selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
     </div>
   );
 };
