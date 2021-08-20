@@ -1,11 +1,12 @@
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import GroupBox from './GroupBox';
 import { GroupAccordion, GroupAccordionSummary, GroupAccordionDetails } from './styled-components';
-import { SIDEBAR_ITEMS } from '../constants';
+import { SIDEBAR_ITEMS, SIDEBAR_ITEM_TYPES } from '../constants';
+import { LINKS } from 'utils/constants';
 
 const useStyles = makeStyles({
   group: {
@@ -22,32 +23,38 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Sidebar(props) {
+export default function Sidebar({ userRole, users }) {
   const classes = useStyles();
-  const role = useSelector((state) => state.auth.profile?.role);
-  const { selectedParticipant } = useSelector((state) => state.board);
   const { pathname } = useLocation();
+  const [items, setItems] = useState(SIDEBAR_ITEMS.filter((item) => item.role.includes(userRole)).map((item) => ({ ...item, expanded: false })));
+
+  useEffect(() => {
+    if (users.length) {
+      setItems(items.map((item) => ({ ...item, expanded: item.type !== SIDEBAR_ITEM_TYPES.toolbox && pathname === LINKS.board })));
+    }
+    // eslint-disable-next-line
+  }, [users, pathname]);
+
+  const handleExpandChange = (type, expanded) => {
+    setItems(items.map((item) => ({ ...item, expanded: type === item.type ? expanded : item.expanded })));
+  };
 
   return (
     <>
-      {SIDEBAR_ITEMS.filter((item) => item.role.includes(role)).map((item) => {
-        const Panel = item.component;
-
-        if (!Panel) {
-          return <GroupBox key={item.title} title={item.title} path={item.path} />;
-        }
-
-        return (
-          <GroupAccordion key={item.title} defaultExpanded={item.defaultExpand({ selectedParticipant, pathname })}>
+      {items.map((item) =>
+        item.component ? (
+          <GroupAccordion key={item.title} expanded={item.expanded} onChange={(e, expanded) => handleExpandChange(item.type, expanded)}>
             <GroupAccordionSummary expandIcon={<ExpandMoreIcon className={classes.expand} />}>
               <Typography className={classes.group}>{item.title}</Typography>
             </GroupAccordionSummary>
             <GroupAccordionDetails>
-              <Panel />
+              <item.component />
             </GroupAccordionDetails>
           </GroupAccordion>
-        );
-      })}
+        ) : (
+          <GroupBox key={item.title} title={item.title} path={item.path} />
+        )
+      )}
     </>
   );
 }
