@@ -3,7 +3,7 @@ import { Box, Link } from '@material-ui/core';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { SIDEBAR_ITEMS } from 'components/Layout/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedParticipant, switchCanvas } from 'actions';
+import { switchCanvas } from 'actions';
 import clsx from 'clsx';
 import { useHistory } from 'react-router';
 import { LINKS } from 'utils/constants';
@@ -46,14 +46,12 @@ export default function MyCanvasPanel() {
   const dispatch = useDispatch();
   const history = useHistory();
   const index = useSelector((state) => state.board.index);
-  const { selectedParticipant } = useSelector((state) => state.board);
   const canvases = SIDEBAR_ITEMS[0].children;
 
   const handleClick = (e, idx) => {
     e.preventDefault();
 
     history.push(LINKS.board);
-    dispatch(setSelectedParticipant(null));
     dispatch(switchCanvas(idx));
   };
 
@@ -61,7 +59,7 @@ export default function MyCanvasPanel() {
     <Box className={classes.root}>
       {canvases.map((canvas, idx) => (
         <Link
-          className={clsx(classes.link, { active: !selectedParticipant && idx === index && history.location.pathname === LINKS.board })}
+          className={clsx(classes.link, { active: idx === index && history.location.pathname === LINKS.board })}
           key={canvas.title}
           onClick={(e) => handleClick(e, idx)}
         >
