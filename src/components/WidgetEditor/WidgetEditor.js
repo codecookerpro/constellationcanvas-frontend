@@ -92,7 +92,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
 
   const handleTransformEnd = (uuid, params) => {
     dispatch(updateFigure({ uuid, ...params }));
-    setActiveFigures([]);
+    setTimeout(() => setActiveFigures([]));
   };
 
   const handleContextClick = (e, type) => {
@@ -230,6 +230,14 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     }
   };
 
+  const handleClick = (e) => {
+    e.preventDefault();
+
+    if (!e.ctrlKey && !activeFigures.length) {
+      setFigureGroup([]);
+    }
+  };
+
   const handleSelectFigures = (e) => {
     if (e.selected.length > 1) {
       e.added.forEach((el) => {
@@ -259,6 +267,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
         onDragOver={handleDragOver}
         onMouseMove={handleMouseMove}
         onContextMenu={handleContextMenu}
+        onClick={handleClick}
         onWheel={handleWheel}
       >
         <div className={classes.figureStage} ref={stageRef} style={{ transform }}>
