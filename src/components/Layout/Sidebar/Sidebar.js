@@ -23,17 +23,32 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Sidebar({ userRole, users }) {
+export default function Sidebar({ selectedParticipant, profile, users }) {
   const classes = useStyles();
   const { pathname } = useLocation();
-  const [items, setItems] = useState(SIDEBAR_ITEMS.filter((item) => item.role.includes(userRole)).map((item) => ({ ...item, expanded: false })));
+  const [items, setItems] = useState(SIDEBAR_ITEMS.filter((item) => item.role.includes(profile.role)).map((item) => ({ ...item, expanded: false })));
 
   useEffect(() => {
-    if (users.length) {
-      setItems(items.map((item) => ({ ...item, expanded: item.type !== SIDEBAR_ITEM_TYPES.toolbox && pathname === LINKS.board })));
+    if (!selectedParticipant || !users.length) {
+      return;
     }
+
+    const participant = users.find((u) => u.uuid === selectedParticipant);
+    const canvasTitle = profile.uuid !== selectedParticipant ? `${participant.name}'s CANVAS` : 'MY CANVAS';
+
+    setItems(
+      items
+        .map((item) => ({
+          ...item,
+          expanded: item.type !== SIDEBAR_ITEM_TYPES.toolbox && pathname === LINKS.board,
+        }))
+        .map((item) => ({
+          ...item,
+          title: item.type === SIDEBAR_ITEM_TYPES.canvas ? canvasTitle : item.title,
+        }))
+    );
     // eslint-disable-next-line
-  }, [users, pathname]);
+  }, [profile, selectedParticipant, users, pathname]);
 
   const handleExpandChange = (type, expanded) => {
     setItems(items.map((item) => ({ ...item, expanded: type === item.type ? expanded : item.expanded })));
