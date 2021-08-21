@@ -18,5 +18,5 @@ export default function CanvasBoard() {
   // eslint-disable-next-line
   useEffect(() => selectedParticipant || dispatch(setSelectedParticipant(userUUID)), [userUUID, selectedParticipant]);
 
-  return <WidgetEditor figures={filteredFigures} copiedFigure={copiedFigure} />;
+  return <WidgetEditor figures={filteredFigures} copiedFigure={copiedFigure} index={index} />;
 }

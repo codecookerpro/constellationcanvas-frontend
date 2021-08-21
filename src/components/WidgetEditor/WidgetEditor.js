@@ -40,7 +40,7 @@ const useStyles = makeStyles({
   },
 });
 
-const WidgetEditor = ({ figures, copiedFigure }) => {
+const WidgetEditor = ({ index, figures, copiedFigure }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [activeFigures, setActiveFigures] = useState([]);
@@ -49,7 +49,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     mouseX: null,
     mouseY: null,
   });
-  const [ctrlPressed, setCtrlPressed] = useState(false);
+  const [isGroupSelecting, setIsGroupSelecting] = useState(false);
   const [figureGroup, setFigureGroup] = useState([]);
 
   const stageRef = useRef();
@@ -219,14 +219,14 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     if (e.key === 'Escape') {
       setActiveFigures([]);
       setFigureGroup([]);
-    } else if (e.key === 'Control') {
-      setCtrlPressed(true);
+    } else if (e.key === 'Control' || e.key === 'Meta') {
+      setIsGroupSelecting(true);
     }
   };
 
   const handleKeyUp = (e) => {
-    if (e.key === 'Control') {
-      setCtrlPressed(false);
+    if (e.key === 'Control' || e.key === 'Meta') {
+      setIsGroupSelecting(false);
     }
   };
 
@@ -256,6 +256,11 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
     window.addEventListener('keyup', handleKeyUp);
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    setFigureGroup([]);
+    setActiveFigures([]);
+  }, [index]);
 
   return (
     <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
@@ -317,7 +322,7 @@ const WidgetEditor = ({ figures, copiedFigure }) => {
           </Menu>
         </div>
       </div>
-      {ctrlPressed && activeFigures.length === 0 && <Selecto selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
+      {isGroupSelecting && activeFigures.length === 0 && <Selecto selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
     </div>
   );
 };
