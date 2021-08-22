@@ -164,7 +164,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   };
 
   const handleMouseMove = (e) => {
-    if (e.buttons === 0 && e.ctrlKey === false && figures.length) {
+    if (e.buttons === 0 && !e.ctrlKey && !e.metaKey && figures.length) {
       const hoveredFigures = getHoveredFigures(e, figures, stageRef);
 
       if (hoveredFigures.length === 0) {
@@ -179,7 +179,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
       }
     }
 
-    if (!blockedPanZoom && !e.ctrlKey && e.buttons === 1) {
+    if (!blockedPanZoom && !e.ctrlKey && !e.metaKey && e.buttons === 1) {
       setContextState({
         uuid: null,
         mouseX: null,
@@ -216,6 +216,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   };
 
   const handleKeyDown = (e) => {
+    console.log(e);
     if (e.key === 'Escape') {
       setActiveFigures([]);
       setFigureGroup([]);
