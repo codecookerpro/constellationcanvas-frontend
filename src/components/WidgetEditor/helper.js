@@ -106,13 +106,19 @@ export const getWidgetBoundaries = (ref, uuid) => {
   return points;
 };
 
-export const getHoveredFigures = (e, figures, ref, includeGroup = false) => {
-  return (includeGroup ? figures.concat({ uuid: 'group', depth: Infinity }) : figures)
+export const getHoveredFigure = (e, figures, ref, includeGroup = false) => {
+  const hoveredFigures = (includeGroup ? figures.concat({ uuid: 'group', depth: Infinity }) : figures)
     .filter((f) => {
       const points = getWidgetBoundaries(ref, f.uuid);
       return pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
     })
     .sort((a, b) => b.depth - a.depth);
+
+  if (hoveredFigures.length) {
+    return hoveredFigures[0].uuid;
+  }
+
+  return null;
 };
 
 export const getOverlapedFigures = (figures, ref, uuid) => {
