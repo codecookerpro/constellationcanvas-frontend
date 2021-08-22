@@ -178,8 +178,6 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   };
 
   const handleMouseDown = (e) => {
-    e.preventDefault();
-
     const currentTime = new Date();
     if (currentTime - mouseDownTime < DOUBLE_CLICK_INTERVAL) {
       panZoomHandlers.onMouseDown(e);
@@ -190,8 +188,6 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   };
 
   const handleMouseUp = (e) => {
-    e.preventDefault();
-
     const currentTime = new Date();
     if (panEnabled) {
       setPanEnabled(false);
