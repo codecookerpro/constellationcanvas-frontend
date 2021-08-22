@@ -10,6 +10,8 @@ import {
   CONTEXTMENU_TYPES,
   WIDGET_GROUP_TYPES,
   WIDGET_EDITOR_SCALE_LIMIT,
+  DOUBLE_CLICK_INTERVAL,
+  CLICK_INTERVAL,
 } from './constants';
 import { getHoveredFigures, getForwardWidget, getBackwardWidget, getMaxDepth } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
@@ -49,8 +51,9 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
     mouseX: null,
     mouseY: null,
   });
-  const [isGroupSelecting, setIsGroupSelecting] = useState(false);
+  const [panEnabled, setPanEnabled] = useState(false);
   const [figureGroup, setFigureGroup] = useState([]);
+  const [mouseDownTime, setMouseDownTime] = useState(new Date());
 
   const stageRef = useRef();
   const rootRef = useRef();
@@ -163,28 +166,47 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
     });
   };
 
-  const handleMouseMove = (e) => {
-    if (e.buttons === 0 && !e.ctrlKey && figures.length) {
-      const hoveredFigures = getHoveredFigures(e, figures, stageRef);
+  const getHoveredFigure = (e, includeGroup = false) => {
+    const hoveredFigures = getHoveredFigures(e, figures, stageRef, includeGroup);
+    let hovered = null;
 
-      if (hoveredFigures.length === 0) {
-        dispatch(setFigureHovered(null));
-      } else {
-        const hovered = hoveredFigures[0].uuid;
-        if (figureGroup.map((f) => f.id).includes(hovered)) {
-          dispatch(setFigureHovered(null));
-        } else {
-          dispatch(setFigureHovered(hovered));
-        }
-      }
+    if (hoveredFigures.length && (includeGroup || !figureGroup.map((f) => f.id).includes(hoveredFigures[0].uuid))) {
+      hovered = hoveredFigures[0].uuid;
     }
 
-    if (!blockedPanZoom && !e.ctrlKey && e.buttons === 1) {
-      setContextState({
-        uuid: null,
-        mouseX: null,
-        mouseY: null,
-      });
+    return hovered;
+  };
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+
+    const currentTime = new Date();
+    if (currentTime - mouseDownTime < DOUBLE_CLICK_INTERVAL) {
+      panZoomHandlers.onMouseDown(e);
+      setPanEnabled(true);
+    }
+
+    setMouseDownTime(currentTime);
+  };
+
+  const handleMouseUp = (e) => {
+    e.preventDefault();
+
+    const currentTime = new Date();
+    if (panEnabled) {
+      setPanEnabled(false);
+    } else if (currentTime - mouseDownTime < CLICK_INTERVAL && !getHoveredFigure(e, true)) {
+      setFigureGroup([]);
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (e.buttons === 0 && figures.length && !contextState.uuid) {
+      const hovered = getHoveredFigure(e);
+      dispatch(setFigureHovered(hovered));
+    }
+
+    if (!blockedPanZoom && e.buttons === 1 && panEnabled) {
       panZoomHandlers.onMouseMove(e);
     }
   };
@@ -192,21 +214,14 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   const handleContextMenu = (e) => {
     e.preventDefault();
 
-    const hoveredFigures = getHoveredFigures(e, figures, stageRef);
-    const frontWidget = hoveredFigures.sort((a, b) => b.depth - a.depth)?.[0];
-    if (frontWidget === undefined) {
-      setContextState({
-        uuid: null,
-        mouseX: e.clientX,
-        mouseY: e.clientY,
-      });
-    } else {
-      setContextState({
-        uuid: frontWidget.uuid,
-        mouseX: e.clientX,
-        mouseY: e.clientY,
-      });
-    }
+    const hovered = getHoveredFigure(e);
+    dispatch(setFigureHovered(hovered));
+
+    setContextState({
+      uuid: hovered,
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+    });
   };
 
   const handleWheel = (e) => {
@@ -216,30 +231,8 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   };
 
   const handleKeyDown = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
     if (e.key === 'Escape') {
       setActiveFigures([]);
-      setFigureGroup([]);
-    } else if (e.ctrlKey) {
-      setIsGroupSelecting(true);
-    }
-  };
-
-  const handleKeyUp = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (e.ctrlKey) {
-      setIsGroupSelecting(false);
-    }
-  };
-
-  const handleClick = (e) => {
-    e.preventDefault();
-
-    if (!e.ctrlKey && !activeFigures.length) {
       setFigureGroup([]);
     }
   };
@@ -259,7 +252,6 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
     // eslint-disable-next-line
   }, []);
 
@@ -277,8 +269,9 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onMouseMove={handleMouseMove}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
         onContextMenu={handleContextMenu}
-        onClick={handleClick}
         onWheel={handleWheel}
       >
         <div className={classes.figureStage} ref={stageRef} style={{ transform }}>
@@ -308,27 +301,23 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
             }
             transitionDuration={0}
           >
-            {(contextState.id === null ? CONTEXTMENU_ITEMS_GENERAL : CONTEXTMENU_ITEMS_WIDGET).map((context, index) => {
-              if (context.type === CONTEXTMENU_TYPES.divider) {
-                return <Divider key={context.type + index} />;
-              }
-              if (context.type === CONTEXTMENU_TYPES.paste) {
-                return (
-                  <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={copiedFigure.id === null}>
-                    {context.label}
-                  </MenuItem>
-                );
-              }
-              return (
+            {(contextState.uuid === null ? CONTEXTMENU_ITEMS_GENERAL : CONTEXTMENU_ITEMS_WIDGET).map((context, index) =>
+              context.type === CONTEXTMENU_TYPES.divider ? (
+                <Divider key={context.type + index} />
+              ) : context.type === CONTEXTMENU_TYPES.paste ? (
+                <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={!copiedFigure.uuid}>
+                  {context.label}
+                </MenuItem>
+              ) : (
                 <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)}>
                   {context.label}
                 </MenuItem>
-              );
-            })}
+              )
+            )}
           </Menu>
         </div>
       </div>
-      {isGroupSelecting && activeFigures.length === 0 && <Selecto selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
+      {!panEnabled && activeFigures.length === 0 && <Selecto selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
     </div>
   );
 };

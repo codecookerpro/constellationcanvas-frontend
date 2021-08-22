@@ -261,3 +261,6 @@ export const WIDGET_DESCRIPTIONS = {
   relationship9: 'Hostile',
   relationship10: 'Cut-off',
 };
+
+export const DOUBLE_CLICK_INTERVAL = 200;
+export const CLICK_INTERVAL = 200;

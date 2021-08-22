@@ -8,7 +8,7 @@ export const INITIAL_BOARD_STATE = Object.freeze({
   figures: [],
   uuid: null,
   copiedFigure: {
-    id: null,
+    uuid: null,
   },
 });
 

@@ -90,7 +90,7 @@ export const extendPolygon = (polygon, dist = 30) => {
 };
 
 export const getWidgetBoundaries = (ref, uuid) => {
-  const widget = ref.current.querySelector(`#widget-container-${uuid}`);
+  const widget = ref.current.querySelector(uuid === 'group' ? '[data-able-groupable=true]' : `#widget-container-${uuid}`);
 
   const points = [
     widget?.querySelector('.moveable-rotation-control'),
@@ -106,8 +106,8 @@ export const getWidgetBoundaries = (ref, uuid) => {
   return points;
 };
 
-export const getHoveredFigures = (e, figures, ref) => {
-  return figures
+export const getHoveredFigures = (e, figures, ref, includeGroup = false) => {
+  return (includeGroup ? figures.concat({ uuid: 'group', depth: Infinity }) : figures)
     .filter((f) => {
       const points = getWidgetBoundaries(ref, f.uuid);
       return pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
