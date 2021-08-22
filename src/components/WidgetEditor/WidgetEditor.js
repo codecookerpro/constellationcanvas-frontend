@@ -317,7 +317,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
           </Menu>
         </div>
       </div>
-      {!panEnabled && activeFigures.length === 0 && <Selecto selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
+      {!panEnabled && !activeFigures.length && <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
     </div>
   );
 };
