@@ -8,6 +8,8 @@ import { toArray } from 'utils';
 const useStyles = makeStyles({
   root: {
     position: 'absolute',
+    width: 0,
+    height: 0,
     zIndex: (props) => props.depth,
     '& .moveable-line, & .moveable-control': {
       visibility: (props) => (props.hovered ? 'visible' : 'hidden'),
