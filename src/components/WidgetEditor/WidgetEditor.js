@@ -9,8 +9,9 @@ import { useDispatch } from 'react-redux';
 import { createFigure, updateFigure, setFigureHovered } from 'actions';
 import { toArray } from 'utils';
 import useContextMenu from './hooks/use-context-menu';
+import { Button } from 'components/form-components';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: '100%',
@@ -19,17 +20,42 @@ const useStyles = makeStyles({
   },
   figureZoompane: {
     width: '100%',
-    height: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
+    height: 'calc(100% - 85px)',
   },
   figureStage: {
     width: '100%',
     height: '100%',
     zIndex: 0,
   },
-});
+  buttonArea: {
+    width: '100%',
+    height: 85,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  saveButton: {
+    height: 45,
+    width: 170,
+    marginRight: 23,
+    borderRadius: 13,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  copyButton: {
+    height: 45,
+    width: 220,
+    marginRight: 18,
+    borderRadius: 13,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: theme.palette.contrastText,
+    backgroundColor: theme.palette.info.main,
+    '&:hover': {
+      backgroundColor: theme.palette.info.main,
+    },
+  },
+}));
 
 const WidgetEditor = ({ index, figures, copiedFigure }) => {
   const classes = useStyles();
@@ -182,6 +208,14 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
           <WidgetGroup targets={figureGroup} zoom={zoom} onTransformStart={handleTransformStart} onTransformEnd={handleTransformEnd} />
           {MenuComponent}
         </div>
+      </div>
+      <div className={classes.buttonArea}>
+        <Button color="primary" variant="contained" className={classes.saveButton}>
+          Save as PDF
+        </Button>
+        <Button color="primary" variant="contained" className={classes.copyButton}>
+          Copy Canvas to ...
+        </Button>
       </div>
       {!panEnabled && !activeFigures.length && <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
     </div>

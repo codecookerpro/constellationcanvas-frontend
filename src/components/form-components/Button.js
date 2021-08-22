@@ -5,7 +5,7 @@ export default withStyles((theme) => ({
   root: {
     borderRadius: 5,
     color: 'white',
-    textTransform: 'uppercase',
+    textTransform: 'none',
     fontWeight: 'bold',
     fontSize: 13,
     letterSpacing: 0.45,
