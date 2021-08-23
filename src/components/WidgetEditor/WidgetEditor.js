@@ -225,7 +225,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
       <div className={classes.buttonArea}>
         <Pdf
           targetRef={stageRef}
-          filename="code-example.pdf"
+          filename="canvas.pdf"
           options={{
             unit: 'px',
             orientation: 'l',
