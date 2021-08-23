@@ -1,11 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="51" height="52" viewBox="0 0 51 52">
-    <g fill="none" fill-rule="evenodd">
-        <g stroke="#000">
-            <g>
-                <g>
-                    <path d="M0 0H50V50H0z" transform="translate(-63.000000, -6745.000000) translate(0.000000, 6636.000000) translate(63.500000, 110.000000)"/>
-                </g>
-            </g>
-        </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52">
+    <g stroke="#000" fill="none" fill-rule="evenodd">
+        <path d="M0 0H50V50H0z" transform="translate(1, 1)"/>
     </g>
 </svg>

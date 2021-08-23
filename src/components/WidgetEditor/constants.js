@@ -2,6 +2,7 @@ import { SIDEBAR_ITEMS, SIDEBAR_ITEM_TYPES } from 'components/Layout/constants';
 import { keyMirror } from 'utils';
 
 import FigureWidget from './widgets/FigureWidget';
+import ShapeWidget from './widgets/ShapeWidget';
 import TextWidget from './widgets/TextWidget';
 
 export const TEXT_WIDGET_DEFAULT_PROPS = {
@@ -177,11 +178,18 @@ export const WIDGET_MAP = {
   [WIDGET_GROUP_TYPES.animal]: FigureWidget,
   [WIDGET_GROUP_TYPES.emotion]: FigureWidget,
   [WIDGET_GROUP_TYPES.object]: FigureWidget,
-  [WIDGET_GROUP_TYPES.shape]: FigureWidget,
+  [WIDGET_GROUP_TYPES.shape]: ShapeWidget,
   [WIDGET_GROUP_TYPES.capacity]: FigureWidget,
   [WIDGET_GROUP_TYPES.arrow]: FigureWidget,
   [WIDGET_GROUP_TYPES.text]: TextWidget,
   [WIDGET_GROUP_TYPES.relationship]: FigureWidget,
+  shape4: FigureWidget,
+};
+
+export const SHAPE_PATHS = {
+  shape1: <path d="M0 0H50V50H0z" />,
+  shape2: <circle cx="25" cy="25" r="25" />,
+  shape3: <polygon id="Triangle" points="25 0 50 50 0 50" />,
 };
 
 export const CONTEXTMENU_TYPES = keyMirror({
