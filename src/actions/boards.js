@@ -27,8 +27,13 @@ export const getBoard = () => (dispatch, getState) => {
 
 export const switchCanvas = (index) => (dispatch, getState) => {
   dispatch(setCanvasIndex(index));
-  const { boardUUID } = getState().auth.profile;
-  API.switchCanvas(boardUUID, index);
+  const state = getState();
+  const { profile } = state.auth;
+  const { selectedParticipant } = state.board;
+
+  if (selectedParticipant === profile.uuid) {
+    API.switchCanvas(profile.boardUUID, index);
+  }
 };
 
 export const updateBoard = (boardUUID, params) => (dispatch) => {

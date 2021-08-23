@@ -28,7 +28,10 @@ export default function CanvasBoard() {
       socket.on('figuresCU', (figure) => figure.creatorUUID !== profile.uuid && dispatch(setFigure(figure)));
       socket.on('figureD', (figure) => figure.creatorUUID !== profile.uuid && dispatch(removeFigure(figure.uuid)));
       socket.on('board', (board) => board.facilitatorUUID !== profile.uuid && dispatch(setBoard(board)));
-      socket.on('canvas', (user) => user.role === USER_ROLES.facilitator && dispatch(setCanvasIndex(user.currentCanvas)));
+      socket.on(
+        'canvas',
+        (user) => user.role === USER_ROLES.facilitator && user.uuid !== profile.uuid && dispatch(setCanvasIndex(user.currentCanvas))
+      );
     }
     // eslint-disable-next-line
   }, [socket, profile]);
