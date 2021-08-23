@@ -33,7 +33,7 @@ const InviteDialog = ({ open, data = { strokeColor: '#000', fillColor: '#0000000
           <Button type="submit" color="primary" variant="contained">
             OK
           </Button>
-          <Button type="reset" color="secondary" variant="contained">
+          <Button type="reset" color="secondary" variant="contained" onClick={onClose}>
             CANCEL
           </Button>
         </DialogActions>
