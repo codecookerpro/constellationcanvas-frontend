@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Menu, MenuItem, Divider } from '@material-ui/core';
 import { CONTEXTMENU_ITEMS_GENERAL, CONTEXTMENU_ITEMS_WIDGET, CONTEXTMENU_TYPES } from '../constants';
@@ -12,6 +12,13 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
     mouseX: null,
     mouseY: null,
   });
+  const targetFigure = useMemo(() => figures.find((f) => f.uuid === contextState.uuid), [figures, contextState]);
+  const menuItems = useMemo(() => {
+    if (contextState.uuid) {
+      return CONTEXTMENU_ITEMS_WIDGET.filter((item) => !item.widget || targetFigure.type.includes(item.widget));
+    }
+    return CONTEXTMENU_ITEMS_GENERAL;
+  }, [targetFigure, contextState]);
 
   const handleContextClick = (e, type) => {
     e.preventDefault();
@@ -69,7 +76,14 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
       case CONTEXTMENU_TYPES.delete:
         dispatch(deleteFigure(uuid));
         break;
-
+      case CONTEXTMENU_TYPES.incFontSize:
+        dispatch(updateFigure({ ...figure, data: { ...figure.data, fontSize: figure.data?.fontSize ? figure.data.fontSize + 3 : 21 } }));
+        break;
+      case CONTEXTMENU_TYPES.decFontSize:
+        dispatch(updateFigure({ ...figure, data: { ...figure.data, fontSize: figure.data?.fontSize ? figure.data.fontSize - 3 : 15 } }));
+        break;
+      case CONTEXTMENU_TYPES.colorPalette:
+        break;
       default:
         break;
     }
@@ -106,7 +120,7 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
       }
       transitionDuration={0}
     >
-      {(contextState.uuid === null ? CONTEXTMENU_ITEMS_GENERAL : CONTEXTMENU_ITEMS_WIDGET).map((context, index) =>
+      {menuItems.map((context, index) =>
         context.type === CONTEXTMENU_TYPES.divider ? (
           <Divider key={context.type + index} />
         ) : context.type === CONTEXTMENU_TYPES.paste ? (

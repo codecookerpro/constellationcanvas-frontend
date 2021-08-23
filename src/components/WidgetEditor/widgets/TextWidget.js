@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     backgroundSize: '100% 100%',
   },
   textarea: {
-    fontSize: 18,
+    fontSize: ({ fontSize }) => fontSize || 18,
     border: 0,
     resize: 'none',
     overflow: 'auto',
@@ -59,7 +59,7 @@ const TextWidget = (props) => {
   } = props;
   const moveableRef = useRef();
   const { width, height } = useDynamicSize(group, type, moveableRef);
-  const classes = useStyles({ type, group, width, height, sx, sy });
+  const classes = useStyles({ type, group, width, height, sx, sy, fontSize: data.fontSize });
   const wrapperRef = useRef();
   const textRef = useRef();
   const [editable, setEditable] = useState(false);

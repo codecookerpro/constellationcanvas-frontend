@@ -194,6 +194,9 @@ export const CONTEXTMENU_TYPES = keyMirror({
   cut: null,
   paste: null,
   delete: null,
+  incFontSize: null,
+  decFontSize: null,
+  colorPalette: null,
 });
 
 export const CONTEXTMENU_ITEMS_GENERAL = [
@@ -236,11 +239,31 @@ export const CONTEXTMENU_ITEMS_WIDGET = [
     label: 'Paste',
   },
   {
-    type: CONTEXTMENU_TYPES.divider,
-  },
-  {
     type: CONTEXTMENU_TYPES.delete,
     label: 'Delete',
+  },
+  {
+    type: CONTEXTMENU_TYPES.divider,
+    widget: WIDGET_GROUP_TYPES.text,
+  },
+  {
+    type: CONTEXTMENU_TYPES.divider,
+    widget: WIDGET_GROUP_TYPES.shape,
+  },
+  {
+    type: CONTEXTMENU_TYPES.incFontSize,
+    label: 'A+',
+    widget: WIDGET_GROUP_TYPES.text,
+  },
+  {
+    type: CONTEXTMENU_TYPES.decFontSize,
+    label: 'A-',
+    widget: WIDGET_GROUP_TYPES.text,
+  },
+  {
+    type: CONTEXTMENU_TYPES.colorPalette,
+    label: 'Color Palette',
+    widget: WIDGET_GROUP_TYPES.shape,
   },
 ];
 
