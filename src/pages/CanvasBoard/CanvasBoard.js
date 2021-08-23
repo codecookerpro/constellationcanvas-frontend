@@ -4,6 +4,7 @@ import { WidgetEditor } from 'components';
 import { getBoard, setSelectedParticipant } from 'actions';
 import { setupSocket } from 'services/websocket';
 import { removeFigure, setBoard, setCanvasIndex, setFigure } from 'actions';
+import { USER_ROLES } from 'utils/constants';
 
 export default function CanvasBoard() {
   const { index, figures, copiedFigure, selectedParticipant } = useSelector((state) => state.board);
@@ -24,13 +25,13 @@ export default function CanvasBoard() {
   useEffect(() => {
     if (socket) {
       socket.removeAllListeners();
-      socket.on('figuresCU', (figure) => dispatch(setFigure(figure)));
-      socket.on('figureD', (figure) => dispatch(removeFigure(figure.uuid)));
-      socket.on('board', (board) => dispatch(setBoard(board)));
-      socket.on('canvas', (user) => dispatch(setCanvasIndex(user.currentCanvas)));
+      socket.on('figuresCU', (figure) => figure.creatorUUID !== profile.uuid && dispatch(setFigure(figure)));
+      socket.on('figureD', (figure) => figure.creatorUUID !== profile.uuid && dispatch(removeFigure(figure.uuid)));
+      socket.on('board', (board) => board.facilitatorUUID !== profile.uuid && dispatch(setBoard(board)));
+      socket.on('canvas', (user) => user.role === USER_ROLES.facilitator && dispatch(setCanvasIndex(user.currentCanvas)));
     }
     // eslint-disable-next-line
-  }, [socket]);
+  }, [socket, profile]);
 
   return <WidgetEditor figures={filteredFigures} copiedFigure={copiedFigure} index={index} />;
 }
