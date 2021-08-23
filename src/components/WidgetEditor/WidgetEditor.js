@@ -10,6 +10,7 @@ import { createFigure, updateFigure, setFigureHovered } from 'actions';
 import { toArray } from 'utils';
 import useContextMenu from './hooks/use-context-menu';
 import { Button } from 'components/form-components';
+import Pdf from 'react-to-pdf';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +81,16 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
     () => activeFigures.length || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
     [activeFigures, contextState, figures]
   );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    setFigureGroup([]);
+    setActiveFigures([]);
+  }, [index]);
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -170,15 +181,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    setFigureGroup([]);
-    setActiveFigures([]);
-  }, [index]);
+  const handleCopyCanvas = (e) => {};
 
   return (
     <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
@@ -220,10 +223,23 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
         </div>
       </div>
       <div className={classes.buttonArea}>
-        <Button color="primary" variant="contained" className={classes.saveButton}>
-          Save as PDF
-        </Button>
-        <Button color="primary" variant="contained" className={classes.copyButton}>
+        <Pdf
+          targetRef={stageRef}
+          filename="code-example.pdf"
+          options={{
+            unit: 'px',
+            orientation: 'l',
+            hotfixes: ['px_scaling'],
+            format: [stageRef.current?.clientWidth, stageRef.current?.clientHeight],
+          }}
+        >
+          {({ toPdf }) => (
+            <Button color="primary" variant="contained" className={classes.saveButton} onClick={toPdf}>
+              Save as PDF
+            </Button>
+          )}
+        </Pdf>
+        <Button color="primary" variant="contained" className={classes.copyButton} onClick={handleCopyCanvas}>
           Copy Canvas to ...
         </Button>
       </div>
