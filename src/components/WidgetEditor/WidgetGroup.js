@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Moveable from 'react-moveable';
 import { WIDGET_SCALE_LIMIT } from './constants';
 import { parseTransform, transformToString } from './helper';
 
-export default function WidgetGroup({ targets, zoom, onTransformStart, onTransformEnd }) {
+export default function WidgetGroup({ targets, figures, zoom, onTransformStart, onTransformEnd }) {
+  const moveableRef = useRef();
+
+  useEffect(() => {
+    console.log(figures);
+    moveableRef.current.updateRect();
+  }, [figures]);
+
   const handleDrag = ({ target, transform, translate: [tx, ty], dist: [dx, dy] }) => {
     tx = tx - dx + dx / zoom;
     ty = ty - dy + dy / zoom;
@@ -47,6 +54,7 @@ export default function WidgetGroup({ targets, zoom, onTransformStart, onTransfo
 
   return (
     <Moveable
+      ref={moveableRef}
       target={targets}
       defaultGroupRotate={0}
       defaultGroupOrigin={'50% 50%'}

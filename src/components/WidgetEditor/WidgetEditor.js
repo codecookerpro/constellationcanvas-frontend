@@ -132,7 +132,11 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   const handleMouseMove = (e) => {
     if (e.buttons === 0 && figures.length && !contextState.uuid) {
       const hovered = getHoveredFigure(e, figures, stageRef, true);
-      dispatch(setFigureHovered(hovered === 'group' ? null : hovered));
+      const oldHovered = figures.find((f) => f.hovered)?.uuid || null;
+
+      if (hovered !== oldHovered) {
+        dispatch(setFigureHovered(hovered));
+      }
     }
 
     if (!blockedPanZoom && e.buttons === 1 && panEnabled) {
@@ -205,7 +209,13 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
               />
             );
           })}
-          <WidgetGroup targets={figureGroup} zoom={zoom} onTransformStart={handleTransformStart} onTransformEnd={handleTransformEnd} />
+          <WidgetGroup
+            targets={figureGroup}
+            figures={figures}
+            zoom={zoom}
+            onTransformStart={handleTransformStart}
+            onTransformEnd={handleTransformEnd}
+          />
           {MenuComponent}
         </div>
       </div>
