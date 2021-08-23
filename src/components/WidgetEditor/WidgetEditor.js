@@ -131,8 +131,8 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
 
   const handleMouseMove = (e) => {
     if (e.buttons === 0 && figures.length && !contextState.uuid) {
-      const hovered = getHoveredFigure(e, figures, stageRef, false);
-      dispatch(setFigureHovered(hovered));
+      const hovered = getHoveredFigure(e, figures, stageRef, true);
+      dispatch(setFigureHovered(hovered === 'group' ? null : hovered));
     }
 
     if (!blockedPanZoom && e.buttons === 1 && panEnabled) {
