@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { makeStyles } from '@material-ui/core';
-import { WIDGET_MAP, WIDGET_GROUP_TYPES, WIDGET_EDITOR_SCALE_LIMIT, DOUBLE_CLICK_INTERVAL, CLICK_INTERVAL } from './constants';
+import { makeStyles, Menu, MenuItem } from '@material-ui/core';
+import { WIDGET_MAP, WIDGET_GROUP_TYPES, WIDGET_EDITOR_SCALE_LIMIT, DOUBLE_CLICK_INTERVAL, CLICK_INTERVAL, COPY_CANVAS_MENU } from './constants';
 import { getHoveredFigure, getMaxDepth } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
 import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
 import { useDispatch } from 'react-redux';
-import { createFigure, updateFigure, setFigureHovered } from 'actions';
+import { createFigure, updateFigure, setFigureHovered, copyCanvasTo } from 'actions';
 import { toArray } from 'utils';
 import useContextMenu from './hooks/use-context-menu';
 import { Button } from 'components/form-components';
@@ -68,6 +68,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   const [panEnabled, setPanEnabled] = useState(false);
   const [figureGroup, setFigureGroup] = useState([]);
   const [mouseDownTime, setMouseDownTime] = useState(new Date());
+  const [copyMenuAnchorEl, setCopyMenuAnchorEl] = useState(null);
 
   const { transform, zoom, panZoomHandlers, setContainer, setZoom } = usePanZoom({
     minZoom: WIDGET_EDITOR_SCALE_LIMIT.min,
@@ -80,6 +81,11 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
   const blockedPanZoom = useMemo(
     () => activeFigures.length || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
     [activeFigures, contextState, figures]
+  );
+
+  const copyCanvasMenuItems = useMemo(
+    () => COPY_CANVAS_MENU.map((item, idx) => ({ ...item, canvasIndex: idx })).filter((_, idx) => idx !== index),
+    [index]
   );
 
   useEffect(() => {
@@ -181,7 +187,14 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
     }
   };
 
-  const handleCopyCanvas = (e) => {};
+  const toggleCopyCanvasMenu = (e) => {
+    setCopyMenuAnchorEl(e.currentTarget);
+  };
+
+  const handleCopyCanvas = (canvasIndex) => {
+    setCopyMenuAnchorEl(null);
+    dispatch(copyCanvasTo(canvasIndex));
+  };
 
   return (
     <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
@@ -206,7 +219,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
                 {...figure}
                 group={group}
                 zoom={zoom}
-                key={figure.uuid}
+                key={`${figure.uuid}-${figure.canvas}`}
                 onTransformStart={handleTransformStart}
                 onTransformEnd={handleTransformEnd}
               />
@@ -239,9 +252,22 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
             </Button>
           )}
         </Pdf>
-        <Button color="primary" variant="contained" className={classes.copyButton} onClick={handleCopyCanvas}>
+        <Button color="primary" variant="contained" className={classes.copyButton} onClick={toggleCopyCanvasMenu}>
           Copy Canvas to ...
         </Button>
+        <Menu
+          id="copy-canvas-menu"
+          anchorEl={copyMenuAnchorEl}
+          keepMounted
+          open={Boolean(copyMenuAnchorEl)}
+          onClose={() => setCopyMenuAnchorEl(null)}
+        >
+          {copyCanvasMenuItems.map(({ title, canvasIndex }) => (
+            <MenuItem key={title} onClick={() => handleCopyCanvas(canvasIndex)}>
+              {title}
+            </MenuItem>
+          ))}
+        </Menu>
       </div>
       {!panEnabled && !activeFigures.length && <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
     </div>

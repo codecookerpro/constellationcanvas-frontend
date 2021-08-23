@@ -7,7 +7,6 @@ export default function WidgetGroup({ targets, figures, zoom, onTransformStart, 
   const moveableRef = useRef();
 
   useEffect(() => {
-    console.log(figures);
     moveableRef.current.updateRect();
   }, [figures]);
 

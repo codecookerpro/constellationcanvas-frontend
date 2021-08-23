@@ -60,3 +60,20 @@ export const deleteFigure = (figureUUID) => (dispatch) => {
     dispatch(setLoading(false));
   });
 };
+
+export const copyCanvasTo = (tarIdx) => (dispatch, getState) => {
+  dispatch(setLoading(true));
+
+  let { figures, selectedParticipant, index: srcIdx } = getState().board;
+  figures = figures.filter((f) => f.creatorUUID === selectedParticipant);
+  const tarFigures = figures.filter((f) => f.canvas === tarIdx);
+  const srcFigures = figures.filter((f) => f.canvas === srcIdx);
+
+  Promise.all(tarFigures.map((f) => API.deleteFigure(f.uuid)))
+    .then(() => Promise.all(srcFigures.map((f) => API.createFigure({ ...f, canvas: tarIdx }))))
+    .then((createdFigures) => {
+      dispatch(removeFigure(tarFigures.map((f) => f.uuid)));
+      dispatch(addFigure(createdFigures));
+      dispatch(setLoading(false));
+    });
+};

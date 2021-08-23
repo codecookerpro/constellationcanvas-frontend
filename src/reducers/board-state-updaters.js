@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { toArray } from 'utils';
 
 export const INITIAL_BOARD_STATE = Object.freeze({
   index: 0,
@@ -29,12 +30,12 @@ export const setCopiedFigureUpdater = (state, { payload: uuid }) => ({
 
 export const addFigureUpdater = (state, { payload }) => ({
   ...state,
-  figures: [...state.figures, payload],
+  figures: [...state.figures, ...toArray(payload)],
 });
 
 export const removeFigureUpdater = (state, { payload: uuid }) => ({
   ...state,
-  figures: state.figures.filter((f) => f.uuid !== uuid),
+  figures: state.figures.filter((f) => (Array.isArray(uuid) ? !uuid.includes(f.uuid) : f.uuid !== uuid)),
 });
 
 export const setFigureUpdater = (state, { payload: figure }) => ({
