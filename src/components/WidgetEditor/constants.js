@@ -1,9 +1,6 @@
 import { SIDEBAR_ITEMS, SIDEBAR_ITEM_TYPES } from 'components/Layout/constants';
 import { keyMirror } from 'utils';
-
-import FigureWidget from './widgets/FigureWidget';
-import ShapeWidget from './widgets/ShapeWidget';
-import TextWidget from './widgets/TextWidget';
+import { FigureWidget, ShapeWidget, TextWidget } from './components';
 
 export const TEXT_WIDGET_DEFAULT_PROPS = {
   text1: { padding: { top: 0.07, right: 0.05, bottom: 0.07, left: 0.05 }, width: 154, height: 64 },

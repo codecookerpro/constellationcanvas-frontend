@@ -13,7 +13,7 @@ const useStyles = makeStyles({
 });
 
 const FigureWidget = (props) => {
-  const { type, group } = props;
+  const { type, group, data } = props;
   const figureRef = useRef();
   const moveableRef = useRef();
   const { draggable, scalable, rotatable, keepRatio } = useMemo(() => WIDGET_GROUPS.find((g) => g.type === group), [group]);
@@ -24,7 +24,7 @@ const FigureWidget = (props) => {
     <BaseWidget {...props} draggable={draggable} scalable={scalable} rotatable={rotatable} keepRatio={keepRatio} target={figureRef} ref={moveableRef}>
       <div ref={figureRef} className={clsx(classes.root, 'widget')} id={props.uuid}>
         <svg width="100%" height="100%" viewBox="0 0 52 52">
-          <g fill="blue" stroke="red" transform="translate(1, 1)">
+          <g fill={data.fillColor || 'none'} stroke={data.strokeColor || '#000'} transform="translate(1, 1)">
             {SHAPE_PATHS[type]}
           </g>
         </svg>

@@ -27,10 +27,10 @@ const InviteDialog = ({ title, open, onClose, onSubmit }) => {
         </DialogContent>
         <DialogActions>
           <Button type="submit" color="primary" variant="contained">
-            Submit
+            SUBMITE
           </Button>
           <Button type="reset" color="secondary" variant="contained" onClick={() => setEmail('')}>
-            Reset
+            RESET
           </Button>
         </DialogActions>
       </form>
