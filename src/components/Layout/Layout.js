@@ -16,6 +16,9 @@ const GlobalStyle = createGlobalStyle`
   body {
     overflow: hidden;
   }
+  body *{
+    user-select: none;
+  }
 `;
 
 const useStyles = makeStyles((theme) => ({
