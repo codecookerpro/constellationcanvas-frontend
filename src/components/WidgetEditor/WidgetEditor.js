@@ -1,6 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
-import { WIDGET_MAP, WIDGET_GROUP_TYPES, WIDGET_EDITOR_SCALE_LIMIT, DOUBLE_CLICK_INTERVAL, CLICK_INTERVAL, COPY_CANVAS_MENU } from './constants';
+import {
+  WIDGET_MAP,
+  WIDGET_GROUP_TYPES,
+  WIDGET_EDITOR_SCALE_LIMIT,
+  DOUBLE_CLICK_INTERVAL,
+  CLICK_INTERVAL,
+  COPY_CANVAS_MENU,
+  CANVAS_PDF_FILENAMES,
+} from './constants';
 import { getHoveredFigure, getMaxDepth } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
 import Selecto from 'react-selecto';
@@ -238,7 +246,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
       <div className={classes.buttonArea}>
         <Pdf
           targetRef={stageRef}
-          filename="canvas.pdf"
+          filename={CANVAS_PDF_FILENAMES[index]}
           options={{
             unit: 'px',
             orientation: 'l',
