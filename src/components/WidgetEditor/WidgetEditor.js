@@ -107,7 +107,9 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   }, [index]);
 
   const handleDragOver = (event) => {
-    event.preventDefault();
+    if (editable) {
+      event.preventDefault();
+    }
   };
 
   const handleDrop = (event) => {
