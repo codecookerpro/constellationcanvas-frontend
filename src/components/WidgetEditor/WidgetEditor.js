@@ -219,7 +219,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
                 {...figure}
                 group={group}
                 zoom={zoom}
-                key={`${figure.uuid}-${figure.canvas}`}
+                key={figure.uuid}
                 onTransformStart={handleTransformStart}
                 onTransformEnd={handleTransformEnd}
               />

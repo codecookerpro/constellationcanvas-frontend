@@ -12,6 +12,7 @@ export const setBoard = createAction(ActionTypes.SET_BOARD, (payload) => payload
 export const setCanvasIndex = createAction(ActionTypes.SET_CANVAS_INDEX, (payload) => payload);
 export const setFigureHovered = createAction(ActionTypes.SET_FIGURE_HOVERED, (payload) => payload);
 export const setSelectedParticipant = createAction(ActionTypes.SET_SELECTED_PARTICIPANT, (payload) => payload);
+export const setBlockingMode = createAction(ActionTypes.SET_BLOCKING_MODE, (payload) => payload);
 
 export const getBoard = () => (dispatch, getState) => {
   dispatch(setLoading(true));
@@ -63,6 +64,7 @@ export const deleteFigure = (figureUUID) => (dispatch) => {
 
 export const copyCanvasTo = (tarIdx) => (dispatch, getState) => {
   dispatch(setLoading(true));
+  dispatch(setBlockingMode(true));
 
   let { figures, selectedParticipant, index: srcIdx } = getState().board;
   figures = figures.filter((f) => f.creatorUUID === selectedParticipant);
@@ -72,6 +74,7 @@ export const copyCanvasTo = (tarIdx) => (dispatch, getState) => {
   Promise.all(tarFigures.map((f) => API.deleteFigure(f.uuid)))
     .then(() => Promise.all(srcFigures.map((f) => API.createFigure({ ...f, canvas: tarIdx }))))
     .then((createdFigures) => {
+      dispatch(setBlockingMode(false));
       dispatch(removeFigure(tarFigures.map((f) => f.uuid)));
       dispatch(addFigure(createdFigures));
       dispatch(setLoading(false));

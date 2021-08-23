@@ -10,6 +10,7 @@ export const ActionTypes = keyMirror({
   SET_FIGURE: null,
   SET_FIGURE_HOVERED: null,
   SET_SELECTED_PARTICIPANT: null,
+  SET_BLOCKING_MODE: null,
 
   // error
   HANDLE_ERROR: null,
