@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const WidgetEditor = ({ index, figures, copiedFigure }) => {
+const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const stageRef = useRef();
@@ -225,6 +225,7 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
             return (
               <WidgetComponent
                 {...figure}
+                editable={editable}
                 group={group}
                 zoom={zoom}
                 key={figure.uuid}
@@ -260,9 +261,11 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
             </Button>
           )}
         </Pdf>
-        <Button color="primary" variant="contained" className={classes.copyButton} onClick={toggleCopyCanvasMenu}>
-          Copy Canvas to ...
-        </Button>
+        {editable && (
+          <Button color="primary" variant="contained" className={classes.copyButton} onClick={toggleCopyCanvasMenu}>
+            Copy Canvas to ...
+          </Button>
+        )}
         <Menu
           id="copy-canvas-menu"
           anchorEl={copyMenuAnchorEl}
@@ -277,7 +280,9 @@ const WidgetEditor = ({ index, figures, copiedFigure }) => {
           ))}
         </Menu>
       </div>
-      {!panEnabled && !activeFigures.length && <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />}
+      {editable && !panEnabled && !activeFigures.length && (
+        <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />
+      )}
     </div>
   );
 };

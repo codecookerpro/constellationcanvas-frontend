@@ -33,5 +33,5 @@ export default function CanvasBoard() {
     // eslint-disable-next-line
   }, [socket, profile]);
 
-  return <WidgetEditor figures={filteredFigures} copiedFigure={copiedFigure} index={index} />;
+  return <WidgetEditor figures={filteredFigures} copiedFigure={copiedFigure} index={index} editable={selectedParticipant === profile.uuid} />;
 }
