@@ -13,6 +13,7 @@ export const setCanvasIndex = createAction(ActionTypes.SET_CANVAS_INDEX, (payloa
 export const setFigureHovered = createAction(ActionTypes.SET_FIGURE_HOVERED, (payload) => payload);
 export const setSelectedParticipant = createAction(ActionTypes.SET_SELECTED_PARTICIPANT, (payload) => payload);
 export const setBlockingMode = createAction(ActionTypes.SET_BLOCKING_MODE, (payload) => payload);
+export const setSelectedFigure = createAction(ActionTypes.SET_SELECTED_FIGURE, (payload) => payload);
 
 export const getBoard = () => (dispatch, getState) => {
   dispatch(setLoading(true));

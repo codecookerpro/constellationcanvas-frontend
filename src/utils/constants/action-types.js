@@ -11,6 +11,7 @@ export const ActionTypes = keyMirror({
   SET_FIGURE_HOVERED: null,
   SET_SELECTED_PARTICIPANT: null,
   SET_BLOCKING_MODE: null,
+  SET_SELECTED_FIGURE: null,
 
   // error
   HANDLE_ERROR: null,
@@ -23,6 +24,7 @@ export const ActionTypes = keyMirror({
   // aux
   SET_LOADING: null,
   SET_ERROR: null,
+  TOGGLE_NOTIFICATION: null,
 });
 
 export default ActionTypes;

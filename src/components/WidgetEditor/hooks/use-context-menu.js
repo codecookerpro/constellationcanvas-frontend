@@ -129,31 +129,33 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
   };
 
   const MenuComponent = (
-    <Menu
-      keepMounted
-      open={contextState.mouseY !== null}
-      onClose={handleContextClick}
-      anchorReference="anchorPosition"
-      anchorPosition={
-        contextState.mouseY !== null && contextState.mouseX !== null ? { top: contextState.mouseY, left: contextState.mouseX } : undefined
-      }
-      transitionDuration={0}
-    >
-      {menuItems.map((context, index) =>
-        context.type === CONTEXTMENU_TYPES.divider ? (
-          <Divider key={context.type + index} />
-        ) : context.type === CONTEXTMENU_TYPES.paste ? (
-          <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={!copiedFigure.uuid}>
-            {context.label}
-          </MenuItem>
-        ) : (
-          <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)}>
-            {context.label}
-          </MenuItem>
-        )
-      )}
+    <>
+      <Menu
+        keepMounted
+        open={contextState.mouseY !== null}
+        onClose={handleContextClick}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextState.mouseY !== null && contextState.mouseX !== null ? { top: contextState.mouseY, left: contextState.mouseX } : undefined
+        }
+        transitionDuration={0}
+      >
+        {menuItems.map((context, index) =>
+          context.type === CONTEXTMENU_TYPES.divider ? (
+            <Divider key={context.type + index} />
+          ) : context.type === CONTEXTMENU_TYPES.paste ? (
+            <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={!copiedFigure.uuid}>
+              {context.label}
+            </MenuItem>
+          ) : (
+            <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)}>
+              {context.label}
+            </MenuItem>
+          )
+        )}
+      </Menu>
       <ShapeColorDialog open={openedShapeColorDlg} data={targetFigure?.data} onClose={() => showShapeColorDlg(false)} onSubmit={applyShapeColor} />
-    </Menu>
+    </>
   );
 
   return {

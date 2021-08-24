@@ -12,6 +12,7 @@ const actionHandler = {
   [ActionTypes.SET_FIGURE_HOVERED]: boardStateUpdaters.setFigureHoveredUpdater,
   [ActionTypes.SET_SELECTED_PARTICIPANT]: boardStateUpdaters.setSelectedParticipantUpdater,
   [ActionTypes.SET_BLOCKING_MODE]: boardStateUpdaters.setBlockingModeUpdater,
+  [ActionTypes.SET_SELECTED_FIGURE]: boardStateUpdaters.setSelectedFigureUpdater,
 };
 
 export default handleActions(actionHandler, boardStateUpdaters.INITIAL_BOARD_STATE);

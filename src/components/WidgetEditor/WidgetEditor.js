@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
 import {
   WIDGET_MAP,
@@ -14,7 +14,7 @@ import usePanZoom from 'use-pan-and-zoom';
 import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
 import { useDispatch } from 'react-redux';
-import { createFigure, updateFigure, setFigureHovered, copyCanvasTo } from 'actions';
+import { createFigure, updateFigure, setFigureHovered, copyCanvasTo, setSelectedFigure, setCopiedFigure, deleteFigure } from 'actions';
 import { toArray } from 'utils';
 import useContextMenu from './hooks/use-context-menu';
 import { Button } from 'components/form-components';
@@ -96,10 +96,8 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     [index]
   );
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    // eslint-disable-next-line
-  }, []);
+  const hoveredFigure = useMemo(() => figures.find((f) => f.hovered), [figures]);
+  const selectedFigure = useMemo(() => figures.find((f) => f.selected), [figures]);
 
   useEffect(() => {
     setFigureGroup([]);
@@ -142,6 +140,8 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     if (currentTime - mouseDownTime < DOUBLE_CLICK_INTERVAL) {
       panZoomHandlers.onMouseDown(e);
       setPanEnabled(true);
+    } else {
+      dispatch(setSelectedFigure(hoveredFigure?.uuid));
     }
 
     setMouseDownTime(currentTime);
@@ -177,12 +177,35 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     }
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      setActiveFigures([]);
-      setFigureGroup([]);
-    }
-  };
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'Escape') {
+        setActiveFigures([]);
+        setFigureGroup([]);
+      } else if (e.key === 'Delete' && selectedFigure) {
+        dispatch(deleteFigure(selectedFigure.uuid));
+      } else if (e.metaKey || e.ctrlKey) {
+        if (e.key === 'c' && selectedFigure) {
+          dispatch(setCopiedFigure(selectedFigure.uuid));
+        } else if (e.key === 'v' && copiedFigure) {
+          const {
+            transform: { tx, ty },
+          } = copiedFigure;
+          const newFigure = {
+            ...copiedFigure,
+            depth: getMaxDepth(figures) + 1,
+            transform: {
+              ...copiedFigure.transform,
+              tx: `${parseFloat(tx) + 50}px`,
+              ty: `${parseFloat(ty) + 50}px`,
+            },
+          };
+          dispatch(createFigure(newFigure));
+        }
+      }
+    },
+    [selectedFigure, copiedFigure, figures, dispatch]
+  );
 
   const handleSelectFigures = (e) => {
     if (e.selected.length > 1) {
@@ -205,6 +228,14 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     setCopyMenuAnchorEl(null);
     dispatch(copyCanvasTo(canvasIndex));
   };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [figures, handleKeyDown]);
 
   return (
     <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">

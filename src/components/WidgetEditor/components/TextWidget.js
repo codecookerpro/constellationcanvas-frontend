@@ -1,7 +1,7 @@
 import BaseWidget from './BaseWidget';
 import { makeStyles } from '@material-ui/core';
-import { useEffect, useRef, useState } from 'react';
-import { TEXT_WIDGET_DEFAULT_PROPS } from '../constants';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { TEXT_WIDGET_DEFAULT_PROPS, WIDGET_GROUPS } from '../constants';
 import useDynamicSize from '../hooks/use-dynamic-size';
 import { getImgUrl } from '../helper';
 import clsx from 'clsx';
@@ -60,6 +60,7 @@ const TextWidget = (props) => {
   const moveableRef = useRef();
   const { width, height } = useDynamicSize(group, type, moveableRef);
   const classes = useStyles({ type, group, width, height, sx, sy, fontSize: data.fontSize });
+  const { draggable, scalable, rotatable, keepRatio } = useMemo(() => WIDGET_GROUPS.find((g) => g.type === group), [group]);
   const wrapperRef = useRef();
   const textRef = useRef();
   const [editable, setEditable] = useState(false);
@@ -84,7 +85,15 @@ const TextWidget = (props) => {
   };
 
   return (
-    <BaseWidget {...props} keepRatio={false} target={wrapperRef} ref={moveableRef}>
+    <BaseWidget
+      {...props}
+      draggable={draggable}
+      scalable={scalable}
+      rotatable={rotatable}
+      keepRatio={keepRatio}
+      target={wrapperRef}
+      ref={moveableRef}
+    >
       <div ref={wrapperRef} className={clsx(classes.root, 'widget')} id={uuid} onDoubleClick={handleDoubleClick}>
         <textarea value={text} className={classes.textarea} onChange={handleTextChange} ref={textRef} disabled={!editable} onBlur={handleFocusOut} />
       </div>

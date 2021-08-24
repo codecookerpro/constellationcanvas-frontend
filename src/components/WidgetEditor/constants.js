@@ -127,7 +127,7 @@ export const WIDGET_GROUPS = [
     draggable: true,
     scalable: true,
     rotatable: false,
-    keepRatio: false,
+    keepRatio: true,
     defaultArea: 10000,
     imageType: 'svg',
     count: 4,

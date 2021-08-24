@@ -84,3 +84,8 @@ export const setBlockingModeUpdater = (state, { payload }) => ({
   ...state,
   isBlockingMode: payload,
 });
+
+export const setSelectedFigureUpdater = (state, { payload: uuid }) => ({
+  ...state,
+  figures: state.figures.map((f) => ({ ...f, selected: f.uuid === uuid })),
+});

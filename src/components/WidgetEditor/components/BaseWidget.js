@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     height: 0,
     zIndex: (props) => props.depth,
     '& .moveable-line, & .moveable-control': {
-      visibility: (props) => (props.hovered ? 'visible' : 'hidden'),
+      visibility: (props) => (props.hovered || props.selected ? 'visible' : 'hidden'),
     },
     '& *': {
       userSelect: 'none',
@@ -21,9 +21,9 @@ const useStyles = makeStyles({
 });
 
 const BaseWidget = React.forwardRef((props, ref) => {
-  const { uuid, depth, children, target, transform, hovered, zoom, editable, onTransformStart, onTransformEnd } = props;
+  const { uuid, depth, children, target, transform, hovered, selected, zoom, editable, onTransformStart, onTransformEnd } = props;
   const containerRef = useRef();
-  const classes = useStyles({ depth, hovered });
+  const classes = useStyles({ depth, hovered, selected });
 
   useEffect(() => {
     toArray(target).forEach((tar) => {
@@ -79,9 +79,6 @@ const BaseWidget = React.forwardRef((props, ref) => {
       {children}
       {editable && (
         <Moveable
-          draggable={true}
-          rotatable={false}
-          scalable={true}
           ref={ref}
           {...props}
           zoom={1 / zoom}

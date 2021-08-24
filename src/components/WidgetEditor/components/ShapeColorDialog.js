@@ -3,7 +3,7 @@ import { DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import { Title, Button, Label, Dialog } from 'components/form-components';
 import { ColorPicker } from 'material-ui-color';
 
-const InviteDialog = ({ open, data = { strokeColor: '#000', fillColor: '#00000000' }, onClose, onSubmit }) => {
+const ShapeColorDialog = ({ open, data = { strokeColor: '#000', fillColor: '#00000000' }, onClose, onSubmit }) => {
   const [strokeColor, setStrokeColor] = useState(data.strokeColor);
   const [fillColor, setFillColor] = useState(data.fillColor);
 
@@ -42,4 +42,4 @@ const InviteDialog = ({ open, data = { strokeColor: '#000', fillColor: '#0000000
   );
 };
 
-export default InviteDialog;
+export default ShapeColorDialog;
