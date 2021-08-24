@@ -30,7 +30,7 @@ export default function CanvasBoard() {
       socket.on('board', (board) => profile.role !== USER_ROLES.facilitator && dispatch(setBoard(board)));
       socket.on(
         'canvas',
-        (user) => profile.role === USER_ROLES.facilitator && user.uuid !== profile.uuid && dispatch(setCanvasIndex(user.currentCanvas))
+        (user) => profile.role === USER_ROLES.facilitator && user.uuid === selectedParticipant && dispatch(setCanvasIndex(user.currentCanvas))
       );
     }
     // eslint-disable-next-line
