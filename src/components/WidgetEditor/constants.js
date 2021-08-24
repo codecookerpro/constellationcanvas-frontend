@@ -97,7 +97,7 @@ export const WIDGET_GROUPS = [
     keepRatio: true,
     defaultArea: 10000,
     imageType: 'png',
-    count: 9,
+    count: 10,
   },
   {
     type: WIDGET_GROUP_TYPES.arrow,
@@ -119,7 +119,7 @@ export const WIDGET_GROUPS = [
     keepRatio: false,
     defaultArea: 10000,
     imageType: 'svg',
-    count: 4,
+    count: 6,
   },
   {
     type: WIDGET_GROUP_TYPES.text,
@@ -184,9 +184,53 @@ export const WIDGET_MAP = {
 };
 
 export const SHAPE_PATHS = {
-  shape1: <path d="M0 0H50V50H0z" />,
-  shape2: <circle cx="25" cy="25" r="25" />,
-  shape3: <polygon id="Triangle" points="25 0 50 50 0 50" />,
+  shape1: ({ fillColor, strokeColor }) => (
+    <svg width="100%" height="100%" viewBox="0 0 52 52">
+      <g fill={fillColor} stroke={strokeColor} transform="translate(1, 1)">
+        <path d="M0 0H50V50H0z" />
+      </g>
+    </svg>
+  ),
+  shape2: ({ fillColor, strokeColor }) => (
+    <svg width="100%" height="100%" viewBox="0 0 52 52">
+      <g fill={fillColor} stroke={strokeColor} transform="translate(1, 1)">
+        <circle cx="25" cy="25" r="25" />
+      </g>
+    </svg>
+  ),
+  shape3: ({ fillColor, strokeColor }) => (
+    <svg width="100%" height="100%" viewBox="0 0 52 52">
+      <g fill={fillColor} stroke={strokeColor} transform="translate(1, 1)">
+        <polygon id="Triangle" points="25 0 50 50 0 50" />
+      </g>
+    </svg>
+  ),
+  shape5: ({ fillColor, strokeColor }) => (
+    <svg width="100%" height="100%" viewBox="0 0 57 50" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <g id="Page-1" strokeWidth="1" fill={fillColor} fillRule="evenodd" stroke={strokeColor}>
+        <g id="Constellation-Canvas" transform="translate(-60.000000, -7465.000000)" fillRule="nonzero">
+          <g id="Shapes" transform="translate(0.000000, 7039.000000)">
+            <g id="heart" transform="translate(61.000000, 427.000000)">
+              <path
+                d="M50.717914,4.31114729 C47.9474534,1.53473879 44.2691621,0.00538977627 40.3573711,0.00538977627 C36.44558,0.00538977627 32.7666177,1.53473879 29.998841,4.31249474 L27.4981129,6.82547792 L24.9953718,4.30912613 C22.2282661,1.53069646 18.5499748,0 14.6375128,0 C10.7250507,0 7.04743039,1.53002274 4.28099567,4.30912613 C-1.42699856,10.0431744 -1.42699856,19.3735508 4.28099567,25.1082727 L26.7862072,47.704236 C26.9828032,47.9016366 27.240458,48 27.4981129,48 C27.7557677,48 28.0134226,47.9016366 28.2100186,47.704236 L50.718585,25.1082727 C56.4272502,19.375572 56.4272502,10.0472167 50.717914,4.31114729 Z"
+                id="Shape"
+              ></path>
+            </g>
+          </g>
+        </g>
+      </g>
+    </svg>
+  ),
+  shape6: ({ fillColor, strokeColor }) => (
+    <svg width="100%" height="100%" viewBox="0 0 57 53">
+      <g fill={fillColor} stroke={strokeColor} transform="translate(1, 1)">
+        <polygon
+          id="Path"
+          points="27.5 0 35.5730702 17.358349 55 19.4802623 40.5625065 32.3302125 44.4959363 51 27.5 41.5833755 10.5040702 51 14.4375 32.3302125 0 19.4802623 19.4269363 17.358349"
+        />
+      </g>
+    </svg>
+  ),
 };
 
 export const CONTEXTMENU_TYPES = keyMirror({
