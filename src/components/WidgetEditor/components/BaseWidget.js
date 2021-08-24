@@ -12,10 +12,11 @@ const useStyles = makeStyles({
     height: 0,
     zIndex: (props) => props.depth,
     '& .moveable-line, & .moveable-control': {
-      visibility: (props) => (props.hovered || props.selected ? 'visible' : 'hidden'),
+      visibility: ({ hovered, selected }) => (hovered || selected ? 'visible' : 'hidden'),
     },
     '& *': {
       userSelect: 'none',
+      '--moveable-color': ({ selected }) => (selected ? '#7fff00' : '#4af'),
     },
   },
 });
