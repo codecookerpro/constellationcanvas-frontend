@@ -53,7 +53,7 @@ export const WIDGET_GROUPS = [
     keepRatio: true,
     defaultArea: 10000,
     imageType: 'png',
-    count: 14,
+    count: 18,
   },
   {
     type: WIDGET_GROUP_TYPES.peg,
