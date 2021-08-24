@@ -26,7 +26,7 @@ export default function CanvasBoard() {
     if (socket) {
       socket.removeAllListeners();
       socket.on('figuresCU', (figure) => figure.creatorUUID !== profile.uuid && dispatch(setFigure(figure)));
-      socket.on('figureD', (figure) => figure.creatorUUID !== profile.uuid && dispatch(removeFigure(figure.uuid)));
+      socket.on('figuresD', (figure) => figure.creatorUUID !== profile.uuid && dispatch(removeFigure(figure.uuid)));
       socket.on('board', (board) => profile.role !== USER_ROLES.facilitator && dispatch(setBoard(board)));
       socket.on(
         'canvas',
