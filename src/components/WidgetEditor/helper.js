@@ -51,7 +51,7 @@ export const transformToString = ({ tx = 0, ty = 0, rotate = 0, sx = 1, sy = 1 }
 
 export const getForwardWidget = (figures, uuid, ref) => {
   const figure = figures.find((f) => f.uuid === uuid);
-  const overlaped = getOverlapedFigures(figures, ref, uuid);
+  const overlaped = getOverlappedFigures(figures, ref, uuid);
   const depth = _.min(overlaped.map((f) => (f.depth <= figure.depth ? Infinity : f.depth)));
 
   return overlaped.find((f) => f.depth === depth);
@@ -59,7 +59,7 @@ export const getForwardWidget = (figures, uuid, ref) => {
 
 export const getBackwardWidget = (figures, uuid, ref) => {
   const figure = figures.find((f) => f.uuid === uuid);
-  const overlaped = getOverlapedFigures(figures, ref, uuid);
+  const overlaped = getOverlappedFigures(figures, ref, uuid);
 
   const depth = _.max(overlaped.map((f) => (f.depth >= figure.depth ? -Infinity : f.depth)));
 
@@ -89,11 +89,11 @@ export const extendPolygon = (polygon, dist = 30) => {
   });
 };
 
-export const getWidgetBoundaries = (ref, uuid) => {
+export const getWidgetBoundaries = (ref, uuid, hover = true) => {
   const widget = ref.current.querySelector(uuid === 'group' ? '[data-able-groupable=true]' : `#widget-container-${uuid}`);
 
   const points = [
-    widget?.querySelector('.moveable-rotation-control'),
+    hover && widget?.querySelector('.moveable-rotation-control'),
     widget?.querySelector('.moveable-ne'),
     widget?.querySelector('.moveable-se'),
     widget?.querySelector('.moveable-sw'),
@@ -109,7 +109,7 @@ export const getWidgetBoundaries = (ref, uuid) => {
 export const getHoveredFigure = (e, figures, ref, includeGroup = false) => {
   const hoveredFigures = (includeGroup ? figures.concat({ uuid: 'group', depth: Infinity }) : figures)
     .filter((f) => {
-      const points = getWidgetBoundaries(ref, f.uuid);
+      const points = getWidgetBoundaries(ref, f.uuid, true);
       return pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
     })
     .sort((a, b) => b.depth - a.depth);
@@ -121,12 +121,12 @@ export const getHoveredFigure = (e, figures, ref, includeGroup = false) => {
   return null;
 };
 
-export const getOverlapedFigures = (figures, ref, uuid) => {
-  const points1 = getWidgetBoundaries(ref, uuid);
+export const getOverlappedFigures = (figures, ref, uuid) => {
+  const points1 = getWidgetBoundaries(ref, uuid, false);
 
   return figures
     .filter((f) => {
-      const points2 = getWidgetBoundaries(ref, f.uuid);
+      const points2 = getWidgetBoundaries(ref, f.uuid, false);
       return overlap(points1, points2);
     })
     .sort((a, b) => b.depth - a.depth);
