@@ -1,6 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
-import { WIDGET_MAP, WIDGET_GROUP_TYPES, WIDGET_EDITOR_SCALE_LIMIT, DOUBLE_CLICK_INTERVAL, CLICK_INTERVAL, COPY_CANVAS_MENU } from './constants';
+import {
+  WIDGET_MAP,
+  WIDGET_GROUP_TYPES,
+  WIDGET_EDITOR_SCALE_LIMIT,
+  DOUBLE_CLICK_INTERVAL,
+  CLICK_INTERVAL,
+  COPY_CANVAS_MENU,
+  CANVAS_PDF_FILENAMES,
+} from './constants';
 import { getHoveredFigure, getMaxDepth } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
 import Selecto from 'react-selecto';
@@ -10,6 +18,7 @@ import { createFigure, updateFigure, setFigureHovered, copyCanvasTo, setSelected
 import { toArray } from 'utils';
 import useContextMenu from './hooks/use-context-menu';
 import { Button } from 'components/form-components';
+import Pdf from 'react-to-pdf';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -211,13 +220,20 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     }
   };
 
-  const toggleCopyCanvasMenu = (e) => {
-    setCopyMenuAnchorEl(e.currentTarget);
+  const handleSaveAsPDF = (e, toPdf) => {
+    e.preventDefault();
+    const svgElements = stageRef.current.querySelectorAll('svg');
+    svgElements.forEach(function (item) {
+      const { width, height } = item.parentElement.getBoundingClientRect();
+      const figure = figures.find((f) => f.uuid === item.parentElement.id);
+      item.setAttribute('width', width / parseFloat(figure.transform.sx) / zoom);
+      item.setAttribute('height', height / parseFloat(figure.transform.sy) / zoom);
+    });
+    toPdf();
   };
 
-  const handleSaveAsPDF = (e) => {
-    e.preventDefault();
-    window.print();
+  const toggleCopyCanvasMenu = (e) => {
+    setCopyMenuAnchorEl(e.currentTarget);
   };
 
   const handleCopyCanvas = (canvasIndex) => {
@@ -275,9 +291,22 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
         </div>
       </div>
       <div className={classes.buttonArea}>
-        <Button color="primary" variant="contained" className={classes.saveButton} onClick={handleSaveAsPDF}>
-          Save as PDF
-        </Button>
+        <Pdf
+          targetRef={stageRef}
+          filename={CANVAS_PDF_FILENAMES[index]}
+          options={{
+            unit: 'px',
+            orientation: 'l',
+            hotfixes: ['px_scaling'],
+            format: [stageRef.current?.clientWidth, stageRef.current?.clientHeight],
+          }}
+        >
+          {({ toPdf }) => (
+            <Button color="primary" variant="contained" className={classes.saveButton} onClick={(e) => handleSaveAsPDF(e, toPdf)}>
+              Save as PDF
+            </Button>
+          )}
+        </Pdf>
         {editable && (
           <Button color="primary" variant="contained" className={classes.copyButton} onClick={toggleCopyCanvasMenu}>
             Copy Canvas to ...

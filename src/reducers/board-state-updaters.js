@@ -6,16 +6,7 @@ export const INITIAL_BOARD_STATE = Object.freeze({
   participants: [],
   selectedParticipant: null,
   name: '',
-  figures: [
-    {
-      uuid: '1',
-      type: 'lego1',
-      data: {},
-      transform: { tx: '100px', ty: '100px', rotate: '0deg', sx: '1', sy: '1' },
-      creatorUUID: '1557d75a-05c6-444e-b575-1da665371e99',
-      canvas: 0,
-    },
-  ],
+  figures: [],
   uuid: null,
   copiedFigure: {
     uuid: null,
