@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import ObjectID from 'bson-objectid';
 import pointInPolygon from 'point-in-polygon';
 import overlap from 'polygon-overlap';
 import { isNumber } from 'utils';
@@ -130,11 +129,6 @@ export const getOverlappedFigures = (figures, ref, uuid) => {
       return overlap(points1, points2);
     })
     .sort((a, b) => b.depth - a.depth);
-};
-
-export const getUniqueId = () => {
-  const ts = new Date().getTime();
-  return ObjectID(ts).toHexString();
 };
 
 export const getMaxDepth = (figures) => {
