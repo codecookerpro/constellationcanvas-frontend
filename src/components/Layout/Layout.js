@@ -16,8 +16,24 @@ const GlobalStyle = createGlobalStyle`
   body {
     overflow: hidden;
   }
-  body *{
+
+  body * {
     user-select: none;
+  }
+
+  @media print {
+    body {
+      visibility: hidden;
+    }
+
+    #widget-editor {
+      visibility: visible;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+    }
   }
 `;
 
