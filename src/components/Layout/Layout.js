@@ -17,7 +17,7 @@ const GlobalStyle = createGlobalStyle`
     overflow: hidden;
   }
 
-  body * {
+  body *:not(input[type='text']) {
     user-select: none;
   }
 
