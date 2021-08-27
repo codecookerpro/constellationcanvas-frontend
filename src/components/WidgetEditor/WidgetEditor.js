@@ -182,9 +182,9 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
       if (e.key === 'Escape') {
         setActiveFigures([]);
         setFigureGroup([]);
-      } else if (e.key === 'Delete' && selectedFigure) {
+      } else if (e.key === 'Delete' && selectedFigure && activeFigures.length === 0) {
         dispatch(deleteFigure(selectedFigure.uuid));
-      } else if (e.metaKey || e.ctrlKey) {
+      } else if ((e.metaKey || e.ctrlKey) && activeFigures.length === 0) {
         if (e.key === 'c' && selectedFigure) {
           dispatch(setCopiedFigure(selectedFigure.uuid));
         } else if (e.key === 'v' && copiedFigure) {
@@ -204,7 +204,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
         }
       }
     },
-    [selectedFigure, copiedFigure, figures, dispatch]
+    [selectedFigure, activeFigures, copiedFigure, figures, dispatch]
   );
 
   const handleSelectFigures = (e) => {
