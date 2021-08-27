@@ -17,10 +17,6 @@ const GlobalStyle = createGlobalStyle`
     overflow: hidden;
   }
 
-  body *:not(input[type='text']) {
-    user-select: none;
-  }
-
   @media print {
     body {
       visibility: hidden;
@@ -98,6 +94,8 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
+    width: '100%',
+    height: '100%',
   },
 }));
 
