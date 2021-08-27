@@ -31,8 +31,10 @@ const useStyles = makeStyles({
     height: ({ sy }) => `${100 * Math.abs(sy)}%`,
     transformOrigin: '0 0',
     transform: ({ sx, sy }) => `scale(${1 / sx}, ${1 / sy})`,
+    userSelect: 'all',
     '&:disabled': {
       color: '#000000',
+      userSelect: 'none',
     },
     '&::-webkit-scrollbar': {
       width: '0.2em',

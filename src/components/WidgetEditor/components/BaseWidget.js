@@ -15,6 +15,7 @@ const useStyles = makeStyles({
       visibility: ({ hovered, selected }) => (hovered || selected ? 'visible' : 'hidden'),
     },
     '& *': {
+      userSelect: 'none',
       '--moveable-color': ({ selected }) => (selected ? '#7fff00' : '#4af'),
     },
   },

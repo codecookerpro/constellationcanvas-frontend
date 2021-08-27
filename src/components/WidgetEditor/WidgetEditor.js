@@ -224,10 +224,12 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     e.preventDefault();
     const svgElements = stageRef.current.querySelectorAll('svg');
     svgElements.forEach(function (item) {
-      const { width, height } = item.parentElement.getBoundingClientRect();
+      let { width, height } = item.parentElement.getBoundingClientRect();
       const figure = figures.find((f) => f.uuid === item.parentElement.id);
-      item.setAttribute('width', width / parseFloat(figure.transform.sx) / zoom);
-      item.setAttribute('height', height / parseFloat(figure.transform.sy) / zoom);
+      width = width / parseFloat(figure.transform.sx) / zoom;
+      height = height / parseFloat(figure.transform.sy) / zoom;
+      width && item.setAttribute('width', width);
+      height && item.setAttribute('height', height);
     });
     toPdf();
   };
