@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: '100%',
-    height: HEADER_HEIGHT,
+    minHeight: HEADER_HEIGHT,
     borderBottom: MAIN_BORDER,
   },
   header: {
