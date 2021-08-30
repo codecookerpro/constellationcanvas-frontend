@@ -1,8 +1,10 @@
 import { useMemo, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useDrag } from 'react-dnd';
 
 import { WIDGET_IMG_BASE_URL } from 'utils/constants/ui';
 import { WIDGET_DESCRIPTIONS } from 'components/WidgetEditor/constants';
+import { DND_ITEM_TYPES } from 'utils/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,35 +39,43 @@ const useStyles = makeStyles((theme) => ({
 
 const Widget = ({ group, type, imageType }) => {
   const classes = useStyles();
-  const ref = useRef();
   const description = useMemo(() => WIDGET_DESCRIPTIONS?.[type], [type]);
+  const imgSrc = `${WIDGET_IMG_BASE_URL}${group}/${type}.${imageType}`;
+  const ref = useRef();
 
-  const onDragStart = (e) => {
-    const rect = e.target.getBoundingClientRect();
-    const data = {
-      offsetX: e.clientX - rect.left,
-      offsetY: e.clientY - rect.top,
-      type,
-    };
+  const [, drag] = useDrag(() => ({
+    type: DND_ITEM_TYPES.widget,
+    item: (monitor) => {
+      const { x: originX, y: originY } = ref.current.getBoundingClientRect();
+      const { x: clientX, y: clientY } = monitor.getInitialClientOffset();
 
-    const dragImg = ref.current.cloneNode(true);
-    dragImg.classList.add('widget-drag-image-template');
-    dragImg.querySelector('#widget-desc')?.remove();
-    document.querySelector('.widget-drag-image-template')?.remove();
-    document.querySelector('body').appendChild(dragImg);
-    e.dataTransfer.setDragImage(dragImg, data.offsetX, data.offsetY);
-    e.dataTransfer.setData('application/constellation-widget', JSON.stringify(data));
-  };
+      return {
+        offsetX: clientX - originX,
+        offsetY: clientY - originY,
+        group,
+        type,
+        imageType,
+      };
+    },
+  }));
 
   return (
-    <div onDragStart={onDragStart} draggable className={classes.root} ref={ref}>
-      <img draggable={false} className={classes.img} src={`${WIDGET_IMG_BASE_URL}${group}/${type}.${imageType}`} alt={type} />
-      {description && (
-        <div className={classes.desc} id="widget-desc">
-          {description}
-        </div>
-      )}
-    </div>
+    <>
+      <div
+        ref={(el) => {
+          drag(el);
+          ref.current = el;
+        }}
+        className={classes.root}
+      >
+        <img draggable={false} className={classes.img} src={imgSrc} alt={type} />
+        {description && (
+          <div className={classes.desc} id="widget-desc">
+            {description}
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

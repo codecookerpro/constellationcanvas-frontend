@@ -10,7 +10,7 @@ const useStyles = makeStyles({
   root: {
     width: (props) => props.width || 0,
     height: (props) => props.height || 0,
-    backgroundImage: ({ group, type }) => `url(${getImgUrl(group, type)})`,
+    backgroundImage: ({ group, type }) => `url(${getImgUrl(group, type, 3)})`,
     backgroundSize: '100% 100%',
   },
 });

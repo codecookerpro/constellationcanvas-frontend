@@ -11,6 +11,7 @@ import {
 } from './constants';
 import { getHoveredFigure, getMaxDepth } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
+import { useDrop } from 'react-dnd';
 import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
 import { useDispatch } from 'react-redux';
@@ -19,6 +20,7 @@ import { toArray } from 'utils';
 import useContextMenu from './hooks/use-context-menu';
 import { Button } from 'components/form-components';
 import Pdf from 'react-to-pdf';
+import { DND_ITEM_TYPES } from 'utils/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,6 +86,29 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     enableZoom: false,
   });
 
+  const [, drop] = useDrop(() => ({
+    accept: DND_ITEM_TYPES.widget,
+    drop: (item, monitor) => {
+      setZoom((zoom) => {
+        const { offsetX, offsetY, type } = item;
+        const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
+        const { x: clientX, y: clientY } = monitor.getClientOffset();
+        const tx = `${(clientX - baseX) / zoom - offsetX}px`;
+        const ty = `${(clientY - baseY) / zoom - offsetY}px`;
+        const figure = {
+          type,
+          data: {},
+          transform: { tx, ty, rotate: '0deg', sx: '1', sy: '1' },
+          depth: getMaxDepth(figures) + 1,
+        };
+
+        dispatch(createFigure(figure));
+
+        return zoom;
+      });
+    },
+  }));
+
   const { contextState, handleContextMenu, MenuComponent } = useContextMenu({ figures, stageRef, zoom, copiedFigure });
 
   const blockedPanZoom = useMemo(
@@ -103,28 +128,6 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     setFigureGroup([]);
     setActiveFigures([]);
   }, [index]);
-
-  const handleDragOver = (event) => {
-    if (editable) {
-      event.preventDefault();
-    }
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    const { offsetX, offsetY, type } = JSON.parse(event.dataTransfer.getData('application/constellation-widget'));
-    const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
-    const tx = `${(event.clientX - baseX) / zoom - offsetX}px`;
-    const ty = `${(event.clientY - baseY) / zoom - offsetY}px`;
-    const figure = {
-      type,
-      data: {},
-      transform: { tx, ty, rotate: '0deg', sx: '1', sy: '1' },
-      depth: getMaxDepth(figures) + 1,
-    };
-
-    dispatch(createFigure(figure));
-  };
 
   const handleTransformStart = (uuids) => {
     setActiveFigures(toArray(uuids));
@@ -257,9 +260,10 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
         id="widget-editor"
         {...panZoomHandlers}
         className={classes.figureZoompane}
-        ref={(el) => setContainer(el)}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
+        ref={(e) => {
+          setContainer(e);
+          drop(e);
+        }}
         onMouseMove={handleMouseMove}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}

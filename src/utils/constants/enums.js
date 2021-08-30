@@ -37,3 +37,7 @@ export const USER_ACTIONS = [
     role: USER_ROLES.user,
   },
 ];
+
+export const DND_ITEM_TYPES = keyMirror({
+  widget: null,
+});

@@ -5,7 +5,11 @@ import { isNumber } from 'utils';
 import { WIDGET_IMG_BASE_URL } from 'utils/constants/ui';
 import { WIDGET_GROUPS } from './constants';
 
-export const getImgUrl = (group, type) => `${WIDGET_IMG_BASE_URL}${group}/${type}.${WIDGET_GROUPS.find((g) => g.type === group).imageType}`;
+export const getImgUrl = (group, type, scale = 1) => {
+  const { imageType } = WIDGET_GROUPS.find((g) => g.type === group);
+  scale = scale === 1 || imageType === 'svg' ? '' : `@${scale}x`;
+  return `${WIDGET_IMG_BASE_URL}${group}/${type}${scale}.${imageType}`;
+};
 
 export const parseTransform = (trans) => {
   const t2dTokens = trans.match(/translate\(([-0-9.]*(px)), ([-0-9.]*(px))\)/);

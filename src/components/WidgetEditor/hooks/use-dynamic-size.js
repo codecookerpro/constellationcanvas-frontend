@@ -15,7 +15,7 @@ const useDynamicSize = (group, type, ref) => {
       setDim({ width: width * scale, height: height * scale });
       setTimeout(() => ref.current?.updateRect());
     });
-    img.src = getImgUrl(group, type);
+    img.src = getImgUrl(group, type, 3);
     // eslint-disable-next-line
   }, []);
 
