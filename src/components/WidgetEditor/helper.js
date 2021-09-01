@@ -11,7 +11,7 @@ export const getImgUrl = (group, type, scale = 1) => {
   return `${WIDGET_IMG_BASE_URL}${group}/${type}${scale}.${imageType}`;
 };
 
-export const parseTransform = (trans) => {
+export const parseTransform = (trans, toNumber = false) => {
   const t2dTokens = trans.match(/translate\(([-0-9.]*(px)), ([-0-9.]*(px))\)/);
   const t3dTokens = trans.match(/translate3d\(([-0-9.]*(px)), ([-0-9.]*(px)), ([-0-9.]*(px))\)/);
   const rTokens = trans.match(/rotate\(([-0-9.]*(deg|rad))\)/);
@@ -20,25 +20,25 @@ export const parseTransform = (trans) => {
   let ty = 0;
   let tz = 0;
   let rotate = 0;
-  let sx = 0;
-  let sy = 0;
+  let sx = 1;
+  let sy = 1;
 
   if (t3dTokens) {
-    tx = t3dTokens[1];
-    ty = t3dTokens[3];
-    tz = t3dTokens[5];
+    tx = toNumber ? parseFloat(t3dTokens[1]) : t3dTokens[1];
+    ty = toNumber ? parseFloat(t3dTokens[3]) : t3dTokens[3];
+    tz = toNumber ? parseFloat(t3dTokens[5]) : t3dTokens[5];
   } else if (t2dTokens) {
-    tx = t2dTokens[1];
-    ty = t2dTokens[3];
+    tx = toNumber ? parseFloat(t2dTokens[1]) : t2dTokens[1];
+    ty = toNumber ? parseFloat(t2dTokens[3]) : t2dTokens[3];
   }
 
   if (rTokens) {
-    rotate = rTokens[1];
+    rotate = toNumber ? parseFloat(rTokens[1]) : rTokens[1];
   }
 
   if (sTokens) {
-    sx = sTokens[1];
-    sy = sTokens[2];
+    sx = toNumber ? parseFloat(sTokens[1]) : sTokens[1];
+    sy = toNumber ? parseFloat(sTokens[2]) : sTokens[2];
   }
 
   return { tx, ty, rotate, sx, sy, ...(t3dTokens && { tz }) };

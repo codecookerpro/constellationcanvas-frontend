@@ -4,3 +4,4 @@ export const MAIN_BORDER = '1px solid rgba(0, 0, 0, 0.12)';
 export const PROJECT_TITLE = 'CONSTELLATION CANVAS';
 export const LOGO_URL = '/assets/img/logo.png';
 export const WIDGET_IMG_BASE_URL = '/assets/img/widgets/';
+export const TRANSPARENT_IMAGE = '/assets/img/transparent.png';

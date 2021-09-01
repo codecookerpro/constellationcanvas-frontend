@@ -1,8 +1,8 @@
 import { useMemo, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useDrag } from 'react-dnd';
+import { DragPreviewImage, useDrag } from 'react-dnd';
 
-import { WIDGET_IMG_BASE_URL } from 'utils/constants/ui';
+import { WIDGET_IMG_BASE_URL, TRANSPARENT_IMAGE } from 'utils/constants/ui';
 import { WIDGET_DESCRIPTIONS } from 'components/WidgetEditor/constants';
 import { DND_ITEM_TYPES } from 'utils/constants';
 
@@ -43,7 +43,7 @@ const Widget = ({ group, type, imageType }) => {
   const imgSrc = `${WIDGET_IMG_BASE_URL}${group}/${type}.${imageType}`;
   const ref = useRef();
 
-  const [, drag] = useDrag(() => ({
+  const [, drag, preview] = useDrag(() => ({
     type: DND_ITEM_TYPES.widget,
     item: (monitor) => {
       const { x: originX, y: originY } = ref.current.getBoundingClientRect();
@@ -61,6 +61,7 @@ const Widget = ({ group, type, imageType }) => {
 
   return (
     <>
+      <DragPreviewImage connect={preview} src={TRANSPARENT_IMAGE} />
       <div
         ref={(el) => {
           drag(el);

@@ -25,8 +25,8 @@ const DnDPreview = () => {
   }
 
   return (
-    <div style={style}>
-      <img src={`${WIDGET_IMG_BASE_URL}${item.group}/${item.type}.${item.imageType}`} />
+    <div style={{ ...style, zIndex: 9999 }}>
+      <img src={`${WIDGET_IMG_BASE_URL}${item.group}/${item.type}.${item.imageType}`} alt={item.type} />
     </div>
   );
 };
@@ -34,19 +34,22 @@ const DnDPreview = () => {
 const App = () => {
   useInitApp();
 
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+  const GlobalContext = React.createContext();
+
   return (
-    <StylesProvider jss={jss}>
-      <ThemeProvider theme={theme}>
-        <StyledThemeProvider theme={theme}>
-          <DndProvider
-            backend={'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 ? TouchBackend : HTML5Backend}
-          >
-            <DnDPreview />
-            <Routes />
-          </DndProvider>
-        </StyledThemeProvider>
-      </ThemeProvider>
-    </StylesProvider>
+    <GlobalContext.Provider value={{ isTouchDevice }}>
+      <StylesProvider jss={jss}>
+        <ThemeProvider theme={theme}>
+          <StyledThemeProvider theme={theme}>
+            <DndProvider backend={isTouchDevice ? TouchBackend : HTML5Backend}>
+              <DnDPreview />
+              <Routes />
+            </DndProvider>
+          </StyledThemeProvider>
+        </ThemeProvider>
+      </StylesProvider>
+    </GlobalContext.Provider>
   );
 };
 
