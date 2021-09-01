@@ -77,6 +77,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     padding: 0,
+    height: '100vh',
   },
   headerPane: {
     display: 'flex',
@@ -90,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
   },
   account: {
     marginLeft: 'auto',
-    marginRight: 60,
+    marginRight: theme.spacing(7.5),
   },
   content: {
     flexGrow: 1,

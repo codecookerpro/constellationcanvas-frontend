@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 
 import { Avatar } from 'components/';
+import { isTouchDevice } from 'utils';
 
 const useStyles = makeStyles({
   root: {
@@ -42,12 +43,14 @@ export default function AccountBox({ displayName }) {
   return (
     <Box className={classes.root}>
       <Avatar displayName={displayName} />
-      <Box className={classes.info}>
-        <Typography className={classes.username}>{displayName}</Typography>
-        <Link className={classes.logout} onClick={handleLogout}>
-          Log out
-        </Link>
-      </Box>
+      {isTouchDevice() || (
+        <Box className={classes.info}>
+          <Typography className={classes.username}>{displayName}</Typography>
+          <Link className={classes.logout} onClick={handleLogout}>
+            Log out
+          </Link>
+        </Box>
+      )}
     </Box>
   );
 }

@@ -7,10 +7,11 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { usePreview } from 'react-dnd-preview';
 
-import theme from 'theme';
+import { desktopTheme, touchTheme } from 'theme';
 import Routes from 'routes';
 import { useInitApp } from 'hooks';
 import { WIDGET_IMG_BASE_URL } from 'utils/constants';
+import { isTouchDevice } from 'utils';
 
 const jss = create({
   ...jssPreset(),
@@ -34,22 +35,20 @@ const DnDPreview = () => {
 const App = () => {
   useInitApp();
 
-  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-  const GlobalContext = React.createContext();
+  const theme = isTouchDevice() ? touchTheme : desktopTheme;
+  const dndBackend = isTouchDevice() ? TouchBackend : HTML5Backend;
 
   return (
-    <GlobalContext.Provider value={{ isTouchDevice }}>
-      <StylesProvider jss={jss}>
-        <ThemeProvider theme={theme}>
-          <StyledThemeProvider theme={theme}>
-            <DndProvider backend={isTouchDevice ? TouchBackend : HTML5Backend}>
-              <DnDPreview />
-              <Routes />
-            </DndProvider>
-          </StyledThemeProvider>
-        </ThemeProvider>
-      </StylesProvider>
-    </GlobalContext.Provider>
+    <StylesProvider jss={jss}>
+      <ThemeProvider theme={theme}>
+        <StyledThemeProvider theme={theme}>
+          <DndProvider backend={dndBackend}>
+            <DnDPreview />
+            <Routes />
+          </DndProvider>
+        </StyledThemeProvider>
+      </ThemeProvider>
+    </StylesProvider>
   );
 };
 

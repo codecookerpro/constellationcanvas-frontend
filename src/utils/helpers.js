@@ -32,3 +32,5 @@ export const generateAvatarColor = (name) => {
   const h = hash % 360;
   return `hsl(${h}, 100%, 75%)`;
 };
+
+export const isTouchDevice = () => 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;

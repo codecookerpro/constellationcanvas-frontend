@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import { HEADER_TITLE_MAP as titles } from 'components/Layout/constants';
+import { HEADER_TITLE_MAP } from 'components/Layout/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,7 +20,7 @@ const TitleHeader = (props) => {
 
   return (
     <Typography className={classes.root} variant="h1" component="h1">
-      {titles[role]}
+      {HEADER_TITLE_MAP[role]}
     </Typography>
   );
 };
