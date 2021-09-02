@@ -7,7 +7,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { usePreview } from 'react-dnd-preview';
 
-import { desktopTheme, touchTheme } from 'theme';
+import { theme } from 'theme';
 import Routes from 'routes';
 import { useInitApp } from 'hooks';
 import { WIDGET_IMG_BASE_URL } from 'utils/constants';
@@ -35,14 +35,11 @@ const DnDPreview = () => {
 const App = () => {
   useInitApp();
 
-  const theme = isTouchDevice() ? touchTheme : desktopTheme;
-  const dndBackend = isTouchDevice() ? TouchBackend : HTML5Backend;
-
   return (
     <StylesProvider jss={jss}>
       <ThemeProvider theme={theme}>
         <StyledThemeProvider theme={theme}>
-          <DndProvider backend={dndBackend}>
+          <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
             <DnDPreview />
             <Routes />
           </DndProvider>

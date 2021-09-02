@@ -1,8 +1,32 @@
 import { useState, memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, makeStyles } from '@material-ui/core';
-import { StyledLabel, StyledInput } from './styled-components';
 import { updateBoard } from 'actions/boards';
+import { styled } from '@material-ui/core/styles';
+import styledComponent from 'styled-components';
+
+const StyledLabel = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  width: '120px',
+}));
+
+const StyledInput = styledComponent.input`
+  ::-webkit-input-placeholder {
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.76px;
+    color: #cacaca;
+  }
+  :focus {
+    outline: none;
+  }
+  font-size: 22px;
+  font-weight: 300;
+  height: 23px;
+  width: 100%;
+  border: none;
+`;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,7 +60,7 @@ const TopicHeader = () => {
 
   return (
     <Box className={classes.root}>
-      <StyledLabel ml="36px">TOPIC:</StyledLabel>
+      <StyledLabel>TOPIC:</StyledLabel>
       <StyledInput placeholder="Type the topic for the canvas…" value={topic} onChange={handleChange} onKeyDown={handleKeyDown} />
     </Box>
   );

@@ -22,13 +22,13 @@ export const StyledAccordion = withStyles({
   expanded: {},
 })(Accordion);
 
-export const StyledAccordionSummary = withStyles({
+export const StyledAccordionSummary = withStyles((theme) => ({
   root: {
     border: 'none',
-    paddingLeft: 40,
-    minHeight: 40,
+    paddingLeft: theme.spacing(5),
+    minHeight: theme.spacing(5),
     '&$expanded': {
-      minHeight: 40,
+      minHeight: theme.spacing(5),
     },
   },
   content: {
@@ -37,11 +37,12 @@ export const StyledAccordionSummary = withStyles({
     },
   },
   expanded: {},
-})(AccordionSummary);
+}))(AccordionSummary);
 
 export const StyledAccordionDetails = withStyles({
   root: {
     padding: 0,
     marginTop: 24,
+    display: 'block',
   },
 })(AccordionDetails);

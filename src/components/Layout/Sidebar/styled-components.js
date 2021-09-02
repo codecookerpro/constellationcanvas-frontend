@@ -16,13 +16,13 @@ export const GroupAccordion = withStyles({
   expanded: {},
 })(Accordion);
 
-export const GroupAccordionSummary = withStyles({
+export const GroupAccordionSummary = withStyles((theme) => ({
   root: {
     border: 'none',
-    paddingLeft: 40,
-    minHeight: 60,
+    paddingLeft: theme.spacing(5),
+    minHeight: theme.spacing(7.5),
     '&$expanded': {
-      minHeight: 60,
+      minHeight: theme.spacing(7.5),
     },
   },
   content: {
@@ -31,10 +31,11 @@ export const GroupAccordionSummary = withStyles({
     },
   },
   expanded: {},
-})(AccordionSummary);
+}))(AccordionSummary);
 
 export const GroupAccordionDetails = withStyles({
   root: {
     padding: 0,
+    display: 'block',
   },
 })(AccordionDetails);

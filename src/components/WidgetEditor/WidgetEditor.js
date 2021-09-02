@@ -1,14 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { makeStyles, Menu, MenuItem } from '@material-ui/core';
-import {
-  WIDGET_MAP,
-  WIDGET_GROUP_TYPES,
-  WIDGET_EDITOR_SCALE_LIMIT,
-  DOUBLE_CLICK_INTERVAL,
-  CLICK_INTERVAL,
-  COPY_CANVAS_MENU,
-  CANVAS_PDF_FILENAMES,
-} from './constants';
+import { WIDGET_MAP, WIDGET_GROUP_TYPES, WIDGET_EDITOR_SCALE_LIMIT, DOUBLE_CLICK_INTERVAL, CLICK_INTERVAL, CANVAS_PDF_FILENAMES } from './constants';
 import { getHoveredFigure, getMaxDepth } from './helper';
 import usePanZoom from 'use-pan-and-zoom';
 import { useDrop } from 'react-dnd';
@@ -20,7 +12,7 @@ import { toArray } from 'utils';
 import useContextMenu from './hooks/use-context-menu';
 import { Button } from 'components/form-components';
 import Pdf from 'react-to-pdf';
-import { DND_ITEM_TYPES } from 'utils/constants';
+import { CANVAS_STATES, DND_ITEM_TYPES } from 'utils/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -117,7 +109,10 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   );
 
   const copyCanvasMenuItems = useMemo(
-    () => COPY_CANVAS_MENU.map((item, idx) => ({ ...item, canvasIndex: idx })).filter((_, idx) => idx !== index),
+    () =>
+      Object.values(CANVAS_STATES)
+        .map((state, idx) => ({ title: state, canvasIndex: idx }))
+        .filter((_, idx) => idx !== index),
     [index]
   );
 
@@ -158,6 +153,10 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
       setFigureGroup([]);
     }
   };
+
+  const handleTouchStart = (e) => {};
+
+  const handleTouchEnd = (e) => {};
 
   const handleMouseMove = (e) => {
     if (e.buttons === 0 && figures.length && !contextState.uuid) {
@@ -264,6 +263,8 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
           setContainer(e);
           drop(e);
         }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
         onMouseMove={handleMouseMove}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}

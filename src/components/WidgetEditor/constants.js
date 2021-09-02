@@ -1,4 +1,3 @@
-import { SIDEBAR_ITEMS, SIDEBAR_ITEM_TYPES } from 'components/Layout/constants';
 import { keyMirror } from 'utils';
 import { FigureWidget, ShapeWidget, TextWidget } from './components';
 
@@ -328,5 +327,4 @@ export const WIDGET_DESCRIPTIONS = {
 
 export const DOUBLE_CLICK_INTERVAL = 200;
 export const CLICK_INTERVAL = 200;
-export const COPY_CANVAS_MENU = SIDEBAR_ITEMS.find((item) => item.type === SIDEBAR_ITEM_TYPES.canvas).children;
 export const CANVAS_PDF_FILENAMES = ['current-state.pdf', 'future-state-1.pdf', 'future-state-2.pdf'];

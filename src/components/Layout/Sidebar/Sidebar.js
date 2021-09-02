@@ -1,14 +1,35 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import { Box, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 import GroupBox from './GroupBox';
 import { GroupAccordion, GroupAccordionSummary, GroupAccordionDetails } from './styled-components';
-import { SIDEBAR_ITEMS, SIDEBAR_ITEM_TYPES } from '../constants';
-import { LINKS } from 'utils/constants';
+import { SIDEBAR_ITEMS } from './constants';
+import { HEADER_HEIGHT, LINKS, MAIN_BORDER, SIDEBAR_ITEM_TYPES } from 'utils/constants';
 
 const useStyles = makeStyles({
+  root: {
+    minWidth: 150,
+    maxWidth: 300,
+    maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '0.6em',
+    },
+    '&::-webkit-scrollbar-track': {
+      '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0,0,0,.1)',
+      borderRadius: 4,
+    },
+    borderRight: MAIN_BORDER,
+  },
   group: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -23,9 +44,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Sidebar({ selectedParticipant, profile, users }) {
+export default function Sidebar() {
   const classes = useStyles();
   const { pathname } = useLocation();
+  const { profile, users } = useSelector((state) => state.auth);
+  const { selectedParticipant } = useSelector((state) => state.board);
   const [items, setItems] = useState(SIDEBAR_ITEMS.filter((item) => item.role.includes(profile.role)).map((item) => ({ ...item, expanded: false })));
 
   useEffect(() => {
@@ -55,7 +78,7 @@ export default function Sidebar({ selectedParticipant, profile, users }) {
   };
 
   return (
-    <>
+    <Box className={classes.root}>
       {items.map((item) =>
         item.component ? (
           <GroupAccordion key={item.title} expanded={item.expanded} onChange={(e, expanded) => handleExpandChange(item.type, expanded)}>
@@ -70,6 +93,6 @@ export default function Sidebar({ selectedParticipant, profile, users }) {
           <GroupBox key={item.title} title={item.title} path={item.path} />
         )
       )}
-    </>
+    </Box>
   );
 }

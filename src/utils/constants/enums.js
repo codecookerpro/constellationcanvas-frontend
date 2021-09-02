@@ -10,7 +10,21 @@ export const USER_ROLES = keyMirror({
 export const HEADER_TYPES = keyMirror({
   topic: null,
   title: null,
+  none: null,
 });
+
+export const SIDEBAR_ITEM_TYPES = keyMirror({
+  canvas: null,
+  toolbox: null,
+  participant: null,
+  manage: null,
+});
+
+export const CANVAS_STATES = {
+  current: 'Current State',
+  future1: 'Future State 1',
+  future2: 'Future State 2',
+};
 
 export const USER_ACTION_TYPES = {
   invite: 'invite',

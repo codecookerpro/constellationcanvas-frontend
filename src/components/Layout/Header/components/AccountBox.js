@@ -5,9 +5,9 @@ import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 
 import { Avatar } from 'components/';
-import { isTouchDevice } from 'utils';
+import { useSelector } from 'react-redux';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -18,6 +18,9 @@ const useStyles = makeStyles({
     textAlign: 'right',
     marginLeft: 14,
     fontWeight: 500,
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
   },
   username: {
     color: '#a4a4a4',
@@ -29,10 +32,11 @@ const useStyles = makeStyles({
     fontSize: 13,
     cursor: 'pointer',
   },
-});
+}));
 
-export default function AccountBox({ displayName }) {
+export default function AccountBox() {
   const classes = useStyles();
+  const { profile } = useSelector((state) => state.auth);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -42,15 +46,13 @@ export default function AccountBox({ displayName }) {
 
   return (
     <Box className={classes.root}>
-      <Avatar displayName={displayName} />
-      {isTouchDevice() || (
-        <Box className={classes.info}>
-          <Typography className={classes.username}>{displayName}</Typography>
-          <Link className={classes.logout} onClick={handleLogout}>
-            Log out
-          </Link>
-        </Box>
-      )}
+      <Avatar displayName={profile.name} />
+      <Box className={classes.info}>
+        <Typography className={classes.username}>{profile.name}</Typography>
+        <Link className={classes.logout} onClick={handleLogout}>
+          Log out
+        </Link>
+      </Box>
     </Box>
   );
 }
