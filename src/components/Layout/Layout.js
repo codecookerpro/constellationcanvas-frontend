@@ -6,6 +6,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 import { Loader, Notifier } from 'components/auxiliary-components';
+import { HEADER_HEIGHT } from 'utils/constants';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -33,6 +34,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     backgroundColor: 'white',
   },
+  content: {
+    display: 'flex',
+    flexGrow: 1,
+    height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+    [theme.breakpoints.down('sm')]: {
+      height: `calc(100vh - ${HEADER_HEIGHT + 70}px)`,
+    },
+  },
 }));
 
 export default function Layout({ sidebar, header, children }) {
@@ -53,10 +62,8 @@ export default function Layout({ sidebar, header, children }) {
 
         <Grid item xs={12}>
           <Box display="flex" flexGrow={1}>
-            {sidebar && <Sidebar />}
-            <Box display="flex" flexGrow={1}>
-              {children}
-            </Box>
+            <Sidebar open={sidebar} />
+            <Box className={classes.content}>{children}</Box>
           </Box>
         </Grid>
       </Grid>
