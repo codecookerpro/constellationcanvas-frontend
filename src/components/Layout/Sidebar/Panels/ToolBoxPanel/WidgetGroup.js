@@ -25,7 +25,7 @@ const WidgetGroup = ({ type, label, count, imageType }) => {
       <StyledAccordionDetails>
         <Grid container>
           {Array.from({ length: count }).map((v, idx) => (
-            <Grid item key={`${type}${idx}`} container justifyContent="center" alignItems="center" xs={12} sm={6} md={4} lg={3} xl={2}>
+            <Grid item key={`${type}${idx}`} container justifyContent="center" alignItems="center" xs={12} sm={6}>
               <Widget group={type} type={`${type}${idx + 1}`} imageType={imageType} />
             </Grid>
           ))}

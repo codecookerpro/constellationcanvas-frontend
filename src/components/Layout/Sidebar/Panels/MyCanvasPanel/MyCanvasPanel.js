@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { useHistory } from 'react-router';
 import { CANVAS_STATES, LINKS } from 'utils/constants';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
@@ -15,8 +15,8 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingLeft: 40,
-    paddingRight: 16,
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(2),
     height: 40,
     fontSize: 14,
     fontWeight: 'bold',
@@ -31,6 +31,9 @@ const useStyles = makeStyles({
       backgroundColor: '#eae6fe',
       textDecoration: 'unset',
     },
+    [theme.breakpoints.down('sm')]: {
+      paddingLeft: theme.spacing(2),
+    },
   },
   text: {
     fontSize: 14,
@@ -38,7 +41,7 @@ const useStyles = makeStyles({
     letterSpacing: 0.49,
     color: '#6c6c6e',
   },
-});
+}));
 
 export default function MyCanvasPanel() {
   const classes = useStyles();

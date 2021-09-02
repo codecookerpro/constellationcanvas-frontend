@@ -11,11 +11,12 @@ import { GroupAccordion, GroupAccordionSummary, GroupAccordionDetails } from './
 import { SIDEBAR_ITEMS } from './constants';
 import { HEADER_HEIGHT, LINKS, MAIN_BORDER, SIDEBAR_ITEM_TYPES } from 'utils/constants';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 150,
+    minWidth: 200,
     maxWidth: 300,
-    maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+    width: '30vw',
+    height: `calc(100vh - ${HEADER_HEIGHT}px)`,
     overflowX: 'hidden',
     overflowY: 'auto',
     '&::-webkit-scrollbar': {
@@ -29,6 +30,9 @@ const useStyles = makeStyles({
       borderRadius: 4,
     },
     borderRight: MAIN_BORDER,
+    [theme.breakpoints.down('sm')]: {
+      height: `calc(100vh - ${HEADER_HEIGHT + 70}px)`,
+    },
   },
   group: {
     fontSize: 16,
@@ -42,7 +46,7 @@ const useStyles = makeStyles({
     color: '#624ad7',
     borderRadius: '8px',
   },
-});
+}));
 
 export default function Sidebar() {
   const classes = useStyles();

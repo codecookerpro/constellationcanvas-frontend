@@ -6,9 +6,7 @@ import { LINKS, USER_ROLES } from 'utils/constants';
 import Participant from './Participant';
 
 const useStyles = makeStyles({
-  root: {
-    padding: '0px 40px 40px 40px',
-  },
+  root: {},
   item: {
     display: 'flex',
     alignItems: 'center',
@@ -30,11 +28,6 @@ export default function ParticipantPanel() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const calcItemPadding = (idx) => ({
-    paddingLeft: idx % 2 ? 17 : 0,
-    paddingRight: idx % 2 ? 0 : 17,
-  });
-
   const handleParcipantClick = (uuid) => {
     history.push(LINKS.board);
     dispatch(setSelectedParticipant(uuid));
@@ -42,8 +35,8 @@ export default function ParticipantPanel() {
 
   return (
     <Grid container className={classes.root}>
-      {participants.map(({ uuid, name }, idx) => (
-        <Grid item xs={6} key={uuid} className={classes.item} style={calcItemPadding(idx)}>
+      {participants.map(({ uuid, name }) => (
+        <Grid container item xs={6} key={uuid} justifyContent="center" alignItems="center">
           <Participant uuid={uuid} name={name} active={uuid === selectedParticipant} onClick={handleParcipantClick} />
         </Grid>
       ))}

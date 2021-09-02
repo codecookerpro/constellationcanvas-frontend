@@ -5,13 +5,13 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import { MAIN_BORDER } from 'utils/constants/ui';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: ({ active }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingLeft: 40,
-    paddingRight: 16,
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(2),
     height: 60,
     borderBottom: MAIN_BORDER,
     fontSize: 16,
@@ -25,13 +25,16 @@ const useStyles = makeStyles({
       color: 'white',
       textDecoration: 'unset',
     },
+    [theme.breakpoints.down('sm')]: {
+      paddingLeft: theme.spacing(2),
+    },
   }),
   expand: {
     backgroundColor: '#eae6fe',
     color: '#624ad7',
     borderRadius: '8px',
   },
-});
+}));
 
 export default function GroupBox(props) {
   const { pathname } = useLocation();

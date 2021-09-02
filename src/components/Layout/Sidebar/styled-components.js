@@ -24,6 +24,9 @@ export const GroupAccordionSummary = withStyles((theme) => ({
     '&$expanded': {
       minHeight: theme.spacing(7.5),
     },
+    [theme.breakpoints.down('sm')]: {
+      paddingLeft: theme.spacing(2),
+    },
   },
   content: {
     '&$expanded': {

@@ -1,5 +1,4 @@
 import { createTheme } from '@material-ui/core/styles';
-import { isTouchDevice } from 'utils';
 
 export const theme = createTheme({
   palette: {
@@ -15,7 +14,6 @@ export const theme = createTheme({
       contrastText: '#fff',
     },
   },
-  spacing: isTouchDevice() ? 2 : 8,
 });
 
 export default theme;
