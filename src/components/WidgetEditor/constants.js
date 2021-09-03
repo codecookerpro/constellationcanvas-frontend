@@ -325,19 +325,6 @@ export const WIDGET_DESCRIPTIONS = {
   relationship10: 'Cut-off',
 };
 
-export const HAMMER_OPTIONS = {
-  touchAction: 'compute',
-  recognizers: {
-    tap: {
-      time: 600,
-      threshold: 100,
-    },
-    press: {
-      time: 500,
-    },
-  },
-};
-
 export const DOUBLE_CLICK_INTERVAL = 200;
 export const CLICK_INTERVAL = 200;
 export const CANVAS_PDF_FILENAMES = ['current-state.pdf', 'future-state-1.pdf', 'future-state-2.pdf'];

@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { Menu, MenuItem } from '@material-ui/core';
 import Pdf from 'react-to-pdf';
-import Hammer from 'react-hammerjs';
 import Selecto from 'react-selecto';
 import usePanZoom from 'use-pan-and-zoom';
 import { useDrop } from 'react-dnd';
@@ -13,15 +12,7 @@ import _ from 'lodash';
 import { getHoveredFigure, getMaxDepth } from './helper';
 import { isTouchDevice, toArray } from 'utils';
 
-import {
-  WIDGET_MAP,
-  WIDGET_GROUP_TYPES,
-  WIDGET_EDITOR_SCALE_LIMIT,
-  DOUBLE_CLICK_INTERVAL,
-  CLICK_INTERVAL,
-  CANVAS_PDF_FILENAMES,
-  HAMMER_OPTIONS,
-} from './constants';
+import { WIDGET_MAP, WIDGET_GROUP_TYPES, WIDGET_EDITOR_SCALE_LIMIT, DOUBLE_CLICK_INTERVAL, CLICK_INTERVAL, CANVAS_PDF_FILENAMES } from './constants';
 import { CANVAS_STATES, DND_ITEM_TYPES } from 'utils/constants';
 
 import { createFigure, updateFigure, setFigureHovered, copyCanvasTo, setSelectedFigure, setCopiedFigure, deleteFigure } from 'actions';
