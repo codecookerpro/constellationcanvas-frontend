@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Menu, MenuItem, Divider } from '@material-ui/core';
 import { CONTEXTMENU_ITEMS_GENERAL, CONTEXTMENU_ITEMS_WIDGET, CONTEXTMENU_TYPES } from '../constants';
 import { getForwardWidget, getBackwardWidget, getMaxDepth, getHoveredFigure } from '../helper';
-import { createFigure, deleteFigure, setCopiedFigure, updateFigure, setFigureHovered } from 'actions';
+import { createFigure, deleteFigure, setCopiedFigure, updateFigure, setSelectedFigure } from 'actions';
 import { ShapeColorDialog } from '../components';
 
 const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
@@ -113,7 +113,7 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
     e.preventDefault();
 
     const hovered = getHoveredFigure(e, figures, stageRef, false);
-    dispatch(setFigureHovered(hovered));
+    dispatch(setSelectedFigure(hovered));
 
     setContextState({
       uuid: hovered,

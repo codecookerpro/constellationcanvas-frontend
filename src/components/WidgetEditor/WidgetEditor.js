@@ -39,6 +39,8 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   const [panEnabled, setPanEnabled] = useState(false);
   const [figureGroup, setFigureGroup] = useState([]);
   const [mouseDownTime, setMouseDownTime] = useState(new Date());
+  const [touchStartTime, setTouchStartTime] = useState(new Date());
+  const [touchStartPoint, setTouchStartPoint] = useState({ clientX: 0, clientY: 0 });
   const [copyMenuAnchorEl, setCopyMenuAnchorEl] = useState(null);
 
   const { transform, zoom, panZoomHandlers, setContainer, setZoom } = usePanZoom({
@@ -73,8 +75,9 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   const { contextState, setContextState, handleContextMenu, MenuComponent } = useContextMenu({ figures, stageRef, zoom, copiedFigure });
 
   const blockedPanZoom = useMemo(
-    () => activeFigures.length || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
-    [activeFigures, contextState, figures]
+    () =>
+      !panEnabled || activeFigures.length || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
+    [panEnabled, activeFigures, contextState, figures]
   );
 
   const copyCanvasMenuItems = useMemo(
@@ -141,7 +144,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
       }
     }
 
-    if (!blockedPanZoom && e.buttons === 1 && panEnabled) {
+    if (!blockedPanZoom && e.buttons === 1) {
       panZoomHandlers.onMouseMove(e);
     }
   };
@@ -231,45 +234,42 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     };
   }, [figures, handleKeyDown]);
 
+  const handleTouchStart = (e) => {
+    const currentTime = new Date();
+    const { clientX, clientY } = e.touches[0];
+    const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef, true);
+
+    if (currentTime - touchStartTime < 500) {
+      setPanEnabled(!hovered);
+    } else if (!contextState.mouseY) {
+      if (hovered) {
+        dispatch(setSelectedFigure(hovered));
+      } else {
+        dispatch(setSelectedFigure(null));
+        setFigureGroup([]);
+      }
+    }
+
+    panZoomHandlers.onTouchStart(e);
+    setTouchStartTime(currentTime);
+    setTouchStartPoint({ clientX, clientY });
+  };
+
   const handleTouchMove = (e) => {
-    console.log(blockedPanZoom, panEnabled);
-    if (!blockedPanZoom && panEnabled) {
+    if (!blockedPanZoom) {
       panZoomHandlers.onTouchMove(e);
     }
   };
 
-  const handleTouchStart = (e) => {
-    if (contextState.mouseY) {
-      return false;
-    }
-
-    const { clientX, clientY } = e.touches[0];
-    const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef, true);
-
-    if (hovered) {
-      dispatch(setSelectedFigure(hovered));
-    } else {
-      dispatch(setSelectedFigure(null));
-      setFigureGroup([]);
-      panZoomHandlers.onTouchStart(e);
-    }
-  };
-
-  const handlePress = ({ center: { x, y } }) => {
-    const hovered = getHoveredFigure({ clientX: x, clientY: y }, figures, stageRef, true);
-    if (!hovered) {
-      setPanEnabled(true);
-    }
-  };
-
-  const handleDoubleTap = ({ center: { x, y } }) => {
-    const hovered = getHoveredFigure({ clientX: x, clientY: y }, figures, stageRef, true);
-    setContextState({ mouseX: x, mouseY: y, uuid: hovered });
-  };
-
   const handleTouchEnd = (e) => {
+    const currentTime = new Date();
+    const { clientX, clientY } = e.changedTouches[0];
+
     if (panEnabled) {
       setPanEnabled(false);
+    } else if (currentTime - touchStartTime > 500 && clientX === touchStartPoint.clientX && clientY === touchStartPoint.clientY) {
+      const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef, true);
+      setContextState({ mouseX: clientX, mouseY: clientY, uuid: hovered });
     }
 
     panZoomHandlers.onTouchEnd(e);
@@ -280,97 +280,90 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     onMouseDown: handleMouseDown,
     onMouseUp: handleMouseUp,
     onWheel: handleWheel,
-    onContextMenu: handleContextMenu,
-  };
-
-  const hammerEventHandlers = {
-    onPress: handlePress,
-    onDoubleTap: handleDoubleTap,
   };
 
   const touchEventHandlers = {
-    onTouchMove: handleTouchMove,
     onTouchStart: handleTouchStart,
     onTouchEnd: handleTouchEnd,
+    onTouchMove: handleTouchMove,
   };
 
   return (
-    <Hammer options={HAMMER_OPTIONS} {...(isTouchDevice() && hammerEventHandlers)}>
-      <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
-        <div
-          id="widget-editor"
-          className={classes.figureZoompane}
-          ref={setRef}
-          {...panZoomHandlers}
-          {...(isTouchDevice() ? touchEventHandlers : mouseEventHandlers)}
-        >
-          <div className={classes.figureStage} ref={stageRef} style={{ transform }}>
-            {figures.map((figure) => {
-              const group = figure.type.match(/([a-zA-Z]*)/)[0];
-              const WidgetComponent = WIDGET_MAP[figure.type] || WIDGET_MAP[group];
-              return (
-                <WidgetComponent
-                  {...figure}
-                  editable={editable}
-                  group={group}
-                  zoom={zoom}
-                  key={figure.uuid}
-                  onTransformStart={handleTransformStart}
-                  onTransformEnd={handleTransformEnd}
-                />
-              );
-            })}
-            <WidgetGroup
-              targets={figureGroup}
-              figures={figures}
-              zoom={zoom}
-              onTransformStart={handleTransformStart}
-              onTransformEnd={handleTransformEnd}
-            />
-            {MenuComponent}
-          </div>
+    <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
+      <div
+        id="widget-editor"
+        className={classes.figureZoompane}
+        ref={setRef}
+        onContextMenu={handleContextMenu}
+        {...panZoomHandlers}
+        {...(isTouchDevice() ? touchEventHandlers : mouseEventHandlers)}
+      >
+        <div className={classes.figureStage} ref={stageRef} style={{ transform }}>
+          {figures.map((figure) => {
+            const group = figure.type.match(/([a-zA-Z]*)/)[0];
+            const WidgetComponent = WIDGET_MAP[figure.type] || WIDGET_MAP[group];
+            return (
+              <WidgetComponent
+                {...figure}
+                editable={editable}
+                group={group}
+                zoom={zoom}
+                key={figure.uuid}
+                onTransformStart={handleTransformStart}
+                onTransformEnd={handleTransformEnd}
+              />
+            );
+          })}
+          <WidgetGroup
+            targets={figureGroup}
+            figures={figures}
+            zoom={zoom}
+            onTransformStart={handleTransformStart}
+            onTransformEnd={handleTransformEnd}
+          />
+          {MenuComponent}
         </div>
-        <div className={classes.buttonArea}>
-          <Pdf
-            targetRef={stageRef}
-            filename={CANVAS_PDF_FILENAMES[index]}
-            options={{
-              unit: 'px',
-              orientation: 'l',
-              hotfixes: ['px_scaling'],
-              format: [stageRef.current?.clientWidth, stageRef.current?.clientHeight],
-            }}
-          >
-            {({ toPdf }) => (
-              <Button color="primary" variant="contained" className={classes.saveButton} onClick={(e) => handleSaveAsPDF(e, toPdf)}>
-                Save as PDF
-              </Button>
-            )}
-          </Pdf>
-          {editable && (
-            <Button color="primary" variant="contained" className={classes.copyButton} onClick={toggleCopyCanvasMenu}>
-              Copy Canvas to ...
+      </div>
+      <div className={classes.buttonArea}>
+        <Pdf
+          targetRef={stageRef}
+          filename={CANVAS_PDF_FILENAMES[index]}
+          options={{
+            unit: 'px',
+            orientation: 'l',
+            hotfixes: ['px_scaling'],
+            format: [stageRef.current?.clientWidth, stageRef.current?.clientHeight],
+          }}
+        >
+          {({ toPdf }) => (
+            <Button color="primary" variant="contained" className={classes.saveButton} onClick={(e) => handleSaveAsPDF(e, toPdf)}>
+              Save as PDF
             </Button>
           )}
-          <Menu
-            id="copy-canvas-menu"
-            anchorEl={copyMenuAnchorEl}
-            keepMounted
-            open={Boolean(copyMenuAnchorEl)}
-            onClose={() => setCopyMenuAnchorEl(null)}
-          >
-            {copyCanvasMenuItems.map(({ title, canvasIndex }) => (
-              <MenuItem key={title} onClick={() => handleCopyCanvas(canvasIndex)}>
-                {title}
-              </MenuItem>
-            ))}
-          </Menu>
-        </div>
-        {editable && !panEnabled && !activeFigures.length && (
-          <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />
+        </Pdf>
+        {editable && (
+          <Button color="primary" variant="contained" className={classes.copyButton} onClick={toggleCopyCanvasMenu}>
+            Copy Canvas to ...
+          </Button>
         )}
+        <Menu
+          id="copy-canvas-menu"
+          anchorEl={copyMenuAnchorEl}
+          keepMounted
+          open={Boolean(copyMenuAnchorEl)}
+          onClose={() => setCopyMenuAnchorEl(null)}
+        >
+          {copyCanvasMenuItems.map(({ title, canvasIndex }) => (
+            <MenuItem key={title} onClick={() => handleCopyCanvas(canvasIndex)}>
+              {title}
+            </MenuItem>
+          ))}
+        </Menu>
       </div>
-    </Hammer>
+      {editable && !panEnabled && !activeFigures.length && (
+        <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />
+      )}
+    </div>
   );
 };
 
