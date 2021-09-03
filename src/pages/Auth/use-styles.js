@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core';
 export default makeStyles((theme) => ({
   root: {
     display: 'flex',
+    width: '100vw',
     height: '100vh',
     overflow: 'auto',
     flexDirection: 'column',
@@ -14,10 +15,14 @@ export default makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-start',
     flexDirection: 'column',
-    width: '360px',
-    padding: '38px 46px 37px 47px',
+    width: 360,
+    padding: theme.spacing(4, 6, 4, 6),
     borderRadius: '15px',
     backgroundColor: '#fff',
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(4, 3, 4, 3),
+      width: 312,
+    },
   },
   title: {
     margin: '0 23px 38px',
