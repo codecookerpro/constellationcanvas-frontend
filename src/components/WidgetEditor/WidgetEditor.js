@@ -1,64 +1,33 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { makeStyles, Menu, MenuItem } from '@material-ui/core';
-import { WIDGET_MAP, WIDGET_GROUP_TYPES, WIDGET_EDITOR_SCALE_LIMIT, DOUBLE_CLICK_INTERVAL, CLICK_INTERVAL, CANVAS_PDF_FILENAMES } from './constants';
-import { getHoveredFigure, getMaxDepth } from './helper';
+import { useDispatch } from 'react-redux';
+import { Menu, MenuItem } from '@material-ui/core';
+import Pdf from 'react-to-pdf';
+import Hammer from 'react-hammerjs';
+import Selecto from 'react-selecto';
 import usePanZoom from 'use-pan-and-zoom';
 import { useDrop } from 'react-dnd';
-import Selecto from 'react-selecto';
 import WidgetGroup from './WidgetGroup';
-import { useDispatch } from 'react-redux';
-import { createFigure, updateFigure, setFigureHovered, copyCanvasTo, setSelectedFigure, setCopiedFigure, deleteFigure } from 'actions';
-import { toArray } from 'utils';
-import useContextMenu from './hooks/use-context-menu';
 import { Button } from 'components/form-components';
-import Pdf from 'react-to-pdf';
+
+import _ from 'lodash';
+import { getHoveredFigure, getMaxDepth } from './helper';
+import { isTouchDevice, toArray } from 'utils';
+
+import {
+  WIDGET_MAP,
+  WIDGET_GROUP_TYPES,
+  WIDGET_EDITOR_SCALE_LIMIT,
+  DOUBLE_CLICK_INTERVAL,
+  CLICK_INTERVAL,
+  CANVAS_PDF_FILENAMES,
+  HAMMER_OPTIONS,
+} from './constants';
 import { CANVAS_STATES, DND_ITEM_TYPES } from 'utils/constants';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    height: '100%',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  figureZoompane: {
-    width: '100%',
-    height: 'calc(100% - 85px)',
-  },
-  figureStage: {
-    width: '100%',
-    height: '100%',
-    zIndex: 0,
-  },
-  buttonArea: {
-    width: '100%',
-    height: 85,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  saveButton: {
-    height: 45,
-    width: 170,
-    marginRight: 23,
-    borderRadius: 13,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  copyButton: {
-    height: 45,
-    width: 220,
-    marginRight: 18,
-    borderRadius: 13,
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: theme.palette.contrastText,
-    backgroundColor: theme.palette.info.main,
-    '&:hover': {
-      backgroundColor: theme.palette.info.main,
-    },
-  },
-}));
+import { createFigure, updateFigure, setFigureHovered, copyCanvasTo, setSelectedFigure, setCopiedFigure, deleteFigure } from 'actions';
+
+import useContextMenu from './hooks/use-context-menu';
+import useStyles from './hooks/use-styles';
 
 const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   const classes = useStyles();
@@ -101,7 +70,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     },
   }));
 
-  const { contextState, handleContextMenu, MenuComponent } = useContextMenu({ figures, stageRef, zoom, copiedFigure });
+  const { contextState, setContextState, handleContextMenu, MenuComponent } = useContextMenu({ figures, stageRef, zoom, copiedFigure });
 
   const blockedPanZoom = useMemo(
     () => activeFigures.length || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
@@ -119,18 +88,26 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   const hoveredFigure = useMemo(() => figures.find((f) => f.hovered), [figures]);
   const selectedFigure = useMemo(() => figures.find((f) => f.selected), [figures]);
 
-  useEffect(() => {
-    setFigureGroup([]);
-    setActiveFigures([]);
-  }, [index]);
+  const setRef = (el) => {
+    setContainer(el);
+    drop(el);
+  };
 
   const handleTransformStart = (uuids) => {
     setActiveFigures(toArray(uuids));
   };
 
   const handleTransformEnd = (uuid, params) => {
-    dispatch(updateFigure({ uuid, ...params }));
-    setTimeout(() => setActiveFigures([]));
+    const oldFigure = _.pick(
+      figures.find((f) => f.uuid === uuid),
+      ['depth', 'data', 'transform']
+    );
+    const newFigure = _.pick({ ...oldFigure, ...params }, ['depth', 'data', 'transform']);
+
+    if (_.isEqual(oldFigure, newFigure) === false) {
+      dispatch(updateFigure({ uuid, ...params }));
+      setTimeout(() => setActiveFigures([]));
+    }
   };
 
   const handleMouseDown = (e) => {
@@ -153,10 +130,6 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
       setFigureGroup([]);
     }
   };
-
-  const handleTouchStart = (e) => {};
-
-  const handleTouchEnd = (e) => {};
 
   const handleMouseMove = (e) => {
     if (e.buttons === 0 && figures.length && !contextState.uuid) {
@@ -246,6 +219,11 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   };
 
   useEffect(() => {
+    setFigureGroup([]);
+    setActiveFigures([]);
+  }, [index]);
+
+  useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
 
     return () => {
@@ -253,90 +231,143 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     };
   }, [figures, handleKeyDown]);
 
+  const handleTouchMove = (e) => {
+    if (!blockedPanZoom && panEnabled) {
+      panZoomHandlers.onTouchMove(e);
+    }
+  };
+
+  const handleTouchStart = (e) => {
+    if (contextState.mouseY) {
+      return false;
+    }
+
+    const { clientX, clientY } = e.touches[0];
+    const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef, true);
+
+    if (hovered) {
+      dispatch(setSelectedFigure(hovered));
+    } else {
+      dispatch(setSelectedFigure(null));
+      setFigureGroup([]);
+      panZoomHandlers.onTouchStart(e);
+    }
+  };
+
+  const handlePress = (e) => {
+    const { x: clientX, y: clientY } = e.center;
+    const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef, true);
+
+    if (hovered) {
+      setContextState({ mouseX: clientX, mouseY: clientY, uuid: hovered });
+    } else {
+      setPanEnabled(true);
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (panEnabled) {
+      setPanEnabled(false);
+    }
+
+    panZoomHandlers.onTouchEnd(e);
+  };
+
+  const mouseEventHandlers = {
+    onMouseMove: handleMouseMove,
+    onMouseDown: handleMouseDown,
+    onMouseUp: handleMouseUp,
+    onWheel: handleWheel,
+  };
+
+  const hammerEventHandlers = {
+    onPress: handlePress,
+  };
+
+  const touchEventHandlers = {
+    onTouchMove: handleTouchMove,
+    onTouchStart: handleTouchStart,
+    onTouchEnd: handleTouchEnd,
+  };
+
   return (
-    <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
-      <div
-        id="widget-editor"
-        {...panZoomHandlers}
-        className={classes.figureZoompane}
-        ref={(e) => {
-          setContainer(e);
-          drop(e);
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onMouseMove={handleMouseMove}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onContextMenu={handleContextMenu}
-        onWheel={handleWheel}
-      >
-        <div className={classes.figureStage} ref={stageRef} style={{ transform }}>
-          {figures.map((figure) => {
-            const group = figure.type.match(/([a-zA-Z]*)/)[0];
-            const WidgetComponent = WIDGET_MAP[figure.type] || WIDGET_MAP[group];
-            return (
-              <WidgetComponent
-                {...figure}
-                editable={editable}
-                group={group}
-                zoom={zoom}
-                key={figure.uuid}
-                onTransformStart={handleTransformStart}
-                onTransformEnd={handleTransformEnd}
-              />
-            );
-          })}
-          <WidgetGroup
-            targets={figureGroup}
-            figures={figures}
-            zoom={zoom}
-            onTransformStart={handleTransformStart}
-            onTransformEnd={handleTransformEnd}
-          />
-          {MenuComponent}
-        </div>
-      </div>
-      <div className={classes.buttonArea}>
-        <Pdf
-          targetRef={stageRef}
-          filename={CANVAS_PDF_FILENAMES[index]}
-          options={{
-            unit: 'px',
-            orientation: 'l',
-            hotfixes: ['px_scaling'],
-            format: [stageRef.current?.clientWidth, stageRef.current?.clientHeight],
-          }}
+    <Hammer options={HAMMER_OPTIONS} {...(isTouchDevice() && hammerEventHandlers)}>
+      <div className={classes.root} ref={rootRef} id="widget-editor-wrapper">
+        <div
+          id="widget-editor"
+          className={classes.figureZoompane}
+          onContextMenu={handleContextMenu}
+          ref={setRef}
+          {...panZoomHandlers}
+          {...(isTouchDevice() ? touchEventHandlers : mouseEventHandlers)}
         >
-          {({ toPdf }) => (
-            <Button color="primary" variant="contained" className={classes.saveButton} onClick={(e) => handleSaveAsPDF(e, toPdf)}>
-              Save as PDF
+          <div className={classes.figureStage} ref={stageRef} style={{ transform }}>
+            {figures.map((figure) => {
+              const group = figure.type.match(/([a-zA-Z]*)/)[0];
+              const WidgetComponent = WIDGET_MAP[figure.type] || WIDGET_MAP[group];
+              return (
+                <WidgetComponent
+                  {...figure}
+                  editable={editable}
+                  group={group}
+                  zoom={zoom}
+                  key={figure.uuid}
+                  onTransformStart={handleTransformStart}
+                  onTransformEnd={handleTransformEnd}
+                />
+              );
+            })}
+            <WidgetGroup
+              targets={figureGroup}
+              figures={figures}
+              zoom={zoom}
+              onTransformStart={handleTransformStart}
+              onTransformEnd={handleTransformEnd}
+            />
+            {MenuComponent}
+          </div>
+        </div>
+        <div className={classes.buttonArea}>
+          <Pdf
+            targetRef={stageRef}
+            filename={CANVAS_PDF_FILENAMES[index]}
+            options={{
+              unit: 'px',
+              orientation: 'l',
+              hotfixes: ['px_scaling'],
+              format: [stageRef.current?.clientWidth, stageRef.current?.clientHeight],
+            }}
+          >
+            {({ toPdf }) => (
+              <Button color="primary" variant="contained" className={classes.saveButton} onClick={(e) => handleSaveAsPDF(e, toPdf)}>
+                Save as PDF
+              </Button>
+            )}
+          </Pdf>
+          {editable && (
+            <Button color="primary" variant="contained" className={classes.copyButton} onClick={toggleCopyCanvasMenu}>
+              Copy Canvas to ...
             </Button>
           )}
-        </Pdf>
-        {editable && (
-          <Button color="primary" variant="contained" className={classes.copyButton} onClick={toggleCopyCanvasMenu}>
-            Copy Canvas to ...
-          </Button>
+          <Menu
+            id="copy-canvas-menu"
+            anchorEl={copyMenuAnchorEl}
+            keepMounted
+            open={Boolean(copyMenuAnchorEl)}
+            onClose={() => setCopyMenuAnchorEl(null)}
+          >
+            {copyCanvasMenuItems.map(({ title, canvasIndex }) => (
+              <MenuItem key={title} onClick={() => handleCopyCanvas(canvasIndex)}>
+                {title}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
+        {editable && !panEnabled && !activeFigures.length && (
+          <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />
         )}
-        <Menu
-          id="copy-canvas-menu"
-          anchorEl={copyMenuAnchorEl}
-          keepMounted
-          open={Boolean(copyMenuAnchorEl)}
-          onClose={() => setCopyMenuAnchorEl(null)}
-        >
-          {copyCanvasMenuItems.map(({ title, canvasIndex }) => (
-            <MenuItem key={title} onClick={() => handleCopyCanvas(canvasIndex)}>
-              {title}
-            </MenuItem>
-          ))}
-        </Menu>
       </div>
-      {editable && !panEnabled && !activeFigures.length && (
-        <Selecto container={rootRef.current} selectableTargets={['.widget']} onSelect={handleSelectFigures} />
-      )}
-    </div>
+    </Hammer>
   );
 };
 

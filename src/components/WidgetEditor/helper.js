@@ -109,11 +109,11 @@ export const getWidgetBoundaries = (ref, uuid, hover = true) => {
   return points;
 };
 
-export const getHoveredFigure = (e, figures, ref, includeGroup = false) => {
+export const getHoveredFigure = ({ clientX, clientY }, figures, ref, includeGroup = false) => {
   const hoveredFigures = (includeGroup ? figures.concat({ uuid: 'group', depth: Infinity }) : figures)
     .filter((f) => {
       const points = getWidgetBoundaries(ref, f.uuid, true);
-      return pointInPolygon([e.clientX, e.clientY], extendPolygon(points, 30));
+      return pointInPolygon([clientX, clientY], extendPolygon(points, 30));
     })
     .sort((a, b) => b.depth - a.depth);
 

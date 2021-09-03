@@ -13,6 +13,7 @@ import { HEADER_HEIGHT, LINKS, MAIN_BORDER, SIDEBAR_ITEM_TYPES } from 'utils/con
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    display: (props) => (props.open ? 'block' : 'none'),
     minWidth: 200,
     maxWidth: 300,
     width: '30vw',
@@ -48,8 +49,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Sidebar() {
-  const classes = useStyles();
+export default function Sidebar({ open = false }) {
+  const classes = useStyles({ open });
   const { pathname } = useLocation();
   const { profile, users } = useSelector((state) => state.auth);
   const { selectedParticipant } = useSelector((state) => state.board);

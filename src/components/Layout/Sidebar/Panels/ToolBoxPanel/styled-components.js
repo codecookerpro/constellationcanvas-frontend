@@ -19,6 +19,7 @@ export const StyledAccordion = withStyles({
       margin: 'auto',
     },
   },
+  expanded: {},
 })(Accordion);
 
 export const StyledAccordionSummary = withStyles((theme) => ({
@@ -38,6 +39,7 @@ export const StyledAccordionSummary = withStyles((theme) => ({
       margin: '12px 0',
     },
   },
+  expanded: {},
 }))(AccordionSummary);
 
 export const StyledAccordionDetails = withStyles({
