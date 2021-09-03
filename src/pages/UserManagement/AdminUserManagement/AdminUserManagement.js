@@ -35,11 +35,12 @@ import { TABLE_COLUMN_MAP, USER_ACTION_MENU, USER_ACTION_TYPE, INVITE_DIALOG_TIT
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '100%',
+    width: 'calc(100vw - 300px)',
     overflow: 'auto',
     padding: theme.spacing(8, 8, 8, 4),
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(4, 4, 4, 2),
+      width: 'calc(100vw - 200px)',
     },
   },
   toolbar: {
