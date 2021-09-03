@@ -232,6 +232,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   }, [figures, handleKeyDown]);
 
   const handleTouchMove = (e) => {
+    console.log(blockedPanZoom, panEnabled);
     if (!blockedPanZoom && panEnabled) {
       panZoomHandlers.onTouchMove(e);
     }
@@ -254,15 +255,16 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     }
   };
 
-  const handlePress = (e) => {
-    const { x: clientX, y: clientY } = e.center;
-    const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef, true);
-
-    if (hovered) {
-      setContextState({ mouseX: clientX, mouseY: clientY, uuid: hovered });
-    } else {
+  const handlePress = ({ center: { x, y } }) => {
+    const hovered = getHoveredFigure({ clientX: x, clientY: y }, figures, stageRef, true);
+    if (!hovered) {
       setPanEnabled(true);
     }
+  };
+
+  const handleDoubleTap = ({ center: { x, y } }) => {
+    const hovered = getHoveredFigure({ clientX: x, clientY: y }, figures, stageRef, true);
+    setContextState({ mouseX: x, mouseY: y, uuid: hovered });
   };
 
   const handleTouchEnd = (e) => {
@@ -278,10 +280,12 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     onMouseDown: handleMouseDown,
     onMouseUp: handleMouseUp,
     onWheel: handleWheel,
+    onContextMenu: handleContextMenu,
   };
 
   const hammerEventHandlers = {
     onPress: handlePress,
+    onDoubleTap: handleDoubleTap,
   };
 
   const touchEventHandlers = {
@@ -296,7 +300,6 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
         <div
           id="widget-editor"
           className={classes.figureZoompane}
-          onContextMenu={handleContextMenu}
           ref={setRef}
           {...panZoomHandlers}
           {...(isTouchDevice() ? touchEventHandlers : mouseEventHandlers)}
