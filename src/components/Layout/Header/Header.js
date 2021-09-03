@@ -34,8 +34,10 @@ const useStyles = makeStyles((theme) => ({
   account: {
     order: 3,
     marginLeft: 'auto',
+    paddingRight: theme.spacing(4),
     [theme.breakpoints.down('sm')]: {
       order: 2,
+      paddingRight: theme.spacing(2),
     },
   },
 }));
@@ -47,13 +49,13 @@ const Header = ({ type }) => {
   return (
     Header && (
       <Grid container className={classes.root}>
-        <Grid item xs={10} sm={10} md={4} className={classes.logo}>
+        <Grid item xs={9} sm={9} md={4} className={classes.logo}>
           <Title>{PROJECT_TITLE}</Title>
         </Grid>
         <Grid item xs={12} sm={12} md={6} className={classes.header}>
           <Header />
         </Grid>
-        <Grid item xs={2} sm={2} md={2} className={classes.account}>
+        <Grid item xs={3} sm={3} md={2} className={classes.account}>
           <AccountBox />
         </Grid>
       </Grid>
