@@ -17,14 +17,15 @@ import { getBoard, getInviteCode, inviteUser, resendCode, updateUser, deleteUser
 import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu, ConfirmDialog } from '../components';
 
 import { TABLE_COLUMN_MAP } from '../constants';
-import { HEADER_HEIGHT } from 'utils/constants/ui';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    paddingLeft: 30,
-    paddingRight: 60,
-    paddingTop: 60,
-    paddingBottom: 60,
+    width: '100%',
+    overflow: 'auto',
+    padding: theme.spacing(8, 8, 8, 4),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(4, 4, 4, 2),
+    },
   },
   toolbar: {
     display: 'flex',
@@ -32,15 +33,13 @@ const useStyles = makeStyles({
     alignItems: 'flex-end',
     marginBottom: 30,
   },
-  tableContainer: {
-    maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 170px)`,
-  },
+  tableContainer: {},
   inviteCell: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-});
+}));
 
 export default function FacilitatorUserManagement(props) {
   const classes = useStyles();

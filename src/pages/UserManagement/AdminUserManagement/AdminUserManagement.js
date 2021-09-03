@@ -32,14 +32,15 @@ import { getUserCount, getDisplayUsers } from '../helpers';
 
 import { USER_ROLES } from 'utils/constants/enums';
 import { TABLE_COLUMN_MAP, USER_ACTION_MENU, USER_ACTION_TYPE, INVITE_DIALOG_TITLE } from '../constants';
-import { HEADER_HEIGHT } from 'utils/constants/ui';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    paddingLeft: 30,
-    paddingRight: 60,
-    paddingTop: 60,
-    paddingBottom: 60,
+    width: '100%',
+    overflow: 'auto',
+    padding: theme.spacing(8, 8, 8, 4),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(4, 4, 4, 2),
+    },
   },
   toolbar: {
     display: 'flex',
@@ -47,9 +48,7 @@ const useStyles = makeStyles({
     alignItems: 'flex-end',
     marginBottom: 30,
   },
-  tableContainer: {
-    maxHeight: `calc(100vh - ${HEADER_HEIGHT}px - 170px)`,
-  },
+  tableContainer: {},
   light: {
     backgroundColor: '#f6f6f6 !important',
   },
@@ -68,7 +67,7 @@ const useStyles = makeStyles({
     height: 10,
     marginLeft: 20,
   },
-});
+}));
 
 export default function AdminUserManagement(props) {
   const classes = useStyles();
