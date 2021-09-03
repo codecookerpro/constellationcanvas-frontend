@@ -14,9 +14,7 @@ import { HEADER_HEIGHT, LINKS, MAIN_BORDER, SIDEBAR_ITEM_TYPES } from 'utils/con
 const useStyles = makeStyles((theme) => ({
   root: {
     display: (props) => (props.open ? 'block' : 'none'),
-    minWidth: 200,
-    maxWidth: 300,
-    width: '30vw',
+    width: 300,
     height: `calc(100vh - ${HEADER_HEIGHT}px)`,
     overflowX: 'hidden',
     overflowY: 'auto',
@@ -32,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
     borderRight: MAIN_BORDER,
     [theme.breakpoints.down('sm')]: {
+      width: 200,
       height: `calc(100vh - ${HEADER_HEIGHT + 70}px)`,
     },
   },
