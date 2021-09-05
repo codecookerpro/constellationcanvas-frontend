@@ -1,7 +1,7 @@
 import { Grid, makeStyles } from '@material-ui/core';
 import AccountBox from './components/AccountBox';
 import { Title } from 'components/form-components';
-import { HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE } from 'utils/constants/ui';
+import { HEADER_HEIGHT, MAIN_BORDER, PROJECT_TITLE, SIDEBAR_MAX_WIDTH } from 'utils/constants/ui';
 import { HEADER_MAP } from './constants';
 
 const useStyles = makeStyles((theme) => ({
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: MAIN_BORDER,
   },
   logo: {
-    maxWidth: 300,
+    maxWidth: SIDEBAR_MAX_WIDTH,
     display: 'flex',
     alignItems: 'center',
     height: HEADER_HEIGHT,

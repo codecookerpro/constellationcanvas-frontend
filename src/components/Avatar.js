@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import { generateAvatarName, generateAvatarColor } from 'utils/helpers';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import { generateAvatarName, generateAvatarColor, noop } from 'utils/helpers';
 
 const useStyles = makeStyles({
   root: (props) => ({
@@ -17,10 +17,14 @@ const useStyles = makeStyles({
   }),
 });
 
-const Avatar = ({ displayName, boxSize = 50, fontSize = 16 }) => {
+const Avatar = ({ displayName, boxSize = 50, fontSize = 16, onClick = noop }) => {
   const classes = useStyles({ boxSize, fontSize, backgroundColor: generateAvatarColor(displayName) });
 
-  return <Box className={classes.root}>{generateAvatarName(displayName)}</Box>;
+  return (
+    <ButtonBase className={classes.root} onClick={onClick}>
+      {generateAvatarName(displayName)}
+    </ButtonBase>
+  );
 };
 
 export default Avatar;
