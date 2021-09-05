@@ -17,6 +17,7 @@ import { getBoard, getInviteCode, inviteUser, resendCode, updateUser, deleteUser
 import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditField, UserActionMenu, ConfirmDialog } from '../components';
 
 import { TABLE_COLUMN_MAP } from '../constants';
+import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,13 +33,31 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    marginBottom: 30,
+    [theme.breakpoints.up('sm')]: {
+      marginBottom: theme.spacing(4),
+    },
   },
   tableContainer: {},
   inviteCell: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  tableDesc: {
+    order: 1,
+    [theme.breakpoints.down('xs')]: {
+      order: 2,
+    },
+  },
+  inviteButton: {
+    order: 2,
+    display: 'flex',
+    justifyContent: 'flex-end',
+    [theme.breakpoints.down('xs')]: {
+      order: 1,
+      marginBottom: theme.spacing(2),
+      justifyContent: 'center',
+    },
   },
 }));
 
@@ -117,17 +136,21 @@ export default function FacilitatorUserManagement(props) {
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.toolbar}>
-        <TableDescription>{users.length} Users total</TableDescription>
-        <InviteButton onClick={handleInviteDialogOpen}>Invite User</InviteButton>
-      </Box>
+      <Grid container className={classes.toolbar}>
+        <Grid item xs={12} sm={6} className={classes.tableDesc}>
+          <TableDescription>{users.length} Users total</TableDescription>
+        </Grid>
+        <Grid item xs={12} sm={6} className={classes.inviteButton}>
+          <InviteButton onClick={handleInviteDialogOpen}>Invite User</InviteButton>
+        </Grid>
+      </Grid>
 
       <UserTableContainer className={classes.tableContainer}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
               {TABLE_COLUMN_MAP.map((column) => (
-                <TableCell key={column.label} width={column.width}>
+                <TableCell key={column.label} style={{ minWidth: column.width }}>
                   {column.label}
                 </TableCell>
               ))}
@@ -150,8 +173,6 @@ export default function FacilitatorUserManagement(props) {
                     </IconButton>
                   </Box>
                 </TableCell>
-                <TableCell style={{ textTransform: 'uppercase' }}>{user.type}</TableCell>
-                <TableCell>{user.date}</TableCell>
                 <TableCell>
                   <IconButton onClick={(e) => handleMenuOpen(e, user.uuid)}>
                     <MoreHorizIcon fontSize="small" />

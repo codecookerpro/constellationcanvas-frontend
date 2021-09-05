@@ -24,14 +24,6 @@ export const TABLE_COLUMN_MAP = [
     width: 150,
   },
   {
-    label: 'Type',
-    width: 50,
-  },
-  {
-    label: 'Date (Y-M-D)',
-    width: 200,
-  },
-  {
     label: 'Actions',
     width: 50,
   },

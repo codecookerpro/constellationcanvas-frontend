@@ -9,12 +9,14 @@ import DoneIcon from '@material-ui/icons/Done';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    alignItems: 'right',
+    alignItems: 'center',
     padding: '1px 0',
+    justifyContent: 'space-between',
   },
   input: {
     border: 'none',
     backgroundColor: 'inherit',
+    width: '100%',
     '&:disabled': {
       color: 'black',
     },

@@ -32,6 +32,7 @@ import { getUserCount, getDisplayUsers } from '../helpers';
 
 import { USER_ROLES } from 'utils/constants/enums';
 import { TABLE_COLUMN_MAP, USER_ACTION_MENU, USER_ACTION_TYPE, INVITE_DIALOG_TITLE } from '../constants';
+import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,7 +48,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    marginBottom: 30,
+    [theme.breakpoints.up('sm')]: {
+      marginBottom: theme.spacing(4),
+    },
   },
   tableContainer: {},
   light: {
@@ -67,6 +70,22 @@ const useStyles = makeStyles((theme) => ({
     width: 10,
     height: 10,
     marginLeft: 20,
+  },
+  tableDesc: {
+    order: 1,
+    [theme.breakpoints.down('xs')]: {
+      order: 2,
+    },
+  },
+  inviteButton: {
+    order: 2,
+    display: 'flex',
+    justifyContent: 'flex-end',
+    [theme.breakpoints.down('xs')]: {
+      order: 1,
+      marginBottom: theme.spacing(2),
+      justifyContent: 'center',
+    },
   },
 }));
 
@@ -168,12 +187,16 @@ export default function AdminUserManagement(props) {
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.toolbar}>
-        <TableDescription>
-          {getUserCount(users, USER_ROLES.facilitator)} Facilitators, {getUserCount(users, USER_ROLES.user)} Users total
-        </TableDescription>
-        <InviteButton onClick={handleInviteDialogOpen}>Invite Facilitator</InviteButton>
-      </Box>
+      <Grid container className={classes.toolbar}>
+        <Grid item xs={12} sm={6} className={classes.tableDesc}>
+          <TableDescription>
+            {getUserCount(users, USER_ROLES.facilitator)} Facilitators, {getUserCount(users, USER_ROLES.user)} Users total
+          </TableDescription>
+        </Grid>
+        <Grid item xs={12} sm={6} className={classes.inviteButton}>
+          <InviteButton onClick={handleInviteDialogOpen}>Invite Facilitator</InviteButton>
+        </Grid>
+      </Grid>
 
       <UserTableContainer className={classes.tableContainer}>
         <Table stickyHeader>
@@ -212,8 +235,6 @@ export default function AdminUserManagement(props) {
                     </IconButton>
                   </Box>
                 </TableCell>
-                <TableCell style={{ textTransform: 'uppercase' }}>{user.type}</TableCell>
-                <TableCell>{user.date}</TableCell>
                 <TableCell>
                   <IconButton onClick={(e) => handleMenuOpen(e, user.uuid, user.role)}>
                     <MoreHorizIcon fontSize="small" />
