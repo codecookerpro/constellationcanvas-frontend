@@ -18,15 +18,16 @@ import { UserTableContainer, TableDescription, InviteDialog, InviteButton, EditF
 
 import { TABLE_COLUMN_MAP } from '../constants';
 import { Grid } from '@material-ui/core';
+import { SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH } from 'utils/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: 'calc(100vw - 300px)',
+    width: `calc(100vw - ${SIDEBAR_MAX_WIDTH}px)`,
     overflow: 'auto',
     padding: theme.spacing(8, 8, 8, 4),
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(4, 4, 4, 2),
-      width: 'calc(100vw - 200px)',
+      width: `calc(100vw - ${SIDEBAR_MIN_WIDTH}px)`,
     },
   },
   toolbar: {

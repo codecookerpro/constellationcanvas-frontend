@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 import { Loader, Notifier } from 'components/auxiliary-components';
-import { HEADER_HEIGHT } from 'utils/constants';
+import { HEADER_HEIGHT, HEADER_TITLE_HEIGHT } from 'utils/constants';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: `calc(100vh - ${HEADER_HEIGHT}px)`,
     [theme.breakpoints.down('sm')]: {
-      height: `calc(100vh - ${HEADER_HEIGHT + 70}px)`,
+      height: `calc(100vh - ${HEADER_HEIGHT + HEADER_TITLE_HEIGHT}px)`,
     },
   },
 }));
