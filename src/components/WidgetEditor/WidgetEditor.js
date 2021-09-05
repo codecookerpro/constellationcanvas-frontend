@@ -238,6 +238,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
       } else {
         dispatch(setSelectedFigure(null));
         setFigureGroup([]);
+        setActiveFigures([]);
       }
     }
 
