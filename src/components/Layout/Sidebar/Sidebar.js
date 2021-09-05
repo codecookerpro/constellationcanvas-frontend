@@ -9,7 +9,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import GroupBox from './GroupBox';
 import { GroupAccordion, GroupAccordionSummary, GroupAccordionDetails } from './styled-components';
 import { SIDEBAR_ITEMS } from './constants';
-import { HEADER_HEIGHT, LINKS, MAIN_BORDER, SIDEBAR_ITEM_TYPES, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH } from 'utils/constants';
+import { HEADER_HEIGHT, HEADER_TITLE_HEIGHT, LINKS, MAIN_BORDER, SIDEBAR_ITEM_TYPES, SIDEBAR_MAX_WIDTH, SIDEBAR_MIN_WIDTH } from 'utils/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     borderRight: MAIN_BORDER,
     [theme.breakpoints.down('sm')]: {
       width: SIDEBAR_MIN_WIDTH,
-      height: `calc(100vh - ${HEADER_HEIGHT + 70}px)`,
+      height: `calc(100vh - ${HEADER_HEIGHT + HEADER_TITLE_HEIGHT}px)`,
     },
   },
   group: {
