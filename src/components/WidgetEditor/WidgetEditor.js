@@ -12,7 +12,15 @@ import _ from 'lodash';
 import { getHoveredFigure, getMaxDepth } from './helper';
 import { isTouchDevice, toArray } from 'utils';
 
-import { WIDGET_MAP, WIDGET_GROUP_TYPES, WIDGET_EDITOR_SCALE_LIMIT, DOUBLE_CLICK_INTERVAL, CLICK_INTERVAL, CANVAS_PDF_FILENAMES } from './constants';
+import {
+  WIDGET_MAP,
+  WIDGET_GROUP_TYPES,
+  WIDGET_EDITOR_SCALE_LIMIT,
+  DOUBLE_CLICK_INTERVAL,
+  CLICK_INTERVAL,
+  CANVAS_PDF_FILENAMES,
+  GROUP_UUID,
+} from './constants';
 import { CANVAS_STATES, DND_ITEM_TYPES } from 'utils/constants';
 
 import { createFigure, updateFigure, setFigureHovered, copyCanvasTo, setSelectedFigure, setCopiedFigure, deleteFigure } from 'actions';
@@ -106,14 +114,15 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
 
   const handleMouseDown = (e) => {
     const currentTime = new Date();
+    const hovered = getHoveredFigure(e, figures, stageRef);
     if (currentTime - mouseDownTime < DOUBLE_CLICK_INTERVAL) {
       panZoomHandlers.onMouseDown(e);
       setPanEnabled(true);
     } else {
-      const hovered = getHoveredFigure(e, figures, stageRef);
       dispatch(setSelectedFigure(hovered));
-      setFigureGroup([]);
-      setActiveFigures([]);
+      if (hovered !== GROUP_UUID) {
+        setFigureGroup([]);
+      }
     }
 
     setMouseDownTime(currentTime);
@@ -251,9 +260,13 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     if (currentTime - touchStartTime < 500) {
       setPanEnabled(!hovered);
     } else if (!contextState.mouseY) {
-      setFigureGroup([]);
-      setActiveFigures([]);
-      dispatch(setSelectedFigure(hovered));
+      if (hovered) {
+        dispatch(setSelectedFigure(hovered));
+      } else {
+        dispatch(setSelectedFigure(null));
+        setFigureGroup([]);
+        setActiveFigures([]);
+      }
     }
 
     panZoomHandlers.onTouchStart(e);
