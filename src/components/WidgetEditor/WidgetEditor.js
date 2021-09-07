@@ -79,7 +79,6 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     [index]
   );
 
-  const hoveredFigure = useMemo(() => figures.find((f) => f.hovered), [figures]);
   const selectedFigure = useMemo(() => figures.find((f) => f.selected), [figures]);
 
   const setRef = (el) => {
@@ -111,7 +110,10 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
       panZoomHandlers.onMouseDown(e);
       setPanEnabled(true);
     } else {
-      dispatch(setSelectedFigure(hoveredFigure?.uuid));
+      const hovered = getHoveredFigure(e, figures, stageRef);
+      dispatch(setSelectedFigure(hovered));
+      setFigureGroup([]);
+      setActiveFigures([]);
     }
 
     setMouseDownTime(currentTime);
@@ -249,13 +251,9 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     if (currentTime - touchStartTime < 500) {
       setPanEnabled(!hovered);
     } else if (!contextState.mouseY) {
-      if (hovered) {
-        dispatch(setSelectedFigure(hovered));
-      } else {
-        dispatch(setSelectedFigure(null));
-        setFigureGroup([]);
-        setActiveFigures([]);
-      }
+      setFigureGroup([]);
+      setActiveFigures([]);
+      dispatch(setSelectedFigure(hovered));
     }
 
     panZoomHandlers.onTouchStart(e);
