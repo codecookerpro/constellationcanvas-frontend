@@ -238,14 +238,29 @@ export const CONTEXTMENU_TYPES = keyMirror({
   colorPalette: null,
 });
 
-export const CONTEXTMENU_ITEMS_GENERAL = [
+export const BOARD_CONTEXTMENU_ITEMS = [
   {
     type: CONTEXTMENU_TYPES.paste,
     label: 'Paste',
   },
 ];
 
-export const CONTEXTMENU_ITEMS_WIDGET = [
+export const GROUP_CONTEXTMENU_ITEMS = [
+  {
+    type: CONTEXTMENU_TYPES.copy,
+    label: 'Copy Group',
+  },
+  {
+    type: CONTEXTMENU_TYPES.cut,
+    label: 'Cut Group',
+  },
+  {
+    type: CONTEXTMENU_TYPES.delete,
+    label: 'Delete Group',
+  },
+];
+
+export const WIDGET_CONTEXTMENU_ITEMS = [
   {
     type: CONTEXTMENU_TYPES.front,
     label: 'Bring to Front',
@@ -328,3 +343,4 @@ export const WIDGET_DESCRIPTIONS = {
 export const DOUBLE_CLICK_INTERVAL = 200;
 export const CLICK_INTERVAL = 200;
 export const CANVAS_PDF_FILENAMES = ['current-state.pdf', 'future-state-1.pdf', 'future-state-2.pdf'];
+export const GROUP_UUID = 'group-uuid';

@@ -63,7 +63,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     },
   }));
 
-  const { contextState, setContextState, handleContextMenu, MenuComponent } = useContextMenu({ figures, stageRef, zoom, copiedFigure });
+  const { contextState, setContextState, handleContextMenu, MenuComponent } = useContextMenu({ figures, figureGroup, stageRef, zoom, copiedFigure });
 
   const blockedZoom = useMemo(
     () => contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
@@ -121,7 +121,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     const currentTime = new Date();
     if (panEnabled) {
       setPanEnabled(false);
-    } else if (currentTime - mouseDownTime < CLICK_INTERVAL && !getHoveredFigure(e, figures, stageRef, true)) {
+    } else if (currentTime - mouseDownTime < CLICK_INTERVAL && !getHoveredFigure(e, figures, stageRef)) {
       setFigureGroup([]);
       setActiveFigures([]);
     }
@@ -129,7 +129,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
 
   const handleMouseMove = (e) => {
     if (e.buttons === 0 && figures.length && !contextState.uuid) {
-      const hovered = getHoveredFigure(e, figures, stageRef, true);
+      const hovered = getHoveredFigure(e, figures, stageRef);
       const oldHovered = figures.find((f) => f.hovered)?.uuid || null;
 
       if (hovered !== oldHovered) {
@@ -150,35 +150,46 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
 
   const handleKeyDown = useCallback(
     (e) => {
+      if (activeFigures.length) {
+        return;
+      }
+
       if (e.key === 'Escape') {
         setActiveFigures([]);
         setFigureGroup([]);
-      } else if (e.key === 'Delete' && selectedFigure && activeFigures.length === 0) {
-        dispatch(deleteFigure(selectedFigure.uuid));
-      } else if ((e.metaKey || e.ctrlKey) && activeFigures.length === 0) {
-        if (e.key === 'c' && selectedFigure) {
-          dispatch(setCopiedFigure(selectedFigure.uuid));
-        } else if (e.key === 'v' && copiedFigure) {
-          const {
-            transform: { tx, ty },
-          } = copiedFigure;
-          const newFigure = {
-            ...copiedFigure,
-            depth: getMaxDepth(figures) + 1,
+      } else if (e.key === 'Delete') {
+        if (selectedFigure) {
+          dispatch(deleteFigure(selectedFigure.uuid));
+        } else if (figureGroup.length) {
+          dispatch(deleteFigure(figureGroup.map((f) => f.id)));
+        }
+      } else if (e.metaKey || e.ctrlKey) {
+        if (e.key === 'c') {
+          if (selectedFigure) {
+            dispatch(setCopiedFigure(selectedFigure.uuid));
+          } else if (figureGroup) {
+            dispatch(setCopiedFigure(figureGroup.map((f) => f.id)));
+          }
+        } else if (e.key === 'v' && copiedFigure.length) {
+          const maxDepth = getMaxDepth(figures);
+          const newFigures = copiedFigure.map((figure, idx) => ({
+            ...figure,
+            depth: maxDepth + idx + 1,
             transform: {
-              ...copiedFigure.transform,
-              tx: `${parseFloat(tx) + 50}px`,
-              ty: `${parseFloat(ty) + 50}px`,
+              ...figure.transform,
+              tx: `${parseFloat(figure.transform.tx) + 50}px`,
+              ty: `${parseFloat(figure.transform.ty) + 50}px`,
             },
-          };
-          dispatch(createFigure(newFigure));
+          }));
+          dispatch(createFigure(newFigures));
         } else if (e.key === 'a') {
           e.preventDefault();
-          setFigureGroup(stageRef.current.querySelectorAll('.widget'));
+          dispatch(setSelectedFigure(null));
+          setFigureGroup(Array.from(stageRef.current.querySelectorAll('.widget')));
         }
       }
     },
-    [selectedFigure, activeFigures, copiedFigure, figures, dispatch]
+    [selectedFigure, activeFigures, figureGroup, copiedFigure, figures, dispatch]
   );
 
   const handleSelectFigures = (e) => {
@@ -233,7 +244,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   const handleTouchStart = (e) => {
     const currentTime = new Date();
     const { clientX, clientY } = e.touches[0];
-    const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef, true);
+    const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef);
 
     if (currentTime - touchStartTime < 500) {
       setPanEnabled(!hovered);
@@ -265,7 +276,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
     if (panEnabled) {
       setPanEnabled(false);
     } else if (currentTime - touchStartTime > 500 && clientX === touchStartPoint.clientX && clientY === touchStartPoint.clientY) {
-      const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef, true);
+      const hovered = getHoveredFigure({ clientX, clientY }, figures, stageRef);
       setContextState({ mouseX: clientX, mouseY: clientY, uuid: hovered });
     }
 

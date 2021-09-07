@@ -3,7 +3,7 @@ import pointInPolygon from 'point-in-polygon';
 import overlap from 'polygon-overlap';
 import { isNumber } from 'utils';
 import { WIDGET_IMG_BASE_URL } from 'utils/constants/ui';
-import { WIDGET_GROUPS } from './constants';
+import { GROUP_UUID, WIDGET_GROUPS } from './constants';
 
 export const getImgUrl = (group, type, scale = 1) => {
   const { imageType } = WIDGET_GROUPS.find((g) => g.type === group);
@@ -93,7 +93,7 @@ export const extendPolygon = (polygon, dist = 30) => {
 };
 
 export const getWidgetBoundaries = (ref, uuid, hover = true) => {
-  const widget = ref.current.querySelector(uuid === 'group' ? '[data-able-groupable=true]' : `#widget-container-${uuid}`);
+  const widget = ref.current.querySelector(uuid === GROUP_UUID ? '[data-able-groupable=true]' : `#widget-container-${uuid}`);
 
   const points = [
     hover && widget?.querySelector('.moveable-rotation-control'),
@@ -109,8 +109,8 @@ export const getWidgetBoundaries = (ref, uuid, hover = true) => {
   return points;
 };
 
-export const getHoveredFigure = ({ clientX, clientY }, figures, ref, includeGroup = false) => {
-  const hoveredFigures = (includeGroup ? figures.concat({ uuid: 'group', depth: Infinity }) : figures)
+export const getHoveredFigure = ({ clientX, clientY }, figures, ref, includeGroup = true) => {
+  const hoveredFigures = (includeGroup ? figures.concat({ uuid: GROUP_UUID, depth: Infinity }) : figures)
     .filter((f) => {
       const points = getWidgetBoundaries(ref, f.uuid, true);
       return pointInPolygon([clientX, clientY], extendPolygon(points, 30));

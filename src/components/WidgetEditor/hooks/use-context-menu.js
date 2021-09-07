@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Menu, MenuItem, Divider } from '@material-ui/core';
-import { CONTEXTMENU_ITEMS_GENERAL, CONTEXTMENU_ITEMS_WIDGET, CONTEXTMENU_TYPES } from '../constants';
+import { BOARD_CONTEXTMENU_ITEMS, WIDGET_CONTEXTMENU_ITEMS, CONTEXTMENU_TYPES, GROUP_UUID, GROUP_CONTEXTMENU_ITEMS } from '../constants';
 import { getForwardWidget, getBackwardWidget, getMaxDepth, getHoveredFigure } from '../helper';
 import { createFigure, deleteFigure, setCopiedFigure, updateFigure, setSelectedFigure } from 'actions';
 import { ShapeColorDialog } from '../components';
+import { toArray } from 'utils';
 
-const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
+const useContextMenu = ({ figures, figureGroup, zoom, stageRef, copiedFigure }) => {
   const dispatch = useDispatch();
   const [contextState, setContextState] = useState({
     uuid: null,
@@ -17,19 +18,23 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
 
   const targetFigure = useMemo(() => figures.find((f) => f.uuid === contextState.uuid), [figures, contextState]);
   const menuItems = useMemo(() => {
-    if (contextState.uuid) {
-      return CONTEXTMENU_ITEMS_WIDGET.filter((item) => !item.widget || targetFigure.type.includes(item.widget));
+    if (contextState.uuid === GROUP_UUID) {
+      return GROUP_CONTEXTMENU_ITEMS;
+    } else if (contextState.uuid) {
+      return WIDGET_CONTEXTMENU_ITEMS.filter((item) => !item.widget || targetFigure.type.includes(item.widget));
+    } else {
+      return BOARD_CONTEXTMENU_ITEMS;
     }
-    return CONTEXTMENU_ITEMS_GENERAL;
   }, [targetFigure, contextState]);
 
   const handleContextClick = (e, type) => {
     e.preventDefault();
     const { uuid, mouseX, mouseY } = contextState;
+    const uuids = uuid === GROUP_UUID ? figureGroup.map((f) => f.id) : toArray(uuid);
+    const maxDepth = getMaxDepth(figures);
 
     switch (type) {
       case CONTEXTMENU_TYPES.front:
-        const maxDepth = getMaxDepth(figures);
         figures
           .filter((f) => f.uuid === targetFigure.uuid || f.depth > targetFigure.depth)
           .map((f) => ({ ...f, depth: f.uuid === targetFigure.uuid ? maxDepth : f.depth - 1 }))
@@ -56,27 +61,39 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
         }
         break;
       case CONTEXTMENU_TYPES.copy:
-        dispatch(setCopiedFigure(uuid));
+        dispatch(setCopiedFigure(uuids));
         break;
       case CONTEXTMENU_TYPES.cut:
-        dispatch(setCopiedFigure(uuid));
-        dispatch(deleteFigure(uuid));
+        dispatch(setCopiedFigure(uuids));
+        dispatch(deleteFigure(uuids));
         break;
       case CONTEXTMENU_TYPES.paste:
         const { x: baseX, y: baseY } = stageRef.current.getBoundingClientRect();
-        const newFigure = {
-          ...copiedFigure,
-          depth: getMaxDepth(figures) + 1,
-          transform: {
-            ...copiedFigure.transform,
-            tx: (mouseX - baseX) / zoom,
-            ty: (mouseY - baseY) / zoom,
+        const { minX, minY } = copiedFigure.reduce(
+          ({ minX, minY }, figure) => {
+            const tx = parseFloat(figure.transform.tx);
+            const ty = parseFloat(figure.transform.ty);
+            return {
+              minX: tx < minX ? tx : minX,
+              minY: ty < minY ? ty : minY,
+            };
           },
-        };
-        dispatch(createFigure(newFigure));
+          { minX: Infinity, minY: Infinity }
+        );
+
+        const newFigures = copiedFigure.map((figure, idx) => ({
+          ...figure,
+          depth: maxDepth + idx + 1,
+          transform: {
+            ...figure.transform,
+            tx: `${parseFloat(figure.transform.tx) - minX + (mouseX - baseX) / zoom}px`,
+            ty: `${parseFloat(figure.transform.ty) - minY + (mouseY - baseY) / zoom}px`,
+          },
+        }));
+        dispatch(createFigure(newFigures));
         break;
       case CONTEXTMENU_TYPES.delete:
-        dispatch(deleteFigure(uuid));
+        dispatch(deleteFigure(uuids));
         break;
       case CONTEXTMENU_TYPES.incFontSize:
         dispatch(
@@ -95,7 +112,6 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
         );
         break;
       case CONTEXTMENU_TYPES.colorPalette:
-        console.log(targetFigure);
         showShapeColorDlg(true);
         return;
       default:
@@ -112,7 +128,7 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
   const handleContextMenu = (e) => {
     e.preventDefault();
 
-    const hovered = getHoveredFigure(e, figures, stageRef, false);
+    const hovered = getHoveredFigure(e, figures, stageRef);
     dispatch(setSelectedFigure(hovered));
 
     setContextState({
@@ -144,7 +160,7 @@ const useContextMenu = ({ figures, zoom, stageRef, copiedFigure }) => {
           context.type === CONTEXTMENU_TYPES.divider ? (
             <Divider key={context.type + index} />
           ) : context.type === CONTEXTMENU_TYPES.paste ? (
-            <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={!copiedFigure.uuid}>
+            <MenuItem key={context.type} onClick={(e) => handleContextClick(e, context.type)} disabled={!copiedFigure.length}>
               {context.label}
             </MenuItem>
           ) : (
