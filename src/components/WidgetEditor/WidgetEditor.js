@@ -100,8 +100,9 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
 
     if (_.isEqual(oldFigure, newFigure) === false) {
       dispatch(updateFigure({ uuid, ...params }));
-      setTimeout(() => setActiveFigures([]));
     }
+
+    setTimeout(() => setActiveFigures([]));
   };
 
   const handleMouseDown = (e) => {
