@@ -8,9 +8,7 @@ export const INITIAL_BOARD_STATE = Object.freeze({
   name: '',
   figures: [],
   uuid: null,
-  copiedFigure: {
-    uuid: null,
-  },
+  copiedFigure: [],
 });
 
 export const setBoardUpdater = (state, { payload }) => ({
