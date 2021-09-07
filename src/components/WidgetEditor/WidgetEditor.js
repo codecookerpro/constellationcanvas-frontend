@@ -65,11 +65,11 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
 
   const { contextState, setContextState, handleContextMenu, MenuComponent } = useContextMenu({ figures, stageRef, zoom, copiedFigure });
 
-  const blockedPanZoom = useMemo(
-    () =>
-      !panEnabled || activeFigures.length || contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
-    [panEnabled, activeFigures, contextState, figures]
+  const blockedZoom = useMemo(
+    () => contextState.mouseY || figures.filter((f) => f.hovered && f.type.match(WIDGET_GROUP_TYPES.text)).length,
+    [contextState, figures]
   );
+  const blockedPan = useMemo(() => activeFigures.length || !panEnabled || blockedZoom, [activeFigures, panEnabled, blockedZoom]);
 
   const copyCanvasMenuItems = useMemo(
     () =>
@@ -122,6 +122,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
       setPanEnabled(false);
     } else if (currentTime - mouseDownTime < CLICK_INTERVAL && !getHoveredFigure(e, figures, stageRef, true)) {
       setFigureGroup([]);
+      setActiveFigures([]);
     }
   };
 
@@ -135,13 +136,13 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
       }
     }
 
-    if (!blockedPanZoom && e.buttons === 1) {
+    if (!blockedPan && e.buttons === 1) {
       panZoomHandlers.onMouseMove(e);
     }
   };
 
   const handleWheel = (e) => {
-    if (!blockedPanZoom) {
+    if (!blockedZoom) {
       setZoom(zoom - e.deltaY * 0.001);
     }
   };
@@ -170,6 +171,9 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
             },
           };
           dispatch(createFigure(newFigure));
+        } else if (e.key === 'a') {
+          e.preventDefault();
+          setFigureGroup(stageRef.current.querySelectorAll('.widget'));
         }
       }
     },
@@ -248,7 +252,7 @@ const WidgetEditor = ({ index, figures, copiedFigure, editable = false }) => {
   };
 
   const handleTouchMove = (e) => {
-    if (!blockedPanZoom) {
+    if (!blockedPan) {
       panZoomHandlers.onTouchMove(e);
     }
   };
