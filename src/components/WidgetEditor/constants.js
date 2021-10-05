@@ -41,7 +41,7 @@ export const WIDGET_GROUPS = [
     keepRatio: true,
     defaultArea: 10000,
     imageType: 'png',
-    count: 20,
+    count: 21,
   },
   {
     type: WIDGET_GROUP_TYPES.family,
@@ -96,7 +96,7 @@ export const WIDGET_GROUPS = [
     keepRatio: true,
     defaultArea: 10000,
     imageType: 'png',
-    count: 12,
+    count: 15,
   },
   {
     type: WIDGET_GROUP_TYPES.arrow,
